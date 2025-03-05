@@ -1,0 +1,159 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px; /* Add padding to avoid content touching the edges */
+}
+
+.container {
+    width: 100%;
+    max-width: 400px; /* Reduce max-width for better fit */
+    margin: 0 auto;
+    padding: 15px; /* Reduce padding */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 80%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        width: 60%;
+    }
+}
+
+h2 {
+    text-align: center;
+    color: #4a90e2;
+    margin-bottom: 15px; /* Reduce margin */
+    font-size: 18px; /* Reduce font size */
+}
+
+p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 15px; /* Reduce margin */
+    font-size: 14px; /* Reduce font size */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Reduce margin */
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #333;
+    font-size: 14px; /* Reduce font size */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px; /* Reduce padding */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+.btn {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px; /* Reduce padding */
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px; /* Reduce font size */
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #357ab7;
+}
+
+.gender-group {
+    display: flex;
+    flex-direction: column; /* Arrange label and options in a column */
+    align-items: flex-start; /* Align items to the start */
+}
+
+.gender-options {
+    display: flex;
+    gap: 10px; /* Add gap between the options */
+    align-items: center; /* Align items to the center */
+}
+
+.gender-options label {
+    margin-right: 5px; /* Adjust margin for better alignment */
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+    display: none;
+}
+
+.link {
+    text-align: center;
+    display: block;
+    margin-top: 10px; /* Reduce margin */
+    font-size: 14px; /* Reduce font size */
+}
+
+.toggle-button {
+    background-color: transparent;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#welcomeMessage {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#resetPasswordForm {
+    display: none;
+}
+
+#registerForm {
+    display: none;
+}
+
+/* Additional styling for better form appearance */
+.form-group input {
+    margin-bottom: 10px; /* Add margin to inputs for better spacing */
+}
+
+.form-group.gender-group {
+    margin-bottom: 15px; /* Ensure consistent spacing for gender group */
+}
+
+.form-group.gender-group label {
+    margin-right: 5px; /* Adjust margin for better alignment */
+}
+
+.form-group.gender-group input[type="radio"] {
+    margin-right: 5px; /* Adjust margin for better alignment */
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttachME | Student Dashboard</title>
+    <link rel="stylesheet" href="../../CSS/SDashboard.css">
+    <!-- <link rel="icon" href="logo.png" type="image/png"> -->
+</head>
+<body>
+    
+    <!-- Header with Navigation -->
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="AttachME Logo">
+            <h1>AttachME</h1>
+            <p>Bridging Students to Opportunities, Seamlessly.</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="SAbout.html">About</a></li>
+                <li><a href="SBrowse.html">Browse</a></li>
+                <li><a href="SApplicationSubmission.html">Applications</a></li>
+                <!-- <li><a href="SProfile.html">Profile</a></li> -->
+                <li class="dropdown">
+                    <a href="#">Profile</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#view-profile">View</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                        <li><a href="#logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <!-- <input type="text" id="searchBar" placeholder="Search..."> -->
+    </header>
+    
+    <!-- Main Dashboard Section -->
+    <main id="dashboard">
+        <section class="welcome">
+            <h2>Welcome, My Name! 👋</h2>
+            <p id="dateTime"></p>
+        </section>
+
+        <section class="stats">
+            <div class="card">
+                <h3>Submitted Applications</h3>
+                <p id="submittedCount">3</p>
+            </div>
+            <div class="card">
+                <h3>Accepted Opportunities</h3>
+                <p id="acceptedCount">1</p>
+            </div>
+            <div class="card">
+                <h3>Pending Reviews</h3>
+                <p id="pendingCount">1</p>
+            </div>
+        </section>
+
+        <section class="notifications">
+            <h3>Notifications</h3>
+            <ul id="notificationList">
+                <li>Hey , application for TechBridge Solutions is under review.</li>
+                <li>Congratulations! your application to InnoHealth Systems was accepted.Check your email for further instructions</li>
+            </ul>
+            <button onclick="clearNotifications()">Clear Notifications</button>
+        </section>
+
+        <section class="deadlines">
+            <h3>Upcoming Deadlines</h3>
+            <ul id="deadlineList">
+                <li>Application to EduSmart Labs closes in <span id="deadlineTimer">3 days.</span></li>
+
+                <li>Application to DesignH Studios closes in <span id="deadlineTimer">2 Months. </span></li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 AttachME. All rights reserved.</p>
+        <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <!-- <li><a href="#">Contact Support</a></li>        </ul> -->
+    </footer>
+
+    <!-- Link to External JavaScript -->
+    <script src="../../Javasript/SDasboard.js"></script>
+</body>
+</html>

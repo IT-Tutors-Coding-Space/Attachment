@@ -1,244 +1,244 @@
 
-AttachMe - Online Industrial Attachment Application System
+                AttachMe - Online Industrial Attachment Application System
 
-🚀 Student Interface
+    🚀 Student Interface
 
-Core Layout (Reusable Across Pages)
+    Core Layout (Reusable Across Pages)
 
-Header:
 
-Logo: AttachME
+    Header:
 
-Navigation Links: Dashboard, Browse Opportunities, Applications, Profile, Notifications
+    Logo: AttachME
 
-Search bar and profile dropdown
+    Navigation Links: Dashboard, Browse Opportunities, Applications, Profile, Notifications
 
-Logout button
+    Search bar and profile dropdown
 
-Footer:
+    Logout button
 
-Quick links: Terms of Service, Privacy Policy
+    Footer:
 
-Social media icons (optional)
+    Quick links: Terms of Service, Privacy Policy
 
-📂 Pages to Design
 
-Login & Registration Pages
+    📂 Pages to Design
 
-Input fields: Email, Registration Number, Course, Year of Study, Password
+        Login & Registration Pages
 
-Sign-up and sign-in buttons
+        Input fields: Email, Registration Number, Course, Year of Study, Password
 
-Dashboard
+        Sign-up and sign-in buttons
 
-Welcome message with student’s name and profile picture
+        Dashboard
 
-Quick stats:
+        Welcome message with student’s name and profile picture
 
-Total applications
+        Quick stats:
 
-Status breakdown (Rejected, Accepted, Pending)
+        Total applications
 
-Recent notifications section
+        Status breakdown (Rejected, Accepted, Pending)
 
-About Page
+        Recent notifications section
 
-Browse / Search Opportunities
+        About Page
 
-Search and filter options: Location, Industry
+        Browse / Search Opportunities
 
-Attachment listings as cards or table view
+        Search and filter options: Location, Industry
 
-Apply button with a confirmation modal
+        Attachment listings as cards or table view
 
-Application Submission Page
+        Apply button with a confirmation modal
 
-Application form with fields for:
+        Application Submission Page
 
-Resume upload
+        Application form with fields for:
 
-Additional info/requirements
+        Resume upload
 
-Preview application before submission
+        Additional info/requirements
 
-Application Status & History
+        Preview application before submission
 
-List of submitted applications
+        Application Status & History
 
-Status tags: Pending, Accepted, Rejected, Under Review
+        List of submitted applications
 
-Timeline view for tracking application stages
+        Status tags: Pending, Accepted, Rejected, Under Review
 
-Feedback section with comments from companies
+        Timeline view for tracking application stages
 
-Profile Management
+    Feedback section with comments from companies
 
-View and edit profile information (Name, Email, etc.)
+    Profile Management
 
-Upload/change profile picture
+        View and edit profile information (Name, Email, etc.)
 
-Change password option
+        Upload/change profile picture
 
-Settings
+        Change password option
 
-Delete account option with confirmation modal
+        Settings
 
-Notifications
+        Delete account option with confirmation modal
 
-List of notifications (Application updates, New opportunities)
+        Notifications
 
-Clear all notifications button
+        List of notifications (Application updates, New opportunities)
 
-Error & Success Pages
+        Clear all notifications button
 
-404 Not Found
+        <!-- Error & Success Pages
 
-Application submission success page
+        404 Not Found
 
-Error page for failed actions (e.g., failed submission)
+        Application submission success page
 
-🛠️ Design Guidelines
+        Error page for failed actions (e.g., failed submission) -->
 
-Clean, minimal design with vibrant, student-friendly colors
+        🛠️ Design Guidelines
 
-Use a modern font like Inter or Roboto
+        Clean, minimal design with vibrant, student-friendly colors
 
-Consistent button styles and hover effects
+        Use a modern font like Inter or Roboto
 
-Spacing and padding for readability
+        Consistent button styles and hover effects
 
-Responsive design for desktop, tablet, and mobile views
+        Spacing and padding for readability
 
+        Responsive design for desktop, tablet, and mobile views
 
 
 
 
 
 
-📘 Online Industrial Attachment Application System
 
-Welcome to the Online Industrial Attachment Application System — a platform designed to bridge the gap between students and organizations for seamless industrial attachment applications! 🚀
-****************************************************************************************
-📌 Table of Contents
+        📘 Online Industrial Attachment Application System
 
-About the Project
+        Welcome to the Online Industrial Attachment Application System — a platform designed to bridge the gap between students and organizations for seamless industrial attachment applications! 🚀
+        ****************************************************************************************
+        📌 Table of Contents
 
-Features
+        About the Project
 
-Tech Stack
+        Features
 
-System Workflow
+        Tech Stack
 
-Installation and Setup
+        System Workflow
 
-Contributors
+        Installation and Setup
 
-License
+        Contributors
 
-*********************************************************************************************
+        License
 
-🔍 About the Project
+        *********************************************************************************************
 
-In many institutions, securing an attachment is challenging due to manual processes, lost applications, and lack of centralized platforms. This project solves those issues with a web-based system that lets students search, apply, and track applications — while companies post opportunities and manage applicants.
+        🔍 About the Project
 
-**************************************************************************************************
+        In many institutions, securing an attachment is challenging due to manual processes, lost applications, and lack of centralized platforms. This project solves those issues with a web-based system that lets students search, apply, and track applications — while companies post opportunities and manage applicants.
 
-🔑 Key Benefits:
+        **************************************************************************************************
 
-Faster and more organized application process.
+        🔑 Key Benefits:
 
-Real-time notifications and progress tracking.
+        Faster and more organized application process.
 
-Secure, scalable, and user-friendly interface.
-***********************************************************************
+        Real-time notifications and progress tracking.
 
+        Secure, scalable, and user-friendly interface.
+        ***********************************************************************
 
-✨ Features
 
-👩‍🎓 Student Portal:
+        ✨ Features
 
-Create and manage accounts.
+        👩‍🎓 Student Portal:
 
-Upload and update resumes.
+        Create and manage accounts.
 
-Browse and filter available attachments.
+        Upload and update resumes.
 
-Track application status.
+        Browse and filter available attachments.
 
-**************************************************************************
+        Track application status.
 
-🏢 Company Portal:
+        **************************************************************************
 
-Post attachment opportunities.
+        🏢 Company Portal:
 
-Review and manage student applications.
+        Post attachment opportunities.
 
-Communicate with applicants.
+        Review and manage student applications.
 
-🛡️ Admin Panel:
+        Communicate with applicants.
 
-Manage user accounts.
+        🛡️ Admin Panel:
 
-Monitor system performance.
+        Manage user accounts.
 
-🔔 Other Features:
+        Monitor system performance.
 
-Real-time notifications.
+        🔔 Other Features:
 
-Secure messaging system.
+        Real-time notifications.
 
-Feedback mechanism.
+        Secure messaging system.
 
+        Feedback mechanism.
 
-*************************************************
 
-🛠 Tech Stack
+        *************************************************
 
-Frontend:  HTML, CSS
+        🛠 Tech Stack
 
-Backend: Node.js , express.js
+        Frontend:  HTML, CSS
 
-Database: MYSQL
+        Backend: Node.js , express.js
 
-Dev Tools: VS Code, GitHub
+        Database: MYSQL
 
-Methodology: Agile
+        Dev Tools: VS Code, GitHub
 
-⚙️ System Workflow
+        Methodology: Agile
 
-[![](https://mermaid.ink/img/pako:eNqNUctOwzAQ_JVoz23Jo0mUHJBaKg6oiIpwgnBwYze1WtuR47SEphI_AAjBvRIXxG_xBf0ETEIQ3PBhtbOamR2tN5AITCCEVKJsblyMYm7oF6kCE66u9run94-7-_3u4bmdXRvd7mF1TlKaKyLzg7FIKa-MqNSQfavrvuYNpVjnxDjLMiFVwamiJK-MEzEda_mfXTU9KqaMqtwYZNmSJkhRoa1_gdGw0RwJliFe6nyPry1og60oWf_bodZMpFhRTHLjmBA8RcmiakM13AFmlOtdL29N22w6RRylWjRZIjUTkv2-AXSAEckQxfq0m69JDGpOGIkh1C1GchFDzLeahwolopInECpZkA5IUaRzCGdomWtUZBgpMqJI_w_7merkl0KwVqIhhBu4gdCyzZ5n267nOaYXWK7ndKCE0LV6ZuA7nu30fd_SdduB29rA7AWWbft9ux_4ruubpr39BFQrtXM?type=png)](https://mermaid.live/edit#pako:eNqNUctOwzAQ_JVoz23Jo0mUHJBaKg6oiIpwgnBwYze1WtuR47SEphI_AAjBvRIXxG_xBf0ETEIQ3PBhtbOamR2tN5AITCCEVKJsblyMYm7oF6kCE66u9run94-7-_3u4bmdXRvd7mF1TlKaKyLzg7FIKa-MqNSQfavrvuYNpVjnxDjLMiFVwamiJK-MEzEda_mfXTU9KqaMqtwYZNmSJkhRoa1_gdGw0RwJliFe6nyPry1og60oWf_bodZMpFhRTHLjmBA8RcmiakM13AFmlOtdL29N22w6RRylWjRZIjUTkv2-AXSAEckQxfq0m69JDGpOGIkh1C1GchFDzLeahwolopInECpZkA5IUaRzCGdomWtUZBgpMqJI_w_7merkl0KwVqIhhBu4gdCyzZ5n267nOaYXWK7ndKCE0LV6ZuA7nu30fd_SdduB29rA7AWWbft9ux_4ruubpr39BFQrtXM)
+        ⚙️ System Workflow
 
+        [![](https://mermaid.ink/img/pako:eNqNUctOwzAQ_JVoz23Jo0mUHJBaKg6oiIpwgnBwYze1WtuR47SEphI_AAjBvRIXxG_xBf0ETEIQ3PBhtbOamR2tN5AITCCEVKJsblyMYm7oF6kCE66u9run94-7-_3u4bmdXRvd7mF1TlKaKyLzg7FIKa-MqNSQfavrvuYNpVjnxDjLMiFVwamiJK-MEzEda_mfXTU9KqaMqtwYZNmSJkhRoa1_gdGw0RwJliFe6nyPry1og60oWf_bodZMpFhRTHLjmBA8RcmiakM13AFmlOtdL29N22w6RRylWjRZIjUTkv2-AXSAEckQxfq0m69JDGpOGIkh1C1GchFDzLeahwolopInECpZkA5IUaRzCGdomWtUZBgpMqJI_w_7merkl0KwVqIhhBu4gdCyzZ5n267nOaYXWK7ndKCE0LV6ZuA7nu30fd_SdduB29rA7AWWbft9ux_4ruubpr39BFQrtXM?type=png)](https://mermaid.live/edit#pako:eNqNUctOwzAQ_JVoz23Jo0mUHJBaKg6oiIpwgnBwYze1WtuR47SEphI_AAjBvRIXxG_xBf0ETEIQ3PBhtbOamR2tN5AITCCEVKJsblyMYm7oF6kCE66u9run94-7-_3u4bmdXRvd7mF1TlKaKyLzg7FIKa-MqNSQfavrvuYNpVjnxDjLMiFVwamiJK-MEzEda_mfXTU9KqaMqtwYZNmSJkhRoa1_gdGw0RwJliFe6nyPry1og60oWf_bodZMpFhRTHLjmBA8RcmiakM13AFmlOtdL29N22w6RRylWjRZIjUTkv2-AXSAEckQxfq0m69JDGpOGIkh1C1GchFDzLeahwolopInECpZkA5IUaRzCGdomWtUZBgpMqJI_w_7merkl0KwVqIhhBu4gdCyzZ5n267nOaYXWK7ndKCE0LV6ZuA7nu30fd_SdduB29rA7AWWbft9ux_4ruubpr39BFQrtXM)
 
-****************************************************************
 
-🚀 Installation and Setup
+        ****************************************************************
 
-Clone the repository:
+        🚀 Installation and Setup
 
-git clone https://github.com/your-repo/industrial-attachment-system.git
-cd industrial-attachment-system
+        Clone the repository:
 
-Install dependencies:
+        git clone https://github.com/your-repo/industrial-attachment-system.git
+        cd industrial-attachment-system
 
-**********************
+        Install dependencies:
 
+        **********************
 
 
-Set up  database:
 
-CREATE DATABASE attachment_system;
+        Set up  database:
 
-Configure environment variables:
+        CREATE DATABASE attachment_system;
 
-DB_HOST=localhost
-DB_USER=your_username
-DB_PASS=your_password
+        Configure environment variables:
 
-*****************************************************************
+        DB_HOST=localhost
+        DB_USER=your_username
+        DB_PASS=your_password
 
-🧑‍🤝‍🧑 Contributors
+        *****************************************************************
 
-Hedmon Onyango Achacha      SIT/B/01-02908/2022
+        🧑‍🤝‍🧑 Contributors
+
+        Hedmon Onyango Achacha      SIT/B/01-02908/2022
 
 
 

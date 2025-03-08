@@ -174,14 +174,18 @@ DB_PASS=your_password
 ## 🧑‍🤝‍🧑 Contributors
 
 - **Hedmon Onyango Achacha** — SIT/B/01-02908/2022
+- ** Vincent ** — SIT/B/01-0/
+- **Richard ** — SIT/B/01-0/
+- **Vera ** — SIT/B/01-0/
+- **Peter ** — SIT/B/01-0/
+- 
 
 ---
 
-## 🛡️ License
+## 🛡️ 
 
-This project is licensed under the MIT License — feel free to modify and adapt as needed!
+feel free to suggest for improvements
 
 ---
 
-I’ve structured everything and organized it for better readability and visual appeal! Let me know if you want any adjustments or additional sections. 🚀
 

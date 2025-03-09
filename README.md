@@ -174,7 +174,7 @@ DB_PASS=your_password
 ## 🧑‍🤝‍🧑 Contributors
 
 - **Hedmon Onyango Achacha** — SIT/B/01-02908/2022
-- **Vincent Omondi Owuor — SIT/B/01-02924/2022
+- Vincent Omondi Owuor — SIT/B/01-02924/2022
 - **Richard** — SIT/B/01-0/
 - **Vera** — SIT/B/01-0/
 - **Peter** — SIT/B/01-0/

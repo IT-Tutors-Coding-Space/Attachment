@@ -178,7 +178,7 @@ DB_PASS=your_password
 - **Richard** — SIT/B/01-0/
 - **Vera** — SIT/B/01-0/
 - **Peter** — SIT/B/01-0/
-- Ohenius Mutiga -SIT/B/01-01631/2018
+- Phenius Mutiga -SIT/B/01-01631/2018
 
 ---
 

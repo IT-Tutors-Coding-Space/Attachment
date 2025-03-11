@@ -175,7 +175,7 @@ DB_PASS=your_password
 
 - **Hedmon Onyango Achacha** — SIT/B/01-02908/2022
 - **Vincent Omondi Owuor** — SIT/B/01-02924/2022
-- **Richard** — SIT/B/01-0/
+- **Richard Ochieng Odiwuor** — SIT/B/01-02904/2022
 - **Vera** — SIT/B/01-0/
 - **Peter** — SIT/B/01-0/
 - **Phenius Mutiga** - SIT/B/01-01631/2018

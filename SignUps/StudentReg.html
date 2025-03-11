@@ -40,7 +40,7 @@
 
         <!-- Registration Form -->
         <form id="registerForm" onsubmit="return validateRegistration()" style="display: none;">
-            <h2>Account Registration</h2>
+            <h2>Student Registration</h2>
             <p>To sign up, kindly fill the form below</p>
             <div class="form-group">
                 <label for="registerFirstName">First Name</label>
@@ -108,7 +108,61 @@
     </div>
 
     <script src="../Javasript/StudentReg.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/registerStudent', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful');
+                } else {
+                    alert('Registration failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
 
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/loginStudent', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Login successful');
+                } else {
+                    alert('Login failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/resetPassword', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reset code sent');
+                } else {
+                    alert('Failed to send reset code: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
 
 </html>

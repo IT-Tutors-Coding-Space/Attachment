@@ -1,11 +1,11 @@
 function toggleForm(formType) {
     console.log('toggleForm called with formType:', formType);
-    if (formType === "login") {
-        document.getElementById("loginForm").style.display = "block";
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("welcomeMessage").style.display = "none";
-        document.getElementById("resetPasswordForm").style.display = "none";
-    } else if (formType === "register") {
+    // if (formType === "login") {
+    //     document.getElementById("loginForm").style.display = "block";
+    //     document.getElementById("registerForm").style.display = "none";
+    //     document.getElementById("welcomeMessage").style.display = "none";
+    //     document.getElementById("resetPasswordForm").style.display = "none";
+     if (formType === "register") {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "block";
         document.getElementById("welcomeMessage").style.display = "none";

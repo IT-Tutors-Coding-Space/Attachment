@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attachment Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-button {
+            padding: 10px 15px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .vacancy {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search for Attachments</h1>
+    <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="Search by title, company, or location...">
+        <button class="search-button" onclick="searchVacancies()">Search</button>
+    </div>
+    <div id="results"></div>
+    
+    <script>
+        const vacancies = [
+            { title: "Software Engineering Internship", company: "TechCorp", location: "Nairobi" },
+            { title: "Marketing Attachment", company: "MarketMinds", location: "Mombasa" },
+            { title: "Data Science Internship", company: "DataWiz", location: "Kisumu" }
+        ];
+
+        function searchVacancies() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const resultsContainer = document.getElementById("results");
+            resultsContainer.innerHTML = "";
+
+            const filteredVacancies = vacancies.filter(vacancy =>
+                vacancy.title.toLowerCase().includes(searchTerm) ||
+                vacancy.company.toLowerCase().includes(searchTerm) ||
+                vacancy.location.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredVacancies.length > 0) {
+                filteredVacancies.forEach(vacancy => {
+                    const div = document.createElement("div");
+                    div.classList.add("vacancy");
+                    div.innerHTML = `<h2>${vacancy.title}</h2><p>${vacancy.company} - ${vacancy.location}</p>`;
+                    resultsContainer.appendChild(div);
+                });
+            } else {
+                resultsContainer.innerHTML = "<p>No vacancies found.</p>";
+            }
+        }
+    </script>
+</body>
+</html>

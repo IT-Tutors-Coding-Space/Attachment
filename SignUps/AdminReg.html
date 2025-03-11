@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,18 +9,26 @@
 </head>
 <body>
     <div class="login-container">
-        <h2>ADMIN REGISTRATION </h2>
-        <form action="dashboard.html" method="POST">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Ente your  username" required>
+        <h2>ADMIN REGISTRATION</h2>
+        <form id="adminForm" onsubmit="return validateForm()">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" minlength="6" required>
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
 
             <button type="submit">Register</button>
 
             <p class="forgot-password"><a href="#">Forgot Password?</a></p>
         </form>
     </div>
+
+    <script src="../Javasript/AdminReg.js"></script>
 </body>
 </html>

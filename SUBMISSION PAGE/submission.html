@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Submission Form</title>
+  <link rel="stylesheet" href="submission.css">
+</head>
+<body>
+
+  <div class="form-container">
+    <h1> Submission form</h1>
+
+    <form id="submission-form">
+     
+      <div class="form-group">
+        <label for="full-name">Full Name</label>
+        <input type="text" id="full-name" name="full-name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+
+      <div class="form-group">
+        <label for="student-id">Student ID</label>
+        <input type="text" id="student-id" name="student-id" required>
+      </div>
+
+      <div class="form-group">
+        <label for="course">Course of Study</label>
+        <input type="text" id="course" name="course" required>
+      </div>
+
+       
+      <div class="form-group">
+        <label for="attachment-type">Type of Attachment</label>
+        <select id="attachment-type" name="attachment-type" required>
+          <option value="internship">Internship</option>
+          <option value="research">Research Project</option>
+          <option value=" industial training"> Industrial Training</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="preferred-industry">Preferred Industry</label>
+        <select id="preferred-industry" name="preferred-industry" required>
+          <option value="it">IT</option>
+          <option value="business">Business</option>
+          <option value="engineering">Engineering</option>
+          <option value="healthcare">Healthcare</option>
+        </select>
+      </div>
+
+       
+      <div class="form-group">
+        <label for="location">Preferred Location</label>
+        <select id="location" name="location" required>
+          <option value="">Select a County</option>
+          
+
+          <option value="Bomet">Bomet</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Embu">Embu</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Kisii">Kisii</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Nairobi">Nairobi</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Narok">Narok</option>
+          <option value="Nyamira">Nyamira</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Tharaka Nithi">Tharaka Nithi</option>
+          <option value="Trans Nzoia">Trans Nzoia</option>
+          <option value="Turkana">Turkana</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Wajir">Wajir</option>
+          <option value="West Pokot">West Pokot</option>
+           
+        </select>
+      </div>
+
+       
+      <div class="form-group">
+        <label for="year-of-study">Current Year of Study</label>
+        <input type="number" id="year-of-study" name="year-of-study" min="1" max="5" required>
+      </div>
+
+       
+
+       
+      <div class="form-group">
+        <label for="skills">Relevant Skills</label>
+        <textarea id="skills" name="skills" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="previous-experience">Previous Experience</label>
+        <textarea id="previous-experience" name="previous-experience"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="resume">Upload Resume/CV</label>
+        <input type="file" id="resume" name="resume" accept=".pdf,.docx" required>
+      </div>
+
+       
+      <div class="form-group">
+        <label for="start-date">Start Date</label>
+        <input type="date" id="start-date" name="start-date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="end-date">End Date</label>
+        <input type="date" id="end-date" name="end-date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="weekly-hours">Weekly Availability (hours)</label>
+        <input type="number" id="weekly-hours" name="weekly-hours" min="1" max="40" required>
+      </div>
+
+       
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="consent" name="consent" required> I agree to the terms and conditions
+        </label>
+      </div>
+
+       
+      <div class="form-group">
+        <button type="submit">Submit Application</button>
+      </div>
+
+       
+      <div id="confirmation-message"></div>
+    </form>
+  </div>
+
+  <script src="submission.js"></script>
+</body>
+</html>

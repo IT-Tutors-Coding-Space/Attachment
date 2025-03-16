@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Management</title>
+    <style>
+        body { font-family: sans-serif; }
+        table { width: 80%; border-collapse: collapse; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+        #details-modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        #details-modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 60%; }
+        .modal-close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .modal-close:hover, .modal-close:focus { color: black; text-decoration: none; cursor: pointer; }
+        #edit-modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        #edit-modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 60%; }
+        .edit-input { width: 95%; padding: 8px; margin-bottom: 10px;}
+    </style>
+</head>
+<body>
+    <h2>Company Management</h2>
+    <table id="company-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Contact</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <div id="details-modal">
+        <div id="details-modal-content">
+            <span class="modal-close" id="details-close">&times;</span>
+            <div id="details-content"></div>
+        </div>
+    </div>
+
+    <div id="edit-modal">
+        <div id="edit-modal-content">
+            <span class="modal-close" id="edit-close">&times;</span>
+            <div id="edit-content">
+                <input type="text" id="edit-name" class="edit-input" placeholder="Name"><br>
+                <input type="text" id="edit-location" class="edit-input" placeholder="Location"><br>
+                <input type="text" id="edit-contact" class="edit-input" placeholder="Contact"><br>
+                <button id="save-edit">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const companies = {
+            "Company A": { status: "approved", location: "New York", contact: "123-456-7890", opportunities: { "Job 1": { applications: 5 }, "Job 2": { applications: 10 } } },
+            "Company B": { status: "pending", location: "London", contact: "987-654-3210", opportunities: {} },
+            "Company C": { status: "approved", location: "Tokyo", contact: "111-222-3333", opportunities: { "Internship": { applications: 2 } } },
+            "Company D": { status: "disabled", location: "Paris", contact: "444-555-6666", opportunities: {} },
+        };
+
+        const companyTable = document.getElementById("company-table").getElementsByTagName('tbody')[0];
+        const detailsModal = document.getElementById("details-modal");
+        const detailsContent = document.getElementById("details-content");
+        const detailsClose = document.getElementById("details-close");
+        const editModal = document.getElementById("edit-modal");
+        const editContent = document.getElementById("edit-content");
+        const editClose = document.getElementById("edit-close");
+        const editName = document.getElementById("edit-name");
+        const editLocation = document.getElementById("edit-location");
+        const editContact = document.getElementById("edit-contact");
+        const saveEdit = document.getElementById("save-edit");
+        let currentCompany;
+
+        function populateTable() {
+            companyTable.innerHTML = "";
+            for (const companyName in companies) {
+                const company = companies[companyName];
+                const row = companyTable.insertRow();
+                const cellName = row.insertCell(0);
+                const cellStatus = row.insertCell(1);
+                const cellLocation = row.insertCell(2);
+                const cellContact = row.insertCell(3);
+                const cellActions = row.insertCell(4);
+
+                cellName.textContent = companyName;
+                cellStatus.textContent = company.status;
+                cellLocation.textContent = company.location;
+                cellContact.textContent = company.contact;
+
+                cellActions.innerHTML = `<button onclick="viewDetails('${companyName}')">View</button>
+                                       <button onclick="approveCompany('${companyName}')">Approve</button>
+                                       <button onclick="rejectCompany('${companyName}')">Reject</button>
+                                       <button onclick="editCompany('${companyName}')">Edit</button>
+                                       <button onclick="disableCompany('${companyName}')">Disable</button>
+                                       <button onclick="deleteCompany('${companyName}')">Delete</button>`;
+            }
+        }
+
+        function viewDetails(companyName) {
+            const company = companies[companyName];
+            let opportunitiesHtml = "<ul>";
+            for (const opportunity in company.opportunities) {
+                opportunitiesHtml += `<li>${opportunity}: ${company.opportunities[opportunity].applications} applications</li>`;
+            }
+            opportunitiesHtml += "</ul>";
+
+            detailsContent.innerHTML = `<h3>${companyName}</h3>
+                                        <p>Status: ${company.status}</p>
+                                        <p>Location: ${company.location}</p>
+                                        <p>Contact: ${company.contact}</p>
+                                        <p>Opportunities: ${opportunitiesHtml}</p>`;
+            detailsModal.style.display = "block";
+        }
+
+        function approveCompany(companyName) {
+            companies[companyName].status = "approved";
+            populateTable();
+        }
+
+        function rejectCompany(companyName) {
+            companies[companyName].status = "rejected";
+            populateTable();
+        }
+
+        function editCompany(companyName) {
+            currentCompany = companyName;
+            editName.value = companyName;
+            editLocation.value = companies[companyName].location;
+            editContact.value = companies[companyName].contact;
+            editModal.style.display = "block";
+        }
+
+        function disableCompany(companyName) {
+            companies[companyName].status = "disabled";
+            populateTable();
+        }
+
+        function deleteCompany(companyName) {
+            delete companies[companyName];
+            populateTable();
+        }
+
+        detailsClose.onclick = function() {
+            detailsModal.style.display = "none";
+        }
+
+        editClose.onclick = function() {
+            editModal.style.display = "none";
+        }
+
+        saveEdit.onclick = function() {
+            const newName = editName.value;
+            const newLocation = editLocation.value;
+            const newContact = editContact.value;
+
+            if (newName !== currentCompany && companies[newName]) {
+                alert("Company name already exists.");
+                return;
+            }
+
+            delete companies[currentCompany];
+            companies[newName] = { status: "approved", location: newLocation, contact: newContact, opportunities: companies[currentCompany].opportunities };
+            populateTable();
+            editModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == detailsModal) {
+                detailsModal.style.display = "none";
+            }
+            if(event.target == editModal){
+                editModal.style.display = "none";
+            }
+        }
+
+        populateTable();
+    </script>
+</body>
+</html>

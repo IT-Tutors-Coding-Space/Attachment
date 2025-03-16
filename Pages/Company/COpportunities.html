@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunities Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        .opportunity-container {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .opportunity {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .status-toggle {
+            cursor: pointer;
+            padding: 5px 10px;
+            background: green;
+            color: white;
+            border-radius: 5px;
+        }
+        .inactive {
+            background: red;
+        }
+        .create-btn {
+            background: blue;
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Opportunities Management</h2>
+    <button class="create-btn" onclick="createOpportunity()">+ Create New Opportunity</button>
+
+    <div id="opportunities" class="opportunity-container">
+        <p>Loading opportunities...</p>
+    </div>
+
+    <script>
+        let opportunities = [
+            { title: "Software Developer Internship", deadline: "2025-04-10", applicants: 5, active: true },
+            { title: "Marketing Intern", deadline: "2025-05-01", applicants: 3, active: false }
+        ];
+
+        function renderOpportunities() {
+            const container = document.getElementById("opportunities");
+            container.innerHTML = "";
+            opportunities.forEach((opportunity, index) => {
+                const div = document.createElement("div");
+                div.className = "opportunity";
+                div.innerHTML = `
+                    <div>
+                        <strong>${opportunity.title}</strong> <br>
+                        Deadline: ${opportunity.deadline} | Applicants: ${opportunity.applicants}
+                    </div>
+                    <button class="status-toggle ${opportunity.active ? '' : 'inactive'}"
+                        onclick="toggleStatus(${index})">
+                        ${opportunity.active ? "Active" : "Inactive"}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleStatus(index) {
+            opportunities[index].active = !opportunities[index].active;
+            renderOpportunities();
+        }
+
+        function createOpportunity() {
+            let title = prompt("Enter opportunity title:");
+            let deadline = prompt("Enter application deadline (YYYY-MM-DD):");
+            if (title && deadline) {
+                opportunities.push({ title, deadline, applicants: 0, active: true });
+                renderOpportunities();
+            }
+        }
+
+        renderOpportunities();
+    </script>
+
+</body>
+</html>

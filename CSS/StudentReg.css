@@ -1,184 +1,184 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #f4f4f4;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    padding: 20px; /* Add padding to avoid content touching the edges */
 }
 
+/* Container */
 .container {
-    width: 100%;
-    max-width: 400px; /* Reduce max-width for better fit */
-    margin: 0 auto;
-    padding: 15px; /* Reduce padding */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    border-radius: 8px;
-}
-.login-container {
-    background: hsl(0, 0%, 100%);
+    background: #fff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 500px;
     text-align: center;
 }
-.input-group {
+/* Welcome Message */
+.welcome-message {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
     margin-bottom: 15px;
+}
+/* Form Title & Header */
+.form-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.form-header {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Form Inputs */
+form {
+    display: flex;
+    flex-direction: column;
     text-align: left;
+    padding: 20px;
+    box-sizing: border-box;
 }
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-}
-.input-group input, .input-group select {
-    padding: 10px;
-width: auto;
-    font-family: poppins, sans-serif;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-.usertype{
-    margin-top: 30px;
-}
-
-@media (min-width: 768px) {
-    .container {
-        width: 80%;
-    }
-}
-
-@media (min-width: 1024px) {
-    .container {
-        width: 60%;
-    }
-}
-
-h2 {
-    text-align: center;
-    color: #4a90e2;
-    margin-bottom: 15px; /* Reduce margin */
-    font-size: 18px; /* Reduce font size */
-}
-
-p {
-    text-align: center;
-    color: #666;
-    margin-bottom: 15px; /* Reduce margin */
-    font-size: 14px; /* Reduce font size */
-}
-
-.form-group {
-    margin-bottom: 15px; /* Reduce margin */
-}
-
+ 
 label {
     font-weight: bold;
-    margin-bottom: 5px;
-    display: block;
-    color: #333;
-    font-size: 14px; /* Reduce font size */
+    margin: 5px 0;
+    width: 100%;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"] {
     width: 100%;
-    padding: 10px; /* Reduce padding */
-    border: 1px solid #ddd;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box;
-    margin-top: 5px;
-    font-size: 14px;
+    font-size: 1rem;
+}
+/* Media Queries for Responsive Design */
+@media (min-width: 768px) {
+    .container {
+        width: 70%;
+        /* Width for medium screens */
+        max-width: 500px;
+        /* Maximum width for medium screens */
+    }
 }
 
-input[type="checkbox"],
-input[type="radio"] {
-    margin-right: 10px;
+@media (min-width: 1024px) {
+    .container {
+        width: 50%;
+        /* Width for large screens */
+        max-width: 600px;
+        /* Maximum width for large screens */
+    }
 }
-
-.btn {
-    background-color: #4a90e2;
-    color: white;
-    padding: 10px; /* Reduce padding */
-    border: none;
-    border-radius: 5px;
-    width: 100%;
-    cursor: pointer;
-    font-size: 14px; /* Reduce font size */
-    margin-top: 10px;
-}
-
-.btn:hover {
-    background-color: #357ab7;
-}
-
-.gender-group {
-    display: flex;
-    flex-direction: column; /* Arrange label and options in a column */
-    align-items: flex-start; /* Align items to the start */
-}
-
+/* Gender Radio Buttons */
 .gender-options {
     display: flex;
-    gap: 10px; /* Add gap between the options */
-    align-items: center; /* Align items to the center */
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.gender-options label {
-    margin-right: 5px; /* Adjust margin for better alignment */
-}
-
-.error {
-    color: red;
-    font-size: 12px;
-    display: none;
-}
-
-.link {
-    text-align: center;
-    display: block;
-    margin-top: 10px; /* Reduce margin */
-    font-size: 14px; /* Reduce font size */
-}
-
-.toggle-button {
-    background-color: transparent;
-    border: none;
-    color: #4a90e2;
+/* Dropdown Styling */
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #fff;
     cursor: pointer;
-    font-size: 14px;
+    appearance: none;
+    /* Remove default dropdown styles */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 30px;
+    /* Space for dropdown arrow */
 }
 
-#welcomeMessage {
-    display: none;
+/* Style the dropdown arrow */
+select::after {
+    content: "▼";
+    font-size: 0.8rem;
+    color: #555;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Footer Enhancements */
+.footer {
+    background: #fff;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover Effects */
+button.submit-btn:hover {
+    background: #0056b3;
+}
+button.submit-btn {
+    /* Ensure button has the same styles as input fields */
+    width: 100%;
+    padding: 12px;
+    /* Increased padding */
+    margin-bottom: 15px;
+    /* Increased margin */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    /* Increased font size */
+    box-sizing: border-box;
+    /* Ensure padding is included in the element's total width and height */
+}
+
+button.submit-btn {
+    background: #007bff;
+    /* Corrected background color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button.submit-btn:hover {
+    background: #0056b3;
+}
+
+/* Login Prompt */
+.login-prompt {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.login-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+/*Copyright */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color:#007bff;
     text-align: center;
-    margin-top: 20px;
-}
-
-#resetPasswordForm {
-    display: none;
-}
-
-#registerForm {
-    display: none;
-}
-
-/* Additional styling for better form appearance */
-.form-group input {
-    margin-bottom: 10px; /* Add margin to inputs for better spacing */
-}
-
-.form-group.gender-group {
-    margin-bottom: 15px; /* Ensure consistent spacing for gender group */
-}
-
-.form-group.gender-group label {
-    margin-right: 5px; /* Adjust margin for better alignment */
-}
-
-.form-group.gender-group input[type="radio"] {
-    margin-right: 5px; /* Adjust margin for better alignment */
+    padding: 10px;
+    font-weight: bold;
 }

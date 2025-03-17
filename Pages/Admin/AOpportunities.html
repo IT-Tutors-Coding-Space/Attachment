@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AttachMe - Opportunity Management</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background-color: #3498db; color: white; text-align: center; padding: 20px 0; }
+        .container { width: 80%; margin: 20px auto; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 60%; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        .modal-input { width: 95%; padding: 8px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AttachMe - Opportunity Management</h1>
+    </header>
+    <div class="container">
+        <button onclick="openCreateModal()">Create Opportunity</button>
+        <table id="opportunity-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th>Applications</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="create-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="create-close">&times;</span>
+            <h3>Create Opportunity</h3>
+            <input type="text" id="create-title" class="modal-input" placeholder="Title"><br>
+            <input type="text" id="create-description" class="modal-input" placeholder="Description"><br>
+            <button onclick="createOpportunity()">Create</button>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="edit-close">&times;</span>
+            <h3>Edit Opportunity</h3>
+            <input type="text" id="edit-title" class="modal-input" placeholder="Title"><br>
+            <input type="text" id="edit-description" class="modal-input" placeholder="Description"><br>
+            <button onclick="saveEdit()">Save</button>
+        </div>
+    </div>
+
+    <script>
+        const opportunities = {
+            "Opportunity 1": { status: "active", views: 100, applications: 10, description: "Description 1" },
+            "Opportunity 2": { status: "inactive", views: 50, applications: 5, description: "Description 2" },
+        };
+
+        const opportunityTable = document.getElementById("opportunity-table").getElementsByTagName('tbody')[0];
+        const createModal = document.getElementById("create-modal");
+        const editModal = document.getElementById("edit-modal");
+        const createClose = document.getElementById("create-close");
+        const editClose = document.getElementById("edit-close");
+        const createTitle = document.getElementById("create-title");
+        const createDescription = document.getElementById("create-description");
+        const editTitle = document.getElementById("edit-title");
+        const editDescription = document.getElementById("edit-description");
+        let currentOpportunity;
+
+        function populateTable() {
+            opportunityTable.innerHTML = "";
+            for (const title in opportunities) {
+                const opportunity = opportunities[title];
+                const row = opportunityTable.insertRow();
+                const cellTitle = row.insertCell(0);
+                const cellStatus = row.insertCell(1);
+                const cellViews = row.insertCell(2);
+                const cellApplications = row.insertCell(3);
+                const cellActions = row.insertCell(4);
+
+                cellTitle.textContent = title;
+                cellStatus.textContent = opportunity.status;
+                cellViews.textContent = opportunity.views;
+                cellApplications.textContent = opportunity.applications;
+
+                cellActions.innerHTML = `<button onclick="toggleStatus('${title}')">${opportunity.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+                                       <button onclick="editOpportunity('${title}')">Edit</button>
+                                       <button onclick="deleteOpportunity('${title}')">Delete</button>`;
+            }
+        }
+
+        function openCreateModal() {
+            createModal.style.display = "block";
+        }
+
+        function createOpportunity() {
+            const title = createTitle.value;
+            const description = createDescription.value;
+            if (title && description) {
+                opportunities[title] = { status: "active", views: 0, applications: 0, description: description };
+                populateTable();
+                createModal.style.display = "none";
+                createTitle.value = "";
+                createDescription.value = "";
+            }
+        }
+
+        function toggleStatus(title) {
+            opportunities[title].status = opportunities[title].status === "active" ? "inactive" : "active";
+            populateTable();
+        }
+
+        function editOpportunity(title) {
+            currentOpportunity = title;
+            editTitle.value = title;
+            editDescription.value = opportunities[title].description;
+            editModal.style.display = "block";
+        }
+
+        function saveEdit() {
+            const newTitle = editTitle.value;
+            const newDescription = editDescription.value;
+            if (newTitle && newDescription) {
+                if (newTitle !== currentOpportunity && opportunities[newTitle]) {
+                    alert("Opportunity title already exists.");
+                    return;
+                }
+                const opportunity = opportunities[currentOpportunity];
+                delete opportunities[currentOpportunity];
+                opportunities[newTitle] = { status: opportunity.status, views: opportunity.views, applications: opportunity.applications, description: newDescription };
+                populateTable();
+                editModal.style.display = "none";
+            }
+        }
+
+        function deleteOpportunity(title) {
+            delete opportunities[title];
+            populateTable();
+        }
+
+        createClose.onclick = function() {
+            createModal.style.display = "none";
+        }
+
+        editClose.onclick = function() {
+            editModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == createModal) {
+                createModal.style.display = "none";
+            }
+            if (event.target == editModal) {
+                editModal.style.display = "none";
+            }
+        }
+
+        populateTable();
+    </script>
+</body>
+</html>

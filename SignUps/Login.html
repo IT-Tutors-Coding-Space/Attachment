@@ -45,15 +45,28 @@
             </div>
         </form>
         <script>
-            document.getElementById('loginForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const userType = document.getElementById('userType').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+             function validateLogin() {
+                const emailInput = document.getElementById('loginUsername');
+                const email = emailInput.value;
+                const emailError = document.getElementById('email-error');
+
                 
-                console.log(`Logging in as ${userType}`);
-                alert(`Login successful as ${userType}`);
-            });
+                const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+
+                if (!emailPattern.test(email)) {
+                    emailError.textContent = "Please enter a valid email address (e.g., example@gmail.com).";
+                    return false;
+                } else {
+                    emailError.textContent = "";
+                    
+                    const userType = document.getElementById('userType').value;
+                    const password = document.getElementById('loginPassword').value;
+
+                    console.log(`Logging in as ${userType} with email: ${email}`);
+                    alert(`Login successful as ${userType}`);
+                    return true; 
+                }
+            }
         </script>
 </body>
 </html>

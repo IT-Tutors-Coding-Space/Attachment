@@ -10,7 +10,7 @@
     <header class="header">
         <nav class="nav"></nav>
         <div class="logo">
-            <img src="logo.png" alt="AttachME Logo">
+            <img src="../../Images/logo.png" alt="AttachME Logo">
             <h1>AttachME</h1>
         </div>
         <nav class="nav">
@@ -20,48 +20,67 @@
                 <li><a href="#applications">Applications</a></li>
                 <li><a href="#messages">Messages</a></li>
                 <li><a href="#analytics">Analytics</a></li>
-                <li><a href="#profile">Profile</a></li>
-                <li><a href="#settings">Settings</a></li>
+
+                <li class="dropdown">
+                    <a href="#">Profile</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#view-profile">View</a></li>
+                        <li><a href="#settings">Settings</a></li>
+
+                        <li><a href="#logout">Logout</a></li>
+                    </ul>
+                </li>
+                <!-- <div class="profile"> 
+                <li><a href="#profile">Profile</a>
+                 <img src="../../Images/log" alt="Profile Picture"> -->
+                <!-- <div class="profile-dropdown">
+                    <a href="#view-profile">View Profile</a>
+                    <a href="#settings">Settings</a>
+                    <a href="#logout">Logout</a>
+                </div>
+            </li>
+            </div> -->
+                <!-- <li><a href="#settings">Settings</a></li> -->
             </ul>
         </nav>
-        <div class="header-actions">
+        <!-- <div class="header-actions">
             <div class="notifications">
                 <span class="bell">🔔</span>
                 <div class="notification-dropdown">
                     <p>No new notifications</p>
                 </div>
-            </div>
-            <div class="profile">
-                <img src="profile-pic.png" alt="Profile Picture">
+            </div> -->
+            <!-- <div class="profile">
+                <img src="../../Images/log" alt="Profile Picture">
                 <div class="profile-dropdown">
                     <a href="#view-profile">View Profile</a>
                     <a href="#settings">Settings</a>
                     <a href="#logout">Logout</a>
                 </div>
-            </div>
+            </div> -->
         </div>
     </header>
 
     <main class="main">
         <section id="welcome" class="welcome-section">
-            <h2>Welcome, [Company Name]! 👋</h2>
-            <p id="dateTime"></p>
+            <h2>Welcome, Company Name! 👋</h2><br>
+            <p id="dateTime"></p><br><br>
             <div class="quick-stats">
                 <div class="stat-card">Active Opportunities: <span id="activeOpportunities">3</span></div>
                 <div class="stat-card">Pending Applications: <span id="pendingApplications">7</span></div>
                 <div class="stat-card">Accepted Students: <span id="acceptedStudents">2</span></div>
             </div>
-        </section>
+        </section><br><br>
 
         <section id="opportunities" class="opportunities-section">
-            <h3>Manage Opportunities</h3>
-            <button class="create-btn" onclick="createOpportunity()">+ Create New Opportunity</button>
-            <div id="opportunityList">Loading opportunities...</div>
-        </section>
+            <h3>Manage Opportunities</h3><br>
+            <button style="background-color: rgb(42, 165, 42); padding: 10px; font-weight: 600;"      class="create-btn" onclick="createOpportunity()">+ Create New Opportunity</button><br><br>
+            <div style="color: red; font-weight: 600;" id="opportunityList">Loading opportunities...</div><br>
+        </section><br><br>
 
         <section id="applications" class="applications-section">
-            <h3>Application Tracking</h3>
-            <input type="text" id="searchApplications" placeholder="Search Applications">
+            <h3>Application Tracking</h3><br>
+            <!-- <input type="text" id="searchApplications" placeholder="Search Applications"><br><br> -->
             <table class="application-table">
                 <thead>
                     <tr>

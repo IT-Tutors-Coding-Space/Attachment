@@ -106,9 +106,9 @@ main {
     justify-self: center;
     max-width: fit-content;
     background: #fff;
-    border: 1px solid #1f1e1e;
+    /* border: 1px solid #1f1e1e; */
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
     margin-top: 30px;
     /* transition: background 0.3s, color 0.3s; */
 }

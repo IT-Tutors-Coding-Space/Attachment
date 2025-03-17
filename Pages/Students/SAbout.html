@@ -5,14 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - AttachME</title>
     <link rel="stylesheet" href="../../CSS/SAbout.css">
-<<<<<<< HEAD
     <!-- <link rel="stylesheet" href="../../CSS/SDashboard.css"> -->
     <link rel="icon" href="../../Images/logo.png" type="image/png">
-=======
->>>>>>> origin/dev
 </head>
 <body>
     <header>
+        <style>
+            header {
+    background: hsl(240, 9%, 98%);
+    color: #141212;
+    padding: 10px;
+    position: sticky;
+    font-size: 17px;
+    display: flex;
+    border-radius: 1px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    /* z-index: 1000; */
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    height: 120px;
+    width: 120px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    font-weight: 800;
+    font-size: 20px;
+    color: #000;
+    padding: 20px;
+    background-color: hsl(207, 100%, 98%);
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #141516;
+    padding: 5px 1px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+nav ul li a:hover {
+    background: #5080e0;
+}
+
+/* Dropdown Menu */
+nav ul .dropdown-menu {
+    display: none;
+    position: relative;
+    top: 0;
+    left: 10%;
+    background: #edeff1;
+    border-radius: 5px;
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+    /* z-index: 1; */
+}
+
+nav ul .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+
+
+
+        </style>
         <h1>About AttachME</h1>
 
         <!-- Header with Navigation -->
@@ -24,7 +97,6 @@
         </div> -->
         <nav class="navbar">
             <ul>
-<<<<<<< HEAD
                 <li><a href="../Students/SDashboard.html">Dashboard</a></li>
                 <li><a href="../Students/SAbout.html">About</a></li>
                 <li><a href="SBrowse.html">Browse</a></li>
@@ -37,9 +109,6 @@
                         <li><a href="#logout">Logout</a></li>
                     </ul>
                 </li>
-=======
-                <li><a href="../Students/SDashboard.html"></a></li>
->>>>>>> origin/dev
             </ul>
         </nav>
     </header>

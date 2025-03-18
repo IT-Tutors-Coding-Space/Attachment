@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications</title>
+    <link rel="stylesheet" href="../../CSS/CHome.css"> 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,6 +46,41 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <nav class="nav"></nav>
+        <div class="logo">
+            <img src="logo.png" alt="AttachME Logo">
+            <h1>AttachME</h1>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="COpportunities.html">Post Opportunity</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="CNotifications.html">Notifications</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#profile">Profile</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <div class="notifications">
+                <span class="bell">🔔</span>
+                <div class="notification-dropdown">
+                    <p>No new notifications</p>
+                </div>
+            </div>
+            <div class="profile">
+                <img src="profile-pic.png" alt="Profile Picture">
+                <div class="profile-dropdown">
+                    <a href="#view-profile">View Profile</a>
+                    <a href="#settings">Settings</a>
+                    <a href="#logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
 
     <h2>Notifications</h2>
     <button class="clear-btn" onclick="clearNotifications()">Clear All</button>
@@ -52,6 +88,15 @@
     <div id="notifications" class="notification-container">
         <p>Loading notifications...</p>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 AttachME. All rights reserved.</p>
+        <ul>
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#contact">Contact Support</a></li>
+        </ul>
+    </footer>
 
     <script>
         let notifications = [

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opportunities Management</title>
+    <link rel="stylesheet" href="../../CSS/CHome.css"> 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,6 +20,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
         .opportunity {
             display: flex;
@@ -32,6 +34,7 @@
             background: green;
             color: white;
             border-radius: 5px;
+            border: none;
         }
         .inactive {
             background: red;
@@ -45,21 +48,117 @@
             border: none;
             border-radius: 5px;
         }
+        .form-container {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            background: green;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cancel-btn {
+            background: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
+    <header class="header">
+        <nav class="nav"></nav>
+        <div class="logo">
+            <img src="logo.png" alt="AttachME Logo">
+            <h1>AttachME</h1>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="CHome.html">Dashboard</a></li>
+                <li><a href="COpportunities.html">Post Opportunity</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="CNotifications.html">Notifications</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#profile">Profile</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <div class="notifications">
+                <span class="bell">🔔</span>
+                <div class="notification-dropdown">
+                    <p>No new notifications</p>
+                </div>
+            </div>
+            <div class="profile">
+                <img src="profile-pic.png" alt="Profile Picture">
+                <div class="profile-dropdown">
+                    <a href="#view-profile">View Profile</a>
+                    <a href="#settings">Settings</a>
+                    <a href="#logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <h2>Opportunities Management</h2>
-    <button class="create-btn" onclick="createOpportunity()">+ Create New Opportunity</button>
+    <button class="create-btn" onclick="showForm()">+ Create New Opportunity</button>
+
+    <div id="formContainer" class="form-container">
+        <h3>Post a New Opportunity</h3>
+        <form id="opportunityForm">
+            <label>Job Title:</label>
+            <input type="text" id="jobTitle" required>
+
+            <label>Application Deadline:</label>
+            <input type="date" id="deadline" required>
+
+            <label>Description:</label>
+            <textarea id="description" rows="3" required></textarea>
+
+            <label>Requirements:</label>
+            <textarea id="requirements" rows="3" required></textarea>
+
+            <button type="submit" class="submit-btn">Post Opportunity</button>
+            <button type="button" class="cancel-btn" onclick="hideForm()">Cancel</button>
+        </form>
+    </div>
 
     <div id="opportunities" class="opportunity-container">
         <p>Loading opportunities...</p>
     </div>
 
+    <footer class="footer">
+        <p>&copy; 2025 AttachME. All rights reserved.</p>
+        <ul>
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#contact">Contact Support</a></li>
+        </ul>
+    </footer>
+
+
     <script>
         let opportunities = [
-            { title: "Software Developer Internship", deadline: "2025-04-10", applicants: 5, active: true },
-            { title: "Marketing Intern", deadline: "2025-05-01", applicants: 3, active: false }
+            { title: "Software Developer Internship", deadline: "2025-04-10", description: "Develop and maintain software", requirements: "Knowledge in Python", applicants: 5, active: true },
+            { title: "Marketing Intern", deadline: "2025-05-01", description: "Assist in marketing campaigns", requirements: "Social media skills", applicants: 3, active: false }
         ];
 
         function renderOpportunities() {
@@ -71,7 +170,9 @@
                 div.innerHTML = `
                     <div>
                         <strong>${opportunity.title}</strong> <br>
-                        Deadline: ${opportunity.deadline} | Applicants: ${opportunity.applicants}
+                        Deadline: ${opportunity.deadline} | Applicants: ${opportunity.applicants} <br>
+                        Description: ${opportunity.description} <br>
+                        Requirements: ${opportunity.requirements}
                     </div>
                     <button class="status-toggle ${opportunity.active ? '' : 'inactive'}"
                         onclick="toggleStatus(${index})">
@@ -87,14 +188,35 @@
             renderOpportunities();
         }
 
-        function createOpportunity() {
-            let title = prompt("Enter opportunity title:");
-            let deadline = prompt("Enter application deadline (YYYY-MM-DD):");
-            if (title && deadline) {
-                opportunities.push({ title, deadline, applicants: 0, active: true });
-                renderOpportunities();
-            }
+        function showForm() {
+            document.getElementById("formContainer").style.display = "block";
         }
+
+        function hideForm() {
+            document.getElementById("formContainer").style.display = "none";
+        }
+
+        document.getElementById("opportunityForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let jobTitle = document.getElementById("jobTitle").value;
+            let deadline = document.getElementById("deadline").value;
+            let description = document.getElementById("description").value;
+            let requirements = document.getElementById("requirements").value;
+
+            if (jobTitle && deadline && description && requirements) {
+                opportunities.push({ 
+                    title: jobTitle, 
+                    deadline, 
+                    description, 
+                    requirements, 
+                    applicants: 0, 
+                    active: true 
+                });
+                renderOpportunities();
+                hideForm();
+                document.getElementById("opportunityForm").reset();
+            }
+        });
 
         renderOpportunities();
     </script>

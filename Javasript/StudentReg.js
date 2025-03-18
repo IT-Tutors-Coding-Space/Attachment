@@ -1,67 +1,56 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("registrationForm");
-  
-    form.addEventListener("submit", function (event) {
-      let isValid = true;
-      let errorMessage = "";
-  
-      // Get form values
-      const firstName = document.getElementById("first_name").value.trim();
-      const lastName = document.getElementById("last_name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const confirmPassword = document
-        .getElementById("confirm_password")
-        .value.trim();
-      const gender = document.querySelector('input[name="gender"]:checked');
-      const yearOfStudy = document.getElementById("year_of_study").value;
-      const course = document.getElementById("course").value;
-  
-      // Validate First Name & Last Name
-      if (firstName === "" || lastName === "") {
+  const form = document.getElementById("registrationForm");
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    let isValid = true;
+
+    // Name validation
+    const namePattern = /^[A-Za-z]{2,50}$/;
+    const firstName = document.getElementById('first_name').value;
+    const lastName = document.getElementById('last_name').value;
+    if (!namePattern.test(firstName)) {
         isValid = false;
-        errorMessage += "First Name and Last Name are required.\n";
-      }
-  
-      // Validate Email
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email.match(emailPattern)) {
+        document.getElementById('first_name_error').textContent = 'First name should be 2-50 characters long and contain only letters.';
+    } else {
+        document.getElementById('first_name_error').textContent = '';
+    }
+    if (!namePattern.test(lastName)) {
         isValid = false;
-        errorMessage += "Enter a valid email address.\n";
-      }
-  
-      // Validate Password
-      if (password.length < 6) {
+        document.getElementById('last_name_error').textContent = 'Last name should be 2-50 characters long and contain only letters.';
+    } else {
+        document.getElementById('last_name_error').textContent = '';
+    }
+
+    // Email validation
+    const email = document.getElementById('email').value;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
         isValid = false;
-        errorMessage += "Password must be at least 6 characters long.\n";
-      }
-      if (password !== confirmPassword) {
+        document.getElementById('email_error').textContent = 'Please enter a valid email address.';
+    } else {
+        document.getElementById('email_error').textContent = '';
+    }
+
+    // Password validation
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordPattern.test(password)) {
         isValid = false;
-        errorMessage += "Passwords do not match.\n";
-      }
-  
-      // Validate Gender Selection
-      if (!gender) {
+        document.getElementById('password_error').textContent = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.';
+    } else {
+        document.getElementById('password_error').textContent = '';
+    }
+    if (password !== confirmPassword) {
         isValid = false;
-        errorMessage += "Please select a gender.\n";
-      }
-  
-      // Validate Year of Study & Course
-      if (yearOfStudy === "") {
-        isValid = false;
-        errorMessage += "Please select a Year of Study.\n";
-      }
-  
-      if (course === "") {
-        isValid = false;
-        errorMessage += "Please select a Course.\n";
-      }
-  
-      // Show errors and prevent form submission if invalid
-      if (!isValid) {
-        alert(errorMessage);
-        event.preventDefault(); // Stop form submission
-      }
-    });
+        document.getElementById('confirm_password_error').textContent = 'Passwords do not match.';
+    } else {
+        document.getElementById('confirm_password_error').textContent = '';
+    }
+
+    if (isValid) {
+        this.submit();
+    }
   });
-  
+});

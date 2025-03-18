@@ -10,18 +10,18 @@
     <div class="container">
         <!-- Login Form -->
         <form id="loginForm" onsubmit="return validateLogin()" style="display: block;">
-            <h2>Login</h2>
+            <h2 style="display: flex; position: relative; text-align: center; margin: 20px; justify-self: center;color: rgb(6, 42, 247); font-weight: 600;">Login Form</h2>
             <div class="login-container">
                 <form id="loginForm">
-                    <div class="input-group">
+                    <div class="input-groupr">
                         <!-- <div class="usertype"> -->
-                        <label for="userType">User Type:</label>
-                        <select id="userType" name="userType" required>
+                        <label style="position: relative; justify-content: center; justify-self: center; text-align: center; margin-left: 180px;" for="userType">User Type:</label>
+                        <select style="width: fit-content;" id="userType" name="userType" required>
                             <option value="admin">Admin</option>
                             <option value="student">Student</option>
                             <option value="company">Company</option>
                         <!-- </div> -->
-                        </select><br><br><br>
+                        </select><br><br>
             <div class="form-group">
                 <label for="loginUsername">Email Address</label>
                 <input type="email" id="loginUsername" name="loginUsername" placeholder="Enter your Email" required>
@@ -35,13 +35,13 @@
                 <input type="checkbox" id="rememberMe" name="rememberMe">
                 <label for="rememberMe">Remember me</label>
             </div> -->
-            <button type="submit" class="btn">Login</button>
+            <button style="display: flex; padding: 10px; font-weight: 600;color: rgb(2, 2, 241); font-size: large;" type="submit" class="btn">Login</button>
             <div class="link">
-                Don't have an account? <a href="javascript:void(0);" class="toggle-button"
-                    onclick="console.log('Navigating to register'); toggleForm('register')">Sign Up</a>
+                <!-- Don't have an account? <a href="javascript:void(0);" class="toggle-button" -->
+                    <!-- onclick="console.log('Navigating to register'); toggleForm('register')">Sign Up</a> -->
             </div>
             <div class="link">
-                <a href="javascript:void(0);" onclick="console.log('Navigating to resetPassword'); toggleForm('resetPassword')">Forgot Password?</a>
+                <!-- <a href="javascript:void(0);" onclick="console.log('Navigating to resetPassword'); toggleForm('resetPassword')">Forgot Password?</a> -->
             </div>
         </form>
         <script>

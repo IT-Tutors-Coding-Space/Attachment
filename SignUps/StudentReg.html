@@ -5,21 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Registration</title>
-    <link rel="stylesheet" href="../CSS/StudentReg.css"> <!-- External CSS file -->
+    <link rel="stylesheet" href="StudentReg.css"> <!-- External CSS file -->
 </head>
 
 <body>
     <div class="container">
-        <!-- <p class="welcome-message">Hello, welcome to AttachME</p> -->
-        <p class="form-title">Student Account Registration</p>
+        <p class="welcome-message">Hello, welcome to AttachME</p>
+        <p class="form-title">Account Registration</p>
         <h1 class="form-header">To sign up, kindly fill the form below</h1>
 
         <form id="registrationForm">
             <label for="first_name">First Name</label>
-            <input type="text" name="first_name" id="first_name" placeholder="Enter your first name" required>
+            <input type="text" name="first_name" id="first_name" placeholder="Enter your first name" required pattern="[A-Za-z]{2,50}" title="First name should be 2-50 characters long and contain only letters.">
+            <span class="error-message" id="first_name_error"></span>
 
             <label for="last_name">Last Name</label>
-            <input type="text" name="last_name" id="last_name" placeholder="Enter your last name" required>
+            <input type="text" name="last_name" id="last_name" placeholder="Enter your last name" required pattern="[A-Za-z]{2,50}" title="Last name should be 2-50 characters long and contain only letters.">
+            <span class="error-message" id="last_name_error"></span>
 
             <label>Gender</label>
             <div class="gender-options">
@@ -31,13 +33,16 @@
 
             <label for="email">Email Address</label>
             <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+            <span class="error-message" id="email_error"></span>
 
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Enter your password" required>
+            <input type="password" name="password" id="password" placeholder="Enter your password" required minlength="8">
+            <span class="error-message" id="password_error"></span>
 
             <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm your password"
-                required>
+            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm your password" required minlength="8">
+            <span class="error-message" id="confirm_password_error"></span>
+
             <!-- Year of Study Dropdown -->
             <label for="year">Year of Study</label>
             <select id="year" name="year" required>
@@ -68,7 +73,7 @@
         <p>&copy; 2025 AttachME. All rights reserved</p>
     </div>
 
-    <script src="../Javasript/StudentReg.js"></script> <!-- External JavaScript file -->
+    <script src="StudentReg.js"></script> <!-- External JavaScript file -->
 </body>
 
 </html>

@@ -1,56 +1,62 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("registrationForm");
+    const signupForm = document.getElementById("studentSignupForm");
+    const studentEmail = document.getElementById("studentEmail");
+    const studentPassword = document.getElementById("studentPassword");
+    const confirmPassword = document.getElementById("confirmPassword");
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    let isValid = true;
+    const emailError = document.createElement("small");
+    emailError.classList.add("text-danger");
+    studentEmail.parentNode.appendChild(emailError);
 
-    // Name validation
-    const namePattern = /^[A-Za-z]{2,50}$/;
-    const firstName = document.getElementById('first_name').value;
-    const lastName = document.getElementById('last_name').value;
-    if (!namePattern.test(firstName)) {
-        isValid = false;
-        document.getElementById('first_name_error').textContent = 'First name should be 2-50 characters long and contain only letters.';
-    } else {
-        document.getElementById('first_name_error').textContent = '';
-    }
-    if (!namePattern.test(lastName)) {
-        isValid = false;
-        document.getElementById('last_name_error').textContent = 'Last name should be 2-50 characters long and contain only letters.';
-    } else {
-        document.getElementById('last_name_error').textContent = '';
-    }
+    const passwordError = document.createElement("small");
+    passwordError.classList.add("text-danger");
+    studentPassword.parentNode.appendChild(passwordError);
 
-    // Email validation
-    const email = document.getElementById('email').value;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        isValid = false;
-        document.getElementById('email_error').textContent = 'Please enter a valid email address.';
-    } else {
-        document.getElementById('email_error').textContent = '';
-    }
+    const confirmPasswordError = document.createElement("small");
+    confirmPasswordError.classList.add("text-danger");
+    confirmPassword.parentNode.appendChild(confirmPasswordError);
 
-    // Password validation
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm_password').value;
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!passwordPattern.test(password)) {
-        isValid = false;
-        document.getElementById('password_error').textContent = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.';
-    } else {
-        document.getElementById('password_error').textContent = '';
-    }
-    if (password !== confirmPassword) {
-        isValid = false;
-        document.getElementById('confirm_password_error').textContent = 'Passwords do not match.';
-    } else {
-        document.getElementById('confirm_password_error').textContent = '';
-    }
+    studentEmail.addEventListener("input", function () {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@attachme\.student$/;
+        if (!emailPattern.test(studentEmail.value)) {
+            emailError.textContent = "Invalid email format! Use format: username@attachme.student";
+        } else {
+            emailError.textContent = "";
+        }
+    });
 
-    if (isValid) {
-        this.submit();
-    }
-  });
+    studentPassword.addEventListener("input", function () {
+        let errors = [];
+        if (studentPassword.value.length < 8) {
+            errors.push("At least 8 characters");
+        }
+        if (!/[A-Z]/.test(studentPassword.value)) {
+            errors.push("One uppercase letter");
+        }
+        if (!/[0-9]/.test(studentPassword.value)) {
+            errors.push("One number");
+        }
+        if (!/[!@#$%^&*]/.test(studentPassword.value)) {
+            errors.push("One special character (!@#$%^&*)");
+        }
+        passwordError.textContent = errors.length > 0 ? errors.join(", ") : "";
+    });
+
+    confirmPassword.addEventListener("input", function () {
+        if (studentPassword.value !== confirmPassword.value) {
+            confirmPasswordError.textContent = "Passwords do not match";
+        } else {
+            confirmPasswordError.textContent = "";
+        }
+    });
+
+    signupForm.addEventListener("submit", function (event) {
+        if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
+            event.preventDefault();
+        } else {
+            event.preventDefault(); // Prevent form submission for demo purposes
+            alert("Registration successful! Redirecting to login page...");
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    });
 });

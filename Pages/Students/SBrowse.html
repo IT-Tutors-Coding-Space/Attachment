@@ -3,199 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attachment Search</title>
- <header>
-        <div class="logo">
-            <img src="../../Images/logo.png" alt="AttachME Logo">
-            <h1>AttachME</h1>
-            <p>Bridging Students to Opportunities, Seamlessly.</p>
-        </div>
-        <nav class="navbar">
-            <ul>
-                <li><a href="SDashboard.html">Dashboard</a></li>
-                <li><a href="SAbout.html">About</a></li>
-                <li><a href="SBrowse.html">Browse</a></li>
-                <!-- <li><a href="../Students/SHistory.html">Applications</a></li> -->
-                <li class="dropdown">
-                    <a href="#">Profile</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#view-profile">View</a></li>
-                        <li><a href="#settings">Settings</a></li>
-                        <li><a href="../Students/SHistory.html">History</a></li>
-
-                        <li><a href="#logout">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    
-    <style>
-        header {
-    background: hsl(240, 9%, 98%);
-    color: #141212;
-    padding: 10px;
-    position: sticky;
-    font-size: 17px;
-    display: flex;
-    border-radius: 1px;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-}
-
-header .logo {
-    display: flex;
-    align-items: center;
-}
-
-header .logo img {
-    height: 120px;
-    width: 120px;
-    margin-right: 5px;
-    border-radius: 50%;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 25px;
-    font-weight: 800;
-    font-size: 20px;
-    color: #000;
-    padding: 15px;
-    background-color: hsl(207, 100%, 98%);
-}
-
-nav ul li {
-    position: relative;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #141516;
-    padding: 5px 1px;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-nav ul li a:hover {
-    background: #5080e0;
-}
-
-/* Dropdown Menu */
-nav ul .dropdown-menu {
-    display: none;
-    position: relative;
-    top: 0;
-    left: 0;
-    background: #edeff1;
-    border-radius: 5px;
-    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-    /* z-index: 1; */
-}
-
-nav ul .dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-
-
-
-        body {
-            /* font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: auto;
-            padding: 20px; */
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-             color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 50px;
-        }
-        .search-container {
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-            /* margin-bottom: 50px; */
-            text-align: center;
-            justify-content: center;
-            justify-self: center;
-        }
-        .search-input {
-            flex: 1;
-            padding: 20px;
-            border: 1px solid #ccc;
-            width: 80%;
-            border-radius: 5px;
-        }
-        .search-button {
-            padding: 10px 15px;
-            border: none;
-            background-color: blue;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .vacancy {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <title>Browse Opportunities - AttachME</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/student-styles.css">
 </head>
-<body>
-
-
-
-
-
+<body class="bg-gray-100 d-flex flex-column min-vh-100">
     
-    <h1>Search for Attachments</h1>
-    <div class="search-container">
-        <input type="text" id="search" class="search-input" placeholder="Search by title, company, or location...">
-        <button class="search-button" onclick="searchVacancies()">Search</button>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+        <div class="container-fluid d-flex justify-content-between">
+            <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
+            <ul class="navbar-nav d-flex flex-row gap-4">
+                <li class="nav-item"><a href="../Students/SDashboard.html" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Students/SAbout.html" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
+
+                <li class="nav-item"><a href="../Students/SBrowse.html" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
+                <li class="nav-item"><a href="../Students/SApplicationSubmission.html" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
+                <li class="nav-item"><a href="../Students/SNotifications.html" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="../Students/SProfile.html" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
+                <li class="nav-item"><a href="../Students/SSettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+            </ul>
+        </div>
+    </nav><br><br><br>
+    
+    <!-- Main Content -->
+    <div class="container p-5 flex-grow-1">
+        <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
+            <h1 class="text-3xl fw-bold">Explore Attachment Opportunities</h1>
+            <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="🔍 Search by title, company, or location...">
+        </header>
+
+        <!-- Opportunities List --> 
+        <div class="row g-4" id="opportunitiesList">
+            <!-- Sample Opportunity Card -->
+            <div class="col-md-6"><br><br>
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+                    <h5 class="fw-bold">Software Engineering Internship</h5>
+                    <p class="text-muted">Safaricom PLC - Nairobi, Kenya</p>
+                    <p><strong>Deadline:</strong> April 30, 2025</p>
+                    <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
+                </div>
+            </div>
+            <div class="col-md-6"><br><br>
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+                    <h5 class="fw-bold">Cybersecurity Analyst Internship</h5>
+                    <p class="text-muted">KCB Group - Nairobi, Kenya</p>
+                    <p><strong>Deadline:</strong> March 25, 2025</p>
+                    <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="results"></div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../Help Center.html" class="text-white fw-bold">Help Center</a>
+            <a href="../Students/Terms of servive.html" class="text-white fw-bold">Terms of Service</a>
+            <a href="tel:+254700234362" class="text-white fw-bold">Contact Support: 0700234362</a>
+        </div>
+    </footer>
     
-    <script>
-        const vacancies = [
-            { title: "Software Engineering Internship", company: "TechCorp", location: "Nairobi" },
-            { title: "Marketing Attachment", company: "MarketMinds", location: "Mombasa" },
-            { title: "Data Science Internship", company: "DataWiz", location: "Kisumu" }
-        ];
-
-        function searchVacancies() {
-            const searchTerm = document.getElementById("search").value.toLowerCase();
-            const resultsContainer = document.getElementById("results");
-            resultsContainer.innerHTML = "";
-
-            const filteredVacancies = vacancies.filter(vacancy =>
-                vacancy.title.toLowerCase().includes(searchTerm) ||
-                vacancy.company.toLowerCase().includes(searchTerm) ||
-                vacancy.location.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredVacancies.length > 0) {
-                filteredVacancies.forEach(vacancy => {
-                    const div = document.createElement("div");
-                    div.classList.add("vacancy");
-                    div.innerHTML = `<h2>${vacancy.title}</h2><p>${vacancy.company} - ${vacancy.location}</p>`;
-                    resultsContainer.appendChild(div);
-                });
-            } else {
-                resultsContainer.innerHTML = "<p>No vacancies found.</p>";
-            }
-        }
-    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../../Javasript/SBrowse.js"></script>
 </body>
 </html>

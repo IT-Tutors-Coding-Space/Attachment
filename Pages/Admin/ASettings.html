@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttachME Admin Dashboard</title>
+    <title>AttachME Admin - Settings</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tailwind CSS -->
@@ -22,7 +22,7 @@
                 <li class="nav-item"><a href="../Admin/AUsers.html" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
                 <li class="nav-item"><a href="../Admin/ACompanies.html" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
                 <li class="nav-item"><a href="../Admin/AOpportunities.html" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.html" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.html" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
                 <li class="nav-item"><a href="../Admin/AAnalytics.html" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
                 <li class="nav-item"><a href="../Admin/ASettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
@@ -32,44 +32,38 @@
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1">
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Admin Dashboard</h1>
-            <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" placeholder="Search...">
-                <button class="btn btn-outline-primary fw-bold fs-5">🔔 Notifications</button>
-                <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle fw-bold fs-5" type="button" data-bs-toggle="dropdown">Admin</button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#profile">Profile</a></li>
-                        <li><a class="dropdown-item" href="#logout">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </header><br><br><br><br>
+            <h1 class="text-3xl fw-bold">Platform Settings</h1>
+            <p class="text-muted">Manage account settings, system configurations, and security preferences.</p>
+        </header>
 
-        <!-- Stats Cards -->
         <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm p-4 bg-primary text-white rounded-lg">
-                    <h5 class="fw-bold fs-5">Total Users</h5>
-                    <h2 id="totalUsers" class="fw-bold fs-3">0</h2>
+            <!-- Account Settings -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+                    <h5 class="fw-bold fs-5 mb-3">Account Settings</h5>
+                    <label class="fw-bold">Admin Name</label>
+                    <input type="text" class="form-control mb-3" id="adminName" value="John Kyalo">
+                    <label class="fw-bold">Email Address</label>
+                    <input type="email" class="form-control mb-3" id="adminEmail" value="admin@attachme.com">
+                    <label class="fw-bold">Change Password</label>
+                    <input type="password" class="form-control mb-3" id="adminPassword" placeholder="Enter new password">
+                    <button class="btn btn-primary w-100" id="saveAccount">Save Changes</button>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm p-4 bg-success text-white rounded-lg">
-                    <h5 class="fw-bold fs-5">Companies</h5>
-                    <h2 id="totalCompanies" class="fw-bold fs-3">0</h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm p-4 bg-warning text-white rounded-lg">
-                    <h5 class="fw-bold fs-5">Opportunities</h5>
-                    <h2 id="totalOpportunities" class="fw-bold fs-3">0</h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm p-4 bg-danger text-white rounded-lg">
-                    <h5 class="fw-bold fs-5">Pending Applications</h5>
-                    <h2 id="totalApplications" class="fw-bold fs-3">0</h2>
+            
+            <!-- Security Settings -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+                    <h5 class="fw-bold fs-5 mb-3">Security Settings</h5>
+                    <!-- <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="enable2FA">
+                        <label class="form-check-label fw-bold" for="enable2FA">Enable Two-Factor Authentication</label>
+                    </div> -->
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="sessionTimeout">
+                        <label class="form-check-label fw-bold" for="sessionTimeout">Enable Session Timeout</label>
+                    </div>
+                    <button class="btn btn-danger w-100" id="logoutAll">Log Out from All Devices</button>
                 </div>
             </div>
         </div>
@@ -88,6 +82,6 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/ADashboard.js"></script>
+    <script src="../../Javasript/ASettings.js"></script>
 </body>
 </html>

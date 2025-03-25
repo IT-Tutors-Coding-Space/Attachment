@@ -13,7 +13,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/signup.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
+<body class="bg-gray 100 d-flex flex-column min-vh-100">
     
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
@@ -29,20 +29,20 @@
             <h5 style="text-align: center;" class="fw-bold text-center text-primary mb-3">Create Your Student Account</h5>
             
             <!-- Student Signup -->
-            <form id="studentSignupForm" class="signup-form">
+            <form id="studentSignupForm" class="signup-form" action="../SignUps/StudentReg.php" method="POST">
                 <h6 style="text-align: center;" class="fw-bold text-secondary">🎓 Student Registration</h6>
                 <div class="mb-3">
                     <label for="studentName" class="form-label">Full Name</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-user"></i></span>
-                        <input type="text" class="form-control" id="studentName" placeholder="Enter your full name" required>
+                        <input type="text" class="form-control" id="studentName" placeholder="Enter your full name" name="full_name" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="studentEmail" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input type="email" class="form-control" id="studentEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.student$" placeholder="username@attachme.student" required>
+                        <input type="email" class="form-control" id="studentEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.student$" placeholder="username@attachme.student" name="email" required>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -51,16 +51,15 @@
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
-                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="studentRegNo" class="form-label">Registration Number</label>
-                    <input type="text" class="form-control" id="studentRegNo" placeholder="Enter your registration number" required>
+                    <input type="text" name="registration_number" class="form-control" id="studentRegNo" placeholder="Enter your registration number" required>
                 </div>
                 <div class="mb-3">
                     <label for="studentLevel" class="form-label">Level of Study</label>
-                    <select class="form-control" id="studentLevel" required>
+                    <select name="level" class="form-control" id="studentLevel" required>
                         <option value="">Select Level</option>
                         <option value="Certificate">Certificate</option>
                         <option value="Diploma">Diploma</option>
@@ -70,7 +69,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="studentYear" class="form-label">Year of Study</label>
-                    <select class="form-control" id="studentYear" required>
+                    <select name="year_of_study" class="form-control" id="studentYear" required>
                         <option value="">Select Year</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -80,31 +79,31 @@
                 </div>
                 <div class="mb-3">
                     <label for="studentCourse" class="form-label">Course</label>
-                    <select class="form-control" id="studentCourse" required>
+                    <select name="course" class="form-control" id="studentCourse" required>
                         <option value="">Select Course</option>
                         <option value="IT">Information Technology</option>
                         <option value="CS">Computer Science</option>
-                        <option value="SIK">Software Engineering</option>
+                        <option value="SIK">SIK</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="studentPassword" class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" class="form-control" id="studentPassword" placeholder="Create a strong password" required>
+                        <input name="password" type="password" class="form-control" id="studentPassword" placeholder="Create a strong password" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="confirmPassword" class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required>
+                        <input name="password" type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Sign Up as Student</button>
+                <button  type="submit" class="btn btn-primary w-100">Sign Up as Student</button>
             </form>
             
-            <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
+            <p class="text-center mt-3">Already have an account? <a href="../SignUps/Login.html" class="text-primary fw-bold">Log In</a></p>
         </div>
     </div>
     <script src="../Javasript/StudentReg.js"></script>

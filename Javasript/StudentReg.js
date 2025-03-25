@@ -51,12 +51,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     signupForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
         if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
-            event.preventDefault();
-        } else {
-            event.preventDefault(); // Prevent form submission for demo purposes
-            alert("Registration successful! Redirecting to login page...");
-            window.location.href = "login.html"; // Redirect to login page
+            return; // Do not proceed if there are validation errors
         }
+
+        const formData = new FormData(signupForm);
+
+        fetch("../SignUps/StudentReg.html", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Registration successful! Redirecting to login page...");
+                    window.location.href = "Login.html";
+                } else {
+                    alert("Registration failed: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
     });
 });

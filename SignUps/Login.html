@@ -26,7 +26,7 @@
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg w-100" style="max-width: 400px;">
-            <h5 class="fw-bold text-center text-primary mb-3">Welcome Back!</h5>
+            <h5 class="fw-bold text-center text-primary mb-3">Log In to Your Account</h5>
             
             <!-- Login Form -->
             <form id="loginForm" class="login-form">
@@ -80,5 +80,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/login.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            fetch("Login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Login successful! Redirecting...");
+                        window.location.href = "../dashboard.html"; // Redirect to dashboard
+                    } else {
+                        alert("Login failed: " + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("An error occurred. Please try again.");
+                });
+        });
+    </script>
 </body>
 </html>

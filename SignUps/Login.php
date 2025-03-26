@@ -15,7 +15,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["user_id"] = $user["id"];
             $_SESSION["role"] = $user["role"];
 
-            echo json_encode(["success" => true, "message" => "Login successful"]);
+            // Redirect based on user role
+            if ($user["role"] === "Student") {
+                header("Location: SDashboard.php");
+            } elseif ($user["role"] === "Admin") {
+                header("Location:  AHome.php");
+            } elseif ($user["role"] === "Company") {
+                header("Location: CHome.php");
+            }
+            exit();
         } else {
             echo json_encode(["success" => false, "message" => "Invalid email or password"]);
         }

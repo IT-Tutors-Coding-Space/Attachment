@@ -67,13 +67,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    signupForm.addEventListener("submit", function (event) {
-        if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
-            event.preventDefault();
-        } else {
-            event.preventDefault(); // Prevent form submission for demo purposes
-            alert("Registration successful! Redirecting to login page...");
-            window.location.href = "login.html";
-        }
-    });
+    // signupForm.addEventListener("submit", function (event) {
+    //     if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
+    //         event.preventDefault();
+    //     } else {
+    //         event.preventDefault(); // Prevent form submission for demo purposes
+    //         alert("Registration successful! Redirecting to login page...");
+    //         window.location.href = "Loginn.php";
+    //     }
+    // });
 });

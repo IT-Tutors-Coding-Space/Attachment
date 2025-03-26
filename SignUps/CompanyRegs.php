@@ -13,32 +13,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/signup.css">
 </head>
-<<<<<<< HEAD
-<body>
-    <div class="container">
-        <h2>Company Registration</h2>
-        <form id="registrationForm">
-            <label for="companyName">Company Name:</label>
-            <input type="text" id="companyName" name="companyName" placeholder="company name"required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email"placeholder=" Email" required>
-
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" placeholder="Conatct"required pattern="[0-9]{10}">
-
-            <!-- <label for="website">Company Website:</label>
-            <input type="url" id="website" name="website" placeholder="company website"> -->
-            <label for="address">Location:</label>
-            <textarea id="address" name="address" placeholder="Location"required></textarea>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password"placeholder="Password" required>
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword"placeholder="Re-enter Password" required>
-
-            <button type="submit">Register</button>
-        </form>
-=======
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     
     <!-- Top Navigation Bar -->
@@ -55,25 +29,25 @@
             <h5 class="fw-bold text-center text-primary mb-3">Create Your Company Account</h5>
             
             <!-- Company Signup -->
-            <form id="companySignupForm" class="signup-form">
+            <form id="companySignupForm" class="signup-form" method="POST" action="../SignUps/CompanyReg.php">
                 <h6 style="text-align: center;" class="fw-bold text-secondary">🏢 Company Registration</h6>
                 <div class="mb-3">
                     <label for="companyName" class="form-label">Company Name</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-building"></i></span>
-                        <input type="text" class="form-control" id="companyName" placeholder="Enter company name" required>
+                        <input name="company_name" type="text" class="form-control" id="companyName" placeholder="Enter company name" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="companyEmail" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input type="email" class="form-control" id="companyEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.company$" placeholder="username@attachme.company" required>
+                        <input  name="contact_email" type="email" class="form-control" id="companyEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.company$" placeholder="username@attachme.company" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="companyLocation" class="form-label">Company Location</label>
-                    <select class="form-control" id="companyLocation" required>
+                    <select name="location" class="form-control" id="companyLocation" required>
                         <option value="">Select County</option>
                         <option value="Nairobi">Nairobi</option>
                         <option value="Mombasa">Mombasa</option>
@@ -111,7 +85,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="companyIndustry" class="form-label">Industry</label>
-                    <select class="form-control" id="companyIndustry" required>
+                    <select name="industry" class="form-control" id="companyIndustry" required>
                         <option value="">Select Industry</option>
                         <option value="Technology">Technology</option>
                         <option value="Finance">Finance</option>
@@ -122,22 +96,21 @@
                     <label for="companyPassword" class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" class="form-control" id="companyPassword" placeholder="Create a strong password" required>
+                        <input name="password" type="password" class="form-control" id="companyPassword" placeholder="Create a strong password" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="confirmCompanyPassword" class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" class="form-control" id="confirmCompanyPassword" placeholder="Re-enter password" required>
+                        <input name="password" type="password" class="form-control" id="confirmCompanyPassword" placeholder="Re-enter password" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Sign Up as Company</button>
+                <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Company</button>
             </form>
             
             <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
         </div>
->>>>>>> 332f26169d0ee8116b402ad7c47c8520be81f1ce
     </div>
 <script src="../Javasript/CompanyReg.js"></script>
     <!-- Footer -->

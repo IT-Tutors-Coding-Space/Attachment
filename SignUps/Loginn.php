@@ -34,20 +34,20 @@
                     <label for="email" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        <input name="email" type="email" class="form-control" id="email" placeholder="Enter your email" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        <input name="email" type="password" class="form-control" id="password" placeholder="Enter your password" required>
                         <span class="input-group-text toggle-password"><i class="fa fa-eye"></i></span>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Select Role</label>
-                    <select class="form-control" id="role" required>
+                    <select name="role" class="form-control" id="role" required>
                         <option value="">Choose your role</option>
                         <option value="admin">Admin</option>
                         <option value="company">Company</option>
@@ -60,9 +60,9 @@
             <p class="text-center mt-3">
                 <a href="forgot-password.html" class="text-primary fw-bold">Forgot Password?</a>
             </p>
-            <p class="text-center mt-2">
+            <!-- <p class="text-center mt-2">
                 Don't have an account? <a href="student-signup.html" class="text-primary fw-bold">Sign Up</a>
-            </p>
+            </p> -->
         </div>
     </div>
 
@@ -72,7 +72,7 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
     
@@ -80,14 +80,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/login.js"></script>
-    <script>
+    <!-- <script>
         document.getElementById("loginForm").addEventListener("submit", function (event) {
             event.preventDefault();
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            fetch("Login.php", {
+            fetch("../?Login.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
@@ -96,7 +96,7 @@
                 .then((data) => {
                     if (data.success) {
                         alert("Login successful! Redirecting...");
-                        window.location.href = "../dashboard.html"; // Redirect to dashboard
+                        window.location.href = ""; // Redirect to dashboard
                     } else {
                         alert("Login failed: " + data.message);
                     }
@@ -106,6 +106,6 @@
                     alert("An error occurred. Please try again.");
                 });
         });
-    </script>
+    </script> -->
 </body>
 </html>

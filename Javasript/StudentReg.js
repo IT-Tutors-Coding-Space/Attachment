@@ -50,31 +50,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    signupForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default form submission
+//     signupForm.addEventListener("submit", function (event) {
+//         event.preventDefault(); // Prevent default form submission
 
-        if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
-            return; // Do not proceed if there are validation errors
-        }
+//         if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
+//             return; // Do not proceed if there are validation errors
+//         }
 
-        const formData = new FormData(signupForm);
+//         const formData = new FormData(signupForm);
+    
+//         fetch("StudentReg.php", {
+//             method: "POST",
+//             body: formData,
+//         })
+//             .then((response) => response.json())
+//             .then((data) => {
+//                 if (data.success) {
+//                     alert("Registration successful! Redirecting to login page...");
+//                     window.location.href = "../SignUps/Login.html";
+                    
+//                 } else {
+//                     alert("Registration failed: " + data.message);
+                
+//                 }
+//             })
+//             .catch((error) => {
+//                 console.error("Error:", error);
+//                 alert("An error occurred. Please try again.");
+//             });
+//     });
 
-        fetch("../SignUps/StudentReg.html", {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    alert("Registration successful! Redirecting to login page...");
-                    window.location.href = "Login.html";
-                } else {
-                    alert("Registration failed: " + data.message);
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("An error occurred. Please try again.");
-            });
-    });
-});
+// 
+ });

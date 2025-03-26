@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttachME Company Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Company Dashboard - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/company-styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
+<body>
+    <div class="container">
+        <h2>Welcome, Company!</h2>
+        <a href="../logout.php" class="btn btn-danger">Logout</a>
+    </div>
+</body>
+</html>
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">

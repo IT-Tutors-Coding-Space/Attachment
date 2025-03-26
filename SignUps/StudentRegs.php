@@ -29,7 +29,7 @@
             <h5 style="text-align: center;" class="fw-bold text-center text-primary mb-3">Create Your Student Account</h5>
             
             <!-- Student Signup -->
-            <form id="studentSignupForm" class="signup-form" action="../SignUps/StudentReg.php" method="POST">
+            <form name="form" id="studentSignupForm" class="signup-form" action="../SignUps/StudentReg.php" method="POST">
                 <h6 style="text-align: center;" class="fw-bold text-secondary">🎓 Student Registration</h6>
                 <div class="mb-3">
                     <label for="studentName" class="form-label">Full Name</label>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="studentGender" class="form-label">Gender</label>
-                    <select class="form-control" id="studentGender" required>
+                    <select name="gender" class="form-control" id="studentGender" required>
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -103,7 +103,7 @@
                 <button  type="submit" class="btn btn-primary w-100">Sign Up as Student</button>
             </form>
             
-            <p class="text-center mt-3">Already have an account? <a href="../SignUps/Login.html" class="text-primary fw-bold">Log In</a></p>
+            <p class="text-center mt-3">Already have an account? <a href="../SignUps/Loginn.php" class="text-primary fw-bold">Log In</a></p>
         </div>
     </div>
     <script src="../Javasript/StudentReg.js"></script>
@@ -114,7 +114,7 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
 </body>

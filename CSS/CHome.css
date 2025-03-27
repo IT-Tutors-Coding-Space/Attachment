@@ -119,33 +119,32 @@ nav ul .dropdown:hover .dropdown-menu {
     color: #fff;
 }
 
-/* Footer */
-.footer {
-
-    margin-top:15%;
-    bottom: 0;
-    position: sticky;
-    padding: 20px;
-    background: #007bff;
-    color: #fff;
-    text-align: center;
-}
-
-.footer ul {
-    list-style: none;
+/* Ensure the entire page takes full height */
+html, body {
+    height: 100%;
+    margin: 0;
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: column;
 }
 
-.footer ul li a {
-    color: #fff;
-    text-decoration: none;
+/* Push content to fill available space */
+.content {
+    flex: 1;
 }
 
-.footer ul li a:hover {
-    text-decoration: underline;
+/* Footer Styling */
+footer {
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    text-align: center; /* Center align text */
+    padding: 15px 0; /* Top and bottom padding */
+    font-size: 16px; /* Professional font size */
+    width: 100%; /* Full width */
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 50px;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 50%;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+input,
+select {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table,
+th,
+td {
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+<<<<<<< HEAD
+/* Ensure the entire page takes full height */
+html,
+body {
+   height: 100%;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+}
+
+/* Push content to fill available space */
+.content {
+   flex: 1;
+}
+
+/* Footer Styling */
+footer {
+   background-color: #007bff;
+   /* Blue background */
+   color: white;
+   /* White text */
+   text-align: center;
+   /* Center align text */
+   padding: 15px 0;
+   /* Top and bottom padding */
+   font-size: 16px;
+   /* Professional font size */
+   width: 100%;
+   /* Full width */
+   position: absolute;
+   bottom: 0;
+   left: 0;
+}
+=======
+/*Copyright */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color:#007bff;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+} 
+
+>>>>>>> origin/main
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+ 
+button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[data-status="accepted"] {
+    background: #28a745;
+    color: white;
+}
+
+button[data-status="rejected"] {
+    background: #dc3545;
+    color: white;
+   }

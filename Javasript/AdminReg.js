@@ -1,48 +1,79 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("adminForm").addEventListener("submit", function (event) {
-        if (!validateForm()) {
-            event.preventDefault();
+    const signupForm = document.getElementById("adminSignupForm");
+    const adminEmail = document.getElementById("adminEmail");
+    const adminPassword = document.getElementById("adminPassword");
+    const confirmPassword = document.getElementById("confirmAdminPassword");
+    const adminRole = document.getElementById("adminRole");
+    const togglePasswordIcons = document.querySelectorAll(".toggle-password");
+
+    // Real-time validation messages
+    const emailError = document.createElement("small");
+    emailError.classList.add("text-danger");
+    adminEmail.parentNode.appendChild(emailError);
+
+    const passwordError = document.createElement("small");
+    passwordError.classList.add("text-danger");
+    adminPassword.parentNode.appendChild(passwordError);
+
+    const confirmPasswordError = document.createElement("small");
+    confirmPasswordError.classList.add("text-danger");
+    confirmPassword.parentNode.appendChild(confirmPasswordError);
+
+    adminEmail.addEventListener("input", function () {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@attachme\.admin$/;
+        if (!emailPattern.test(adminEmail.value)) {
+            emailError.textContent = "Invalid email format! Use format: username@attachme.admin";
+        } else {
+            emailError.textContent = "";
         }
     });
+
+    adminPassword.addEventListener("input", function () {
+        let errors = [];
+        if (adminPassword.value.length < 8) {
+            errors.push("At least 8 characters");
+        }
+        if (!/[A-Z]/.test(adminPassword.value)) {
+            errors.push("One uppercase letter");
+        }
+        if (!/[0-9]/.test(adminPassword.value)) {
+            errors.push("One number");
+        }
+        if (!/[!@#$%^&*]/.test(adminPassword.value)) {
+            errors.push("One special character (!@#$%^&*)");
+        }
+        passwordError.textContent = errors.length > 0 ? errors.join(", ") : "";
+    });
+
+    confirmPassword.addEventListener("input", function () {
+        if (adminPassword.value !== confirmPassword.value) {
+            confirmPasswordError.textContent = "Passwords do not match";
+        } else {
+            confirmPasswordError.textContent = "";
+        }
+    });
+
+    // Password show/hide toggle
+    togglePasswordIcons.forEach(icon => {
+        icon.addEventListener("click", function () {
+            const passwordField = this.previousElementSibling;
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                this.innerHTML = '<i class="fa fa-eye-slash"></i>';
+            } else {
+                passwordField.type = "password";
+                this.innerHTML = '<i class="fa fa-eye"></i>';
+            }
+        });
+    });
+
+    // signupForm.addEventListener("submit", function (event) {
+    //     if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
+    //         event.preventDefault();
+    //     } else {
+    //         event.preventDefault(); // Prevent form submission for demo purposes
+    //         alert("Registration successful! Redirecting to login page...");
+    //         window.location.href = "Loginn.php";
+    //     }
+    // });
 });
-
-function validateForm() {
-    let fullName = document.getElementById("fullName").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let username = document.getElementById("username").value.trim();
-    let password = document.getElementById("password").value;
-    let confirmPassword = document.getElementById("confirmPassword").value;
-
-    // Validate full name (at least 2 words)
-    if (!/^[a-zA-Z ]{3,}$/.test(fullName)) {
-        alert("Full Name must be at least 3 characters long and contain only letters.");
-        return false;
-    }
-
-    // Validate email format
-    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-        alert("Please enter a valid email address.");
-        return false;
-    }
-
-    // Validate username (at least 4 characters)
-    if (username.length < 4) {
-        alert("Username must be at least 4 characters long.");
-        return false;
-    }
-
-    // Validate password (at least 6 characters)
-    if (password.length < 6) {
-        alert("Password must be at least 6 characters long.");
-        return false;
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return false;
-    }
-
-    return true;
-}

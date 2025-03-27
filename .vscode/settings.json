@@ -12,6 +12,20 @@
             "name": "TESTDB",
             "database": "student_db",
             "username": "root"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "attachme",
+            "database": "attachme",
+            "username": "root"
         }
-    ]
+    ],
+    "codewindProfiling.showProfiling": false
 }

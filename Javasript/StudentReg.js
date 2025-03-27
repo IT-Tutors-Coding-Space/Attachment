@@ -1,100 +1,84 @@
-function toggleForm(formType) {
-    console.log('toggleForm called with formType:', formType);
-    // if (formType === "login") {
-    //     document.getElementById("loginForm").style.display = "block";
-    //     document.getElementById("registerForm").style.display = "none";
-    //     document.getElementById("welcomeMessage").style.display = "none";
-    //     document.getElementById("resetPasswordForm").style.display = "none";
-     if (formType === "register") {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("registerForm").style.display = "block";
-        document.getElementById("welcomeMessage").style.display = "none";
-        document.getElementById("resetPasswordForm").style.display = "none";
-    } else if (formType === "resetPassword") {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("welcomeMessage").style.display = "none";
-        document.getElementById("resetPasswordForm").style.display = "block";
-    }
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const signupForm = document.getElementById("studentSignupForm");
+    const studentEmail = document.getElementById("studentEmail");
+    const studentPassword = document.getElementById("studentPassword");
+    const confirmPassword = document.getElementById("confirmPassword");
 
-function validateLogin() {
-    let username = document.getElementById("loginUsername").value;
-    let password = document.getElementById("loginPassword").value;
+    const emailError = document.createElement("small");
+    emailError.classList.add("text-danger");
+    studentEmail.parentNode.appendChild(emailError);
 
-    // Dummy validation for demonstration
-    if (username === "user@example.com" && password === "password") {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("welcomeMessage").style.display = "block";
-        return false; // Prevent form submission
-    } else {
-        alert("Invalid details. Please check your username and password.");
-        return false; // Prevent form submission
-    }
-}
+    const passwordError = document.createElement("small");
+    passwordError.classList.add("text-danger");
+    studentPassword.parentNode.appendChild(passwordError);
 
-function validateRegistration() {
-    let password = document.getElementById("registerPassword").value;
-    let confirmPassword = document.getElementById("confirmPassword").value;
+    const confirmPasswordError = document.createElement("small");
+    confirmPasswordError.classList.add("text-danger");
+    confirmPassword.parentNode.appendChild(confirmPasswordError);
 
-    if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return false; // Prevent form submission
-    }
-
-    let firstName = document.getElementById("registerFirstName").value;
-    let lastName = document.getElementById("registerLastName").value;
-    let email = document.getElementById("registerEmail").value;
-    let gender = document.querySelector('input[name="gender"]:checked').value;
-
-    // Dummy registration success message
-    alert(
-        "Registration successful!\n" +
-        "Name: " +
-        firstName +
-        " " +
-        lastName +
-        "\n" +
-        "Email: " +
-        email +
-        "\n" +
-        "Gender: " +
-        gender
-    );
-    toggleForm("login"); // Redirect to login form
-    return false; // Prevent form submission
-}
-
-function validateResetPassword() {
-    let email = document.getElementById("resetEmail").value;
-    let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-    if (!emailPattern.test(email)) {
-        document.getElementById("emailError").style.display = "block";
-        return false;
-    } else {
-        document.getElementById("emailError").style.display = "none";
-        // Simulate sending a reset code via email
-        alert("A reset code (12345) has been sent to your email address.");
-        // Proceed to ask for the reset code
-        promptForResetCode();
-        return false;
-    }
-}
-
-function promptForResetCode() {
-    let code = prompt("Enter the reset code sent to your email:");
-
-    if (code === "12345") {
-        let newPassword = prompt("Enter your new password:");
-
-        if (newPassword) {
-            alert("Your password has been reset successfully.");
-            toggleForm("login"); // Redirect to login form
+    studentEmail.addEventListener("input", function () {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@attachme\.student$/;
+        if (!emailPattern.test(studentEmail.value)) {
+            emailError.textContent = "Invalid email format! Use format: username@attachme.student";
         } else {
-            alert("Please enter a new password.");
+            emailError.textContent = "";
         }
-    } else {
-        alert("Invalid code. Please try again.");
-    }
-}
+    });
+
+    studentPassword.addEventListener("input", function () {
+        let errors = [];
+        if (studentPassword.value.length < 8) {
+            errors.push("At least 8 characters");
+        }
+        if (!/[A-Z]/.test(studentPassword.value)) {
+            errors.push("One uppercase letter");
+        }
+        if (!/[0-9]/.test(studentPassword.value)) {
+            errors.push("One number");
+        }
+        if (!/[!@#$%^&*]/.test(studentPassword.value)) {
+            errors.push("One special character (!@#$%^&*)");
+        }
+        passwordError.textContent = errors.length > 0 ? errors.join(", ") : "";
+    });
+
+    confirmPassword.addEventListener("input", function () {
+        if (studentPassword.value !== confirmPassword.value) {
+            confirmPasswordError.textContent = "Passwords do not match";
+        } else {
+            confirmPasswordError.textContent = "";
+        }
+    });
+
+//     signupForm.addEventListener("submit", function (event) {
+//         event.preventDefault(); // Prevent default form submission
+
+//         if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
+//             return; // Do not proceed if there are validation errors
+//         }
+
+//         const formData = new FormData(signupForm);
+    
+//         fetch("StudentReg.php", {
+//             method: "POST",
+//             body: formData,
+//         })
+//             .then((response) => response.json())
+//             .then((data) => {
+//                 if (data.success) {
+//                     alert("Registration successful! Redirecting to login page...");
+//                     window.location.href = "../SignUps/Login.html";
+                    
+//                 } else {
+//                     alert("Registration failed: " + data.message);
+                
+//                 }
+//             })
+//             .catch((error) => {
+//                 console.error("Error:", error);
+//                 alert("An error occurred. Please try again.");
+//             });
+//     });
+
+// 
+ });

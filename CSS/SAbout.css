@@ -6,11 +6,12 @@ body {
     background-color: #f9f9f9;
     color: #333;
 }
-header {
+/* header {
     background: #0044cc;
-    color: #fff;
+    color: #0e0d0d;
     padding: 1rem 0;
     text-align: center;
+    
 }
 nav ul {
     list-style: none;
@@ -25,7 +26,7 @@ nav ul li a {
     color: #fff;
     text-decoration: none;
     font-weight: bold;
-}
+} */
 main {
     padding: 20px;
     max-width: 800px;

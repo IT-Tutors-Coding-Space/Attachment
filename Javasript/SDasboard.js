@@ -1,47 +1,77 @@
-// script.js
+// student-dashboard.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Dashboard loaded!");
+    console.log("Student Dashboard Loaded");
 
-    // Dynamic content update
-    const submittedCount = document.getElementById("submittedCount");
-    const acceptedCount = document.getElementById("acceptedCount");
-    const pendingCount = document.getElementById("pendingCount");
-    const dateTimeElement = document.getElementById("dateTime");
-    const deadlineTimer = document.getElementById("deadlineTimer");
+    // Sample data for dashboard stats
+    document.getElementById("totalApplications").innerText = "5";
+    document.getElementById("acceptedApplications").innerText = "2";
+    document.getElementById("pendingApplications").innerText = "3";
 
-    // Simulate fetching data from an API
-    setTimeout(() => {
-        submittedCount.innerText = 5;
-        acceptedCount.innerText = 2;
-        pendingCount.innerText = 3;
-    }, 2000);
+    const applicationsTable = document.getElementById("recentApplicationsTable");
 
-    // Show current date and time
-    function updateDateTime() {
-        const now = new Date();
-        dateTimeElement.innerText = `Today is ${now.toDateString()}, ${now.toLocaleTimeString()}`;
-    }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    // Clear notifications
-    window.clearNotifications = function () {
-        const notificationList = document.getElementById("notificationList");
-        notificationList.innerHTML = "<li>No new notifications</li>";
+    // Function to view application details
+    function viewApplication(button) {
+        const row = button.closest("tr");
+        const opportunity = row.children[0].innerText;
+        const company = row.children[1].innerText;
+        const status = row.children[2].innerText;
+        alert(`📄 Application Details:\n\n🔹 Opportunity: ${opportunity}\n🏢 Company: ${company}\n📌 Status: ${status}`);
     }
 
-    // Countdown timer for deadlines
-    function startCountdown(days) {
-        let remainingDays = days;
-        setInterval(() => {
-            if (remainingDays > 0) {
-                remainingDays--;
-                deadlineTimer.innerText = `${remainingDays} days`;
-            } else {
-                deadlineTimer.innerText = "Deadline reached";
-            }
-        }, 86400000); // Update every 24 hours
+    // Function to withdraw an application
+    function withdrawApplication(button) {
+        if (confirm("⚠️ Are you sure you want to withdraw this application? This action cannot be undone.")) {
+            const row = button.closest("tr");
+            row.remove();
+            alert("✅ Application withdrawn successfully!");
+            updateDashboardStats(-1);
+        }
     }
-    startCountdown(3);
+
+    // Function to track application progress
+    function trackApplication(button) {
+        const row = button.closest("tr");
+        const status = row.children[2].innerText;
+        
+        if (status === "Accepted") {
+            alert("🎉 Congratulations! Your application has been accepted. Check your messages for the next steps.");
+        } else if (status === "Pending") {
+            alert("⏳ Your application is still under review. Please be patient.");
+        } else {
+            alert("❌ Unfortunately, your application was rejected. Keep applying for more opportunities!");
+        }
+    }
+
+    // Function to update dashboard stats dynamically
+    function updateDashboardStats(change) {
+        let totalApps = parseInt(document.getElementById("totalApplications").innerText);
+        let pendingApps = parseInt(document.getElementById("pendingApplications").innerText);
+
+        totalApps += change;
+        pendingApps += change;
+
+        document.getElementById("totalApplications").innerText = totalApps;
+        document.getElementById("pendingApplications").innerText = pendingApps;
+    }
+
+    // Function to refresh applications list dynamically
+    function refreshApplications() {
+        alert("🔄 Fetching latest application updates...");
+        location.reload();
+    }
+
+    // Add event listeners dynamically
+    applicationsTable.addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-outline-secondary")) {
+            viewApplication(event.target);
+        } else if (event.target.classList.contains("btn-outline-danger")) {
+            withdrawApplication(event.target);
+        } else if (event.target.classList.contains("btn-outline-info")) {
+            trackApplication(event.target);
+        }
+    });
+
+//     // Auto-refresh applications every 30 seconds
+//     setInterval(refreshApplications, 30000);
 });

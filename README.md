@@ -64,7 +64,7 @@ In many institutions, securing an attachment is challenging due to manual proces
 ## 🛠 Tech Stack
 
 - **Frontend:** HTML, CSS
-- **Backend:** Node.js, Express.js
+- **Backend:** PHP
 - **Database:** MySQL
 - **Dev Tools:** VS Code, GitHub
 - **Methodology:** Agile
@@ -177,7 +177,6 @@ DB_PASS=your_password
 - **Vincent Omondi Owuor** — SIT/B/01-02924/2022
 - **Richard Ochieng Odiwuor** — SIT/B/01-02904/2022
 - **Vera** — SIT/B/01-0/
-- **Peter** — SIT/B/01-0/
 - **Phenius Mutiga** - SIT/B/01-01631/2018
 
 ---

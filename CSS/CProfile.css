@@ -64,6 +64,7 @@ body {
     flex-direction: column;
 }
 
+<<<<<<< HEAD
 /* Push content to fill available space */
 .content {
     flex: 1;
@@ -86,4 +87,16 @@ footer {
     position: absolute;
     bottom: 0;
     left: 0;
+=======
+/*Copyright */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color:#007bff;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+>>>>>>> origin/main
 }

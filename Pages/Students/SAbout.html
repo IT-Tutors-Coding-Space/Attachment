@@ -3,155 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - AttachME</title>
-    <link rel="stylesheet" href="../../CSS/SAbout.css">
-    <!-- <link rel="stylesheet" href="../../CSS/SDashboard.css"> -->
-    <link rel="icon" href="../../Images/logo.png" type="image/png">
+    <title>About AttachME - Student Portal</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/about.css">
 </head>
-<body>
-    <header>
-        <style>
-            header {
-    background: hsl(240, 9%, 98%);
-    color: #141212;
-    padding: 10px;
-    position: sticky;
-    font-size: 17px;
-    display: flex;
-    border-radius: 1px;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    /* z-index: 1000; */
-}
+<body class="bg-gray-100 d-flex flex-column min-vh-100">
+    
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+        <div class="container-fluid d-flex justify-content-between">
+            <h2 class="text-white fw-bold fs-3">AttachME - About Us</h2>
+            <a href="../Students/SDashboard.html" class="btn btn-outline-light">🏠 Dashboard</a>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container p-5 flex-grow-1">
+        <header class="text-center mb-4">
+            <h1 class="text-3xl fw-bold">Welcome to AttachME</h1>
+            <p class="text-muted">Empowering students through seamless attachment opportunities.</p>
+        </header>
 
-header .logo {
-    display: flex;
-    align-items: center;
-}
-
-header .logo img {
-    height: 120px;
-    width: 120px;
-    margin-right: 5px;
-    border-radius: 50%;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 25px;
-    font-weight: 800;
-    font-size: 20px;
-    color: #000;
-    padding: 20px;
-    background-color: hsl(207, 100%, 98%);
-}
-
-nav ul li {
-    position: relative;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #141516;
-    padding: 5px 1px;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-nav ul li a:hover {
-    background: #5080e0;
-}
-
-/* Dropdown Menu */
-nav ul .dropdown-menu {
-    display: none;
-    position: relative;
-    top: 0;
-    left: 10%;
-    background: #edeff1;
-    border-radius: 5px;
-    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-    /* z-index: 1; */
-}
-
-nav ul .dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-
-
-
-        </style>
-        <h1>About AttachME</h1>
-
-        <!-- Header with Navigation -->
-    <!-- <header> -->
-        <div class="logo">
-            <!-- <img src="../../Images/logo.png" alt="AttachME Logo"> -->
-            <!-- <h1>AttachME</h1>
-            <p>Bridging Students to Opportunities, Seamlessly.</p>
-        </div> -->
-        <nav class="navbar">
+        <!-- About Section -->
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+            <h5 class="fw-bold text-primary">Our Mission</h5>
+            <p>AttachME is committed to revolutionizing the way students connect with companies for industrial attachments. We strive to equip students with real-world skills and experiences to enhance their professional journeys.</p>
+            
+            <h5 class="fw-bold text-primary">Our Vision</h5>
+            <p>To be the leading platform that bridges the gap between students and the corporate world by providing verified, accessible, and growth-oriented attachment opportunities.</p>
+            
+            <h5 class="fw-bold text-primary">Core Values</h5>
             <ul>
-                <li><a href="../Students/SDashboard.html">Dashboard</a></li>
-                <li><a href="../Students/SAbout.html">About</a></li>
-                <li><a href="SBrowse.html">Browse</a></li>
-                <li><a href="../Students/SHistory.html">Applications</a></li>
-                <li class="dropdown">
-                    <a href="#">Profile</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#view-profile">View</a></li>
-                        <li><a href="#settings">Settings</a></li>
-                        <li><a href="#logout">Logout</a></li>
-                    </ul>
-                </li>
+                <li>🌍 <strong>Innovation:</strong> Continuously improving our platform to meet industry demands.</li>
+                <li>🤝 <strong>Integrity:</strong> Ensuring transparency and fairness in all applications.</li>
+                <!-- <li>📚 <strong>Empowerment:</strong> Providing students with the resources to excel.</li> -->
+                <li>🚀 <strong>Accessibility:</strong> Making opportunities available to all students.</li>
             </ul>
-        </nav>
-    </header>
-        <!-- <nav>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mt-4">
+            <h5 class="fw-bold text-primary">How It Works</h5>
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li>🎓 <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
+                <li>🏢 <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
+                <li>📊 <strong>For Admins:</strong> Oversee platform operations, ensure compliance, and provide support.</li>
             </ul>
-        </nav> -->
-    <!-- </header> -->
-    <main>
-        <section class="intro">
-            <h2>Welcome to AttachME</h2>
-            <p>At AttachME, we are dedicated to providing top-notch attachment solutions for your business needs. Our team of experts is committed to delivering exceptional service and innovative products that help you achieve your goals.</p>
-        </section>
-        <section class="mission">
-            <h2>Our Mission</h2>
-            <p>Our mission is to empower businesses with reliable and efficient attachment solutions that enhance productivity and drive success. We strive to exceed our clients' expectations through continuous improvement and customer-focused service.</p>
-        </section>
-        <section class="team">
-            <h2>Meet Our Team</h2>
-            <p>Our team is composed of dedicated students who are passionate about building innovative solutions. We work collaboratively to ensure that our application meets the highest standards and provides value to our users.</p>
-            <ol>
-                <li>Hedmon Achacha is our team lead and oversees the operations of the application as we build it. His leadership and vision are crucial in guiding the team towards our goals.</li>
-                <li>Vincent Omondi is the coordinator, managing daily activities and ensuring that the development process runs smoothly. His organizational skills help keep the team on track and focused.</li>
-                <li>Richard Odiwuor is responsible for documentation, making sure that each task performed is well documented and clearly communicated. His attention to detail ensures that our work is thoroughly recorded and easy to understand.</li>
-                <li>Vera Brenda, Phenuis Mutiga, and Peter Okomo are key members and contributors to the project. Their diverse skills and perspectives bring valuable insights and ideas to the team, helping us to create a well-rounded and effective application.</li>
-                <li>Although we are still students and may not have extensive experience, our enthusiasm and commitment drive us to learn and grow as we work on this project. We are proud of our progress and excited to continue developing AttachME.</li>
-            </ol>
-        </section>
-        <section class="skills">
-            <h2>Our Professional Skills and Achievements</h2>
-            <p>Our team members possess a diverse set of skills and have achieved significant milestones in their respective fields. Here are some highlights:</p>
+        </div>
+
+        <!-- Why Choose AttachME -->
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mt-4">
+            <h5 class="fw-bold text-primary">Why Choose AttachME?</h5>
             <ul>
-                <li>Hedmon Achacha has led multiple successful projects and has a strong background in project management and software development.</li>
-                <li>Vincent Omondi has coordinated various tech events and hackathons, showcasing his exceptional organizational and leadership skills.</li>
-                <li>Richard Odiwuor has authored several technical documents and guides, demonstrating his expertise in technical writing and documentation.</li>
-                <li>Vera Brenda has developed innovative solutions in web development and has been recognized for her creative problem-solving abilities.</li>
-                <li>Phenuis Mutiga has a strong foundation in data analysis and has contributed to several research projects, highlighting his analytical skills.</li>
-                <li>Peter Okomo has a keen interest in cybersecurity and has participated in numerous cybersecurity competitions, proving his proficiency in the field.</li>
+                <li>✅ User-friendly and intuitive platform for easy navigation.</li>
+                <li>✅ Verified companies and opportunities ensure reliability.</li>
+                <li>✅ Secure application process with real-time updates.</li>
+                <li>✅ Dedicated support system for both students and recruiters.</li>
             </ul>
+<<<<<<< HEAD
             <p>As students, we are continuously learning and growing as we build this application. Our enthusiasm and commitment drive us to overcome challenges and achieve our goals.</p>
         </section>
     </main>
      
+=======
+        </div>
+
+        <!-- Team Section -->
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mt-4 text-center">
+            <h5 class="fw-bold text-primary">Meet Our Team</h5>
+            <p>Behind AttachME is a team with passion dedicated to student career growth.</p>
+            <div class="row g-4 d-flex justify-content-center">
+                <div class="col-md-2">
+                    <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
+                        <img src="../../Images/logo.png" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Hedmon Achacha">
+                        <h6 class="fw-bold mt-2">Hedmon Achacha</h6>
+                        <p class="text-muted">Project Lead</p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
+                        <img src="images/vincent.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Vincent Owuor">
+                        <h6 class="fw-bold mt-2">Vincent Owuor</h6>
+                        <p class="text-muted">Backend Developer</p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
+                        <img src="images/richard.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Richard Ochieng">
+                        <h6 class="fw-bold mt-2">Richard Ochieng</h6>
+                        <p class="text-muted">Frontend Developer</p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
+                        <img src="images/vera.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Vera Brenda">
+                        <h6 class="fw-bold mt-2">Vera Brenda</h6>
+                        <p class="text-muted">UI/UX Designer</p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
+                        <img src="images/pheniuis.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Pheniuis Mutiga">
+                        <h6 class="fw-bold mt-2">Pheniuis Mutiga</h6>
+                        <p class="text-muted">System Analyst</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
+            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+        </div>
+    </footer>
+>>>>>>> origin/main
 </body>
 </html>

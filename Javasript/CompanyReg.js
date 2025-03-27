@@ -1,47 +1,39 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("registrationForm");
+    const signupForm = document.getElementById("companySignupForm");
+    const companyPassword = document.getElementById("companyPassword");
+    const confirmPassword = document.getElementById("confirmCompanyPassword");
+    const togglePassword = document.createElement("span");
+    const toggleConfirmPassword = document.createElement("span");
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent form submission
+    // Add show/hide toggle buttons
+    togglePassword.innerHTML = '<i class="fa fa-eye"></i>';
+    togglePassword.style.cursor = "pointer";
+    togglePassword.classList.add("input-group-text");
+    companyPassword.parentNode.appendChild(togglePassword);
 
-        // Get form values
-        const companyName = document.getElementById("companyName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const website = document.getElementById("website").value.trim();
-        const address = document.getElementById("address").value.trim();
-         
-        const password = document.getElementById("password").value.trim();
-        const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    toggleConfirmPassword.innerHTML = '<i class="fa fa-eye"></i>';
+    toggleConfirmPassword.style.cursor = "pointer";
+    toggleConfirmPassword.classList.add("input-group-text");
+    confirmPassword.parentNode.appendChild(toggleConfirmPassword);
 
-        // Email validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailPattern.test(email)) {
-            alert("Please enter a valid email address.");
-            return;
+    // Toggle password visibility
+    togglePassword.addEventListener("click", function () {
+        if (companyPassword.type === "password") {
+            companyPassword.type = "text";
+            togglePassword.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+            companyPassword.type = "password";
+            togglePassword.innerHTML = '<i class="fa fa-eye"></i>';
         }
+    });
 
-        // Phone number validation (10 digits)
-        const phonePattern = /^[0-9]{10}$/;
-        if (!phonePattern.test(phone)) {
-            alert("Phone number must be 10 digits.");
-            return;
+    toggleConfirmPassword.addEventListener("click", function () {
+        if (confirmPassword.type === "password") {
+            confirmPassword.type = "text";
+            toggleConfirmPassword.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+            confirmPassword.type = "password";
+            toggleConfirmPassword.innerHTML = '<i class="fa fa-eye"></i>';
         }
-
-        // Password matching validation
-        if (password !== confirmPassword) {
-            alert("Passwords do not match.");
-            return;
-        }
-
-        // Check required fields
-        if (!companyName || !email || !phone || !industry || !address || !description || !password || !confirmPassword) {
-            alert("Please fill in all required fields.");
-            return;
-        }
-
-        // Simulating form submission (Replace with actual backend request)
-        alert("Registration successful!");
-        form.reset();
     });
 });

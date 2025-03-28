@@ -1,3 +1,25 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Student") {
+    header("Location: ../../SignUps/Login.php");
+    exit();
+}
+
+$student_id = $_SESSION["user_id"];
+try {
+    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $applicationsStmt = $conn->prepare("SELECT * FROM applications WHERE student_id = ?");
+    $applicationsStmt->execute([$student_id]);
+    $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching data: " . $e->getMessage());
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,14 +40,13 @@
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Students/SDashboard.html" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.html" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
+                <li class="nav-item"><a href="../Students/SDashboard.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Students/SAbout.php" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
 
-                <li class="nav-item"><a href="../Students/SBrowse.html" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.html" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.html" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.html" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-                <li class="nav-item"><a href="../Students/SSettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Students/SBrowse.php" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
+                <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
+                <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
             </ul>
         </div>
     </nav>
@@ -33,7 +54,7 @@
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1">
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Welcome, Student!</h1>
+            <h1 class="text-3xl fw-bold">Welcome, <?php echo htmlspecialchars($student["full_name"]); ?>!</h1>
             <p class="text-muted">Track your applications, explore new opportunities, and manage your profile.</p>
         </header><br><br><br>
 
@@ -72,22 +93,16 @@
                     </tr>
                 </thead>
                 <tbody id="recentApplicationsTable">
-                    <tr>
-                        <td>Software Engineering Internship</td>
-                        <td>Safaricom PLC</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary">View</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Cybersecurity Analyst Internship</td>
-                        <td>KCB Group</td>
-                        <td><span class="badge bg-success">Accepted</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary">View</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($applications as $application): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($application["title"]); ?></td>
+                            <td><?php echo htmlspecialchars($application["company_name"]); ?></td>
+                            <td><span class="badge bg-<?php echo $application["status"] === "Accepted" ? "success" : ($application["status"] === "Pending" ? "warning" : "danger"); ?>">
+                                <?php echo htmlspecialchars($application["status"]); ?>
+                            </span></td>
+                            <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

@@ -1,3 +1,25 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Company") {
+    header("Location: ../../SignUps/Login.php");
+    exit();
+}
+
+$company_id = $_SESSION["user_id"];
+try {
+    $opportunitiesStmt = $conn->prepare("SELECT * FROM opportunities WHERE company_id = ?");
+    $opportunitiesStmt->execute([$company_id]);
+    $opportunities = $opportunitiesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $applicationsStmt = $conn->prepare("SELECT * FROM applications WHERE company_id = ?");
+    $applicationsStmt->execute([$company_id]);
+    $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching data: " . $e->getMessage());
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,23 +91,19 @@
                     </tr>
                 </thead>
                 <tbody id="recentApplicationsTable">
-                    <tr>
-                        <td>Brian Otieno</td>
-                        <td>Software Engineering Internship</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-success">Accept</button>
-                            <button class="btn btn-sm btn-outline-danger">Reject</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Mary Wanjiru</td>
-                        <td>Cybersecurity Analyst Internship</td>
-                        <td><span class="badge bg-success">Accepted</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary">View</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($applications as $application): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($application["student_name"]); ?></td>
+                            <td><?php echo htmlspecialchars($application["opportunity_title"]); ?></td>
+                            <td><span class="badge bg-<?php echo $application["status"] === "Accepted" ? "success" : ($application["status"] === "Pending" ? "warning" : "danger"); ?>">
+                                <?php echo htmlspecialchars($application["status"]); ?>
+                            </span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success">Accept</button>
+                                <button class="btn btn-sm btn-outline-danger">Reject</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

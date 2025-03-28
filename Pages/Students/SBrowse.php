@@ -65,7 +65,7 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../Help Center.html" class="text-white fw-bold">Help Center</a>
             <a href="../Students/Terms of servive.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="tel:+254700234362" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="tel:+254700234362" class="text-white fw-bold">Contact Support: 0796915745</a>
         </div>
     </footer>
     

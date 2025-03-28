@@ -67,7 +67,8 @@
                         <option value="Masters">Masters</option>
                     </select>
                 </div>
-                <div class="mb-3">
+                
+                    <div class="mb-3">
                     <label for="studentYear" class="form-label">Year of Study</label>
                     <select name="year_of_study" class="form-control" id="studentYear" required>
                         <option value="">Select Year</option>

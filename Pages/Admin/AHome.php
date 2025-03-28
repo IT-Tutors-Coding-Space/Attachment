@@ -1,3 +1,28 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Admin") {
+    header("Location: ../../SignUps/Login.php");
+    exit();
+}
+
+try {
+    $totalUsersStmt = $conn->query("SELECT COUNT(*) AS total FROM users");
+    $totalUsers = $totalUsersStmt->fetch(PDO::FETCH_ASSOC)["total"];
+
+    $totalCompaniesStmt = $conn->query("SELECT COUNT(*) AS total FROM companies");
+    $totalCompanies = $totalCompaniesStmt->fetch(PDO::FETCH_ASSOC)["total"];
+
+    $totalOpportunitiesStmt = $conn->query("SELECT COUNT(*) AS total FROM opportunities");
+    $totalOpportunities = $totalOpportunitiesStmt->fetch(PDO::FETCH_ASSOC)["total"];
+
+    $pendingApplicationsStmt = $conn->query("SELECT COUNT(*) AS total FROM applications WHERE status = 'Pending'");
+    $pendingApplications = $pendingApplicationsStmt->fetch(PDO::FETCH_ASSOC)["total"];
+} catch (PDOException $e) {
+    die("Error fetching data: " . $e->getMessage());
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,25 +76,25 @@
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-4 bg-primary text-white rounded-lg">
                     <h5 class="fw-bold fs-5">Total Users</h5>
-                    <h2 id="totalUsers" class="fw-bold fs-3">0</h2>
+                    <h2 id="totalUsers" class="fw-bold fs-3"><?php echo $totalUsers; ?></h2>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-4 bg-success text-white rounded-lg">
                     <h5 class="fw-bold fs-5">Companies</h5>
-                    <h2 id="totalCompanies" class="fw-bold fs-3">0</h2>
+                    <h2 id="totalCompanies" class="fw-bold fs-3"><?php echo $totalCompanies; ?></h2>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-4 bg-warning text-white rounded-lg">
                     <h5 class="fw-bold fs-5">Opportunities</h5>
-                    <h2 id="totalOpportunities" class="fw-bold fs-3">0</h2>
+                    <h2 id="totalOpportunities" class="fw-bold fs-3"><?php echo $totalOpportunities; ?></h2>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-4 bg-danger text-white rounded-lg">
                     <h5 class="fw-bold fs-5">Pending Applications</h5>
-                    <h2 id="totalApplications" class="fw-bold fs-3">0</h2>
+                    <h2 id="totalApplications" class="fw-bold fs-3"><?php echo $pendingApplications; ?></h2>
                 </div>
             </div>
         </div>

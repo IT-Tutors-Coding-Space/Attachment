@@ -64,7 +64,7 @@
                     <label for="confirmAdminPassword" class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input name="password"  type="password" class="form-control" id="confirmAdminPassword" placeholder="Re-enter password" required>
+                        <input name="confirm_password" type="password" class="form-control" id="confirmAdminPassword" placeholder="Re-enter password" required>
                         <span class="input-group-text toggle-password"><i class="fa fa-eye"></i></span>
                     </div>
                 </div>

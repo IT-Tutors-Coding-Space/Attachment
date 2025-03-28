@@ -4,6 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>Student Applications</title>
+    <link rel="stylesheet" href="CTrack.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Student Applications Tracking</h2>
+
+        <input type="text" id="searchInput" placeholder="Search by name...">
+        <select id="filterStatus">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+        </select>
+
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Student Name</th>
+                    <th onclick="sortTable(1)">Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="applicationTable">
+                <!-- Data will be dynamically inserted -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Application Details</h3>
+            <p id="studentDetails"></p>
+            <button class="status-btn" data-status="accepted">Accept</button>
+            <button class="status-btn" data-status="rejected">Reject</button>
+        </div>
+    </div>
+
+    <script src="CTrack.js"></script>
+    <footer>
+        <p>&copy; 2025 AttachME. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
+=======
     <title>Student Applications - AttachME</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -102,3 +151,4 @@
 </body>
 
 </html>
+>>>>>>> origin/main

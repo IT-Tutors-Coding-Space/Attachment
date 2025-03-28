@@ -64,6 +64,12 @@
                 <li>✅ Secure application process with real-time updates.</li>
                 <li>✅ Dedicated support system for both students and recruiters.</li>
             </ul>
+<<<<<<< HEAD
+            <p>As students, we are continuously learning and growing as we build this application. Our enthusiasm and commitment drive us to overcome challenges and achieve our goals.</p>
+        </section>
+    </main>
+     
+=======
         </div>
 
         <!-- Team Section -->
@@ -119,5 +125,6 @@
             <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
         </div>
     </footer>
+>>>>>>> origin/main
 </body>
 </html>

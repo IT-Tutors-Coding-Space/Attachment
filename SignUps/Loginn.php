@@ -1,3 +1,61 @@
+<?php
+require_once "../db.php";
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format";
+    } else {
+        $email = $_POST["email"];
+        $password = $_POST["password"];
+        $role = $_POST["role"];
+
+        try {
+            $table = match ($role) {
+                "admin" => "admins",
+                "company" => "companies",
+                "student" => "students",
+                default => null,
+            };
+
+            if (!$table) {
+                $error = "Invalid role selected";
+            } else {
+                // Debugging: Log the table being queried
+                error_log("Querying table: $table for email: $email");
+
+                $stmt = $conn->prepare("SELECT * FROM $table WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Debugging: Log the fetched user data
+                error_log("Fetched user: " . json_encode($user));
+
+                if (is_array($user) && password_verify($password, $user["password_hash"])) {
+                    $_SESSION["user_id"] = $user["id"] ?? $user["student_id"];
+                    $_SESSION["role"] = ucfirst($role);
+
+                    // Redirect to the appropriate dashboard
+                    $dashboard = match ($role) {
+                        "admin" => "../Pages/Admins/ADashboard.php",
+                        "company" => "../Pages/Companies/CDashboard.php",
+                        "student" => "../Pages/Students/SDashboard.php",
+                    };
+
+                    header("Location: $dashboard");
+                    exit();
+                } else {
+                    $error = "Invalid email or password";
+                }
+            }
+        } catch (PDOException $e) {
+            // Log the database error for debugging
+            error_log("Database Error: " . $e->getMessage());
+            $error = "A server error occurred. Please try again later.";
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +77,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 style="margin-left: 45%;" class="text-white fw-bold fs-3">🔐 AttachME - Login</h2>
-            <!-- <a href="index.html" class="btn btn-outline-light">🏠 Home</a> -->
         </div>
     </nav>
     
@@ -28,8 +85,15 @@
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg w-100" style="max-width: 400px;">
             <h5 class="fw-bold text-center text-primary mb-3">Log In to Your Account</h5>
             
+            <!-- Display Error Message -->
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger text-center">
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Login Form -->
-            <form id="loginForm" class="login-form">
+            <form id="loginForm" class="login-form" method="POST">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
                     <div class="input-group">
@@ -41,7 +105,7 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input name="email" type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        <input name="password" type="password" class="form-control" id="password" placeholder="Enter your password" required>
                         <span class="input-group-text toggle-password"><i class="fa fa-eye"></i></span>
                     </div>
                 </div>
@@ -60,9 +124,6 @@
             <p class="text-center mt-3">
                 <a href="forgot-password.html" class="text-primary fw-bold">Forgot Password?</a>
             </p>
-            <!-- <p class="text-center mt-2">
-                Don't have an account? <a href="student-signup.html" class="text-primary fw-bold">Sign Up</a>
-            </p> -->
         </div>
     </div>
 
@@ -75,37 +136,5 @@
             <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
-    
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="js/login.js"></script>
-    <!-- <script>
-        document.getElementById("loginForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            fetch("../?Login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert("Login successful! Redirecting...");
-                        window.location.href = ""; // Redirect to dashboard
-                    } else {
-                        alert("Login failed: " + data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    alert("An error occurred. Please try again.");
-                });
-        });
-    </script> -->
 </body>
 </html>

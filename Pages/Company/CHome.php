@@ -32,11 +32,7 @@
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Company Dashboard</h1>
             <p class="text-muted">Monitor your posted opportunities, applications, and engagement insights.</p>
-        </header>
-
-        <!-- Dashboard Overview Cards -->
-        <div class="row g-4 mb-4"><br><br><br>
-            <div class="col-md-4">
+        </<div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-primary text-white rounded-lg text-center">
                     <h5 class="fw-bold fs-5">Total Opportunities</h5>
                     <h2 id="totalOpportunities" class="fw-bold fs-3">0</h2>
@@ -107,3 +103,8 @@
     <script src="../../Javasript/CHome.js"></script>
 </body>
 </html>
+header>
+
+        <!-- Dashboard Overview Cards -->
+        <div class="row g-4 mb-4"><br><br><br>
+            

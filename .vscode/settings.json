@@ -27,5 +27,8 @@
             "username": "root"
         }
     ],
-    "codewindProfiling.showProfiling": false
+    "codewindProfiling.showProfiling": false,
+    "cSpell.words": [
+        "attachme"
+    ]
 }

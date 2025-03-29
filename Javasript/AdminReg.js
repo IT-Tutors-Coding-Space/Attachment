@@ -67,6 +67,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    document.getElementById("adminSignupForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+    
+        let formData = new FormData(this);
+    
+        fetch("../SignUps/AdminRegs.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                window.location.href = "../SignUps/Alogin.php"; // Redirect only on success
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+    
+
     // signupForm.addEventListener("submit", function (event) {
     //     if (emailError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
     //         event.preventDefault();

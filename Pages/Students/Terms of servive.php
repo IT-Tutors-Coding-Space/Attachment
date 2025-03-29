@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Terms & Privacy</h2>
-            <a href="../Students/SDashboard.html" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Home</a>
         </div>
     </nav>
     
@@ -82,7 +82,7 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../Help Center.html" class="text-white fw-bold">Help Center</a>
             <a href="../Students/Terms of servive.html" class="text-white fw-bold">Terms & Privacy</a>
-            <a href="../Students/Contact Support.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="../Students/Contact Support.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
     

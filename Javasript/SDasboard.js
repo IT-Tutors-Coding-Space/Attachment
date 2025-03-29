@@ -3,12 +3,47 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Student Dashboard Loaded");
 
-    // Sample data for dashboard stats
-    document.getElementById("totalApplications").innerText = "5";
-    document.getElementById("acceptedApplications").innerText = "2";
-    document.getElementById("pendingApplications").innerText = "3";
-
+    const totalApplicationsElement = document.getElementById("totalApplications");
+    const acceptedApplicationsElement = document.getElementById("acceptedApplications");
+    const pendingApplicationsElement = document.getElementById("pendingApplications");
     const applicationsTable = document.getElementById("recentApplicationsTable");
+
+    // Fetch student dashboard data from the server
+    async function fetchDashboardData() {
+        try {
+            const response = await fetch("../../api/student-dashboard.php");
+            if (!response.ok) {
+                throw new Error("Failed to fetch dashboard data");
+            }
+            const data = await response.json();
+
+            // Update dashboard stats
+            totalApplicationsElement.innerText = data.totalApplications;
+            acceptedApplicationsElement.innerText = data.acceptedApplications;
+            pendingApplicationsElement.innerText = data.pendingApplications;
+
+            // Populate recent applications table
+            applicationsTable.innerHTML = "";
+            data.recentApplications.forEach(application => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${application.opportunity_title}</td>
+                    <td>${application.company_name}</td>
+                    <td><span class="badge bg-${application.status === "Accepted" ? "success" : (application.status === "Pending" ? "warning" : "danger")}">${application.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary">View</button>
+                    </td>
+                `;
+                applicationsTable.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+            alert("Failed to load dashboard data. Please try again later.");
+        }
+    }
+
+    // Fetch data on page load
+    fetchDashboardData();
 
     // Function to view application details
     function viewApplication(button) {
@@ -45,14 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to update dashboard stats dynamically
     function updateDashboardStats(change) {
-        let totalApps = parseInt(document.getElementById("totalApplications").innerText);
-        let pendingApps = parseInt(document.getElementById("pendingApplications").innerText);
+        let totalApps = parseInt(totalApplicationsElement.innerText);
+        let pendingApps = parseInt(pendingApplicationsElement.innerText);
 
         totalApps += change;
         pendingApps += change;
 
-        document.getElementById("totalApplications").innerText = totalApps;
-        document.getElementById("pendingApplications").innerText = pendingApps;
+        totalApplicationsElement.innerText = totalApps;
+        pendingApplicationsElement.innerText = pendingApps;
     }
 
     // Function to refresh applications list dynamically
@@ -71,7 +106,4 @@ document.addEventListener("DOMContentLoaded", () => {
             trackApplication(event.target);
         }
     });
-
-//     // Auto-refresh applications every 30 seconds
-//     setInterval(refreshApplications, 30000);
 });

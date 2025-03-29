@@ -3,7 +3,7 @@ require_once "../../db.php";
 session_start();
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Company") {
-    header("Location: ../../SignUps/Login.php");
+    header("Location: ../../SignUps/Loginn.php");
     exit();
 }
 
@@ -40,11 +40,11 @@ try {
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Company Portal</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Company/CHome.html" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Company/COpportunities.html" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Company/CTrack.html" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Company/CNotifications.html" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Company/CProfile.html" class="nav-link text-white fw-bold fs-5">🏢 Profile</a></li>
+                <li class="nav-item"><a href="../Company/CHome.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Company/COpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
+                <li class="nav-item"><a href="../Company/CTrack.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
+                <li class="nav-item"><a href="../Company/CNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="../Company/CProfile.php" class="nav-link text-white fw-bold fs-5">🏢 Profile</a></li>
             </ul>
         </div>
     </nav>

@@ -2,46 +2,31 @@
 require_once "../db.php";
 session_start();
 
+$error = ""; // Initialize error variable
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Validate email
     if (empty($_POST["email"]) || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email format";
+    } elseif (!isset($_POST["password"]) || empty($_POST["password"])) {
+        $error = "Password field is required.";
     } else {
-        $email = $_POST["email"];
-        $password = $_POST["password"];
-        $role = $_POST["role"] ?? '';
+        $email = trim($_POST["email"]);
+        $password = trim($_POST["password"]);
 
         try {
-            // Map role to table
-            $table = match ($role) {
-                "admin" => "admins",
-                "company" => "companies",
-                "student" => "students",
-                default => null,
-            };
+            $stmt = $conn->prepare("SELECT * FROM admins WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$table) {
-                $error = "Invalid role selected";
+            if ($user && isset($user["password"]) && password_verify($password, $user["password"])) {
+                $_SESSION["user_id"] = $user["admin_id"];
+                $_SESSION["role"] = "admin";
+
+                header("Location: ../Pages/Admin/AHome.php");
+                exit();
             } else {
-                $stmt = $conn->prepare("SELECT * FROM $table WHERE email = ?");
-                $stmt->execute([$email]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if ($user && password_verify($password, $user["password_hash"])) {
-                    $_SESSION["user_id"] = $user["id"] ?? $user["student_id"] ?? $user["company_id"] ?? $user["admin_id"];
-                    $_SESSION["role"] = ucfirst($role);
-
-                    // Redirect to the appropriate dashboard
-                    $dashboard = match ($role) {
-                        "admin" => "../Pages/Admin/AHome.php",
-                        "company" => "../Pages/Company/CHome.php",
-                        "student" => "../Pages/Students/SDashboard.php",
-                    };
-
-                    header("Location: $dashboard");
-                    exit();
-                } else {
-                    $error = "Invalid email or password. Please check your credentials.";
-                }
+                $error = "Invalid email or password. Please check your credentials.";
             }
         } catch (PDOException $e) {
             error_log("Database Error: " . $e->getMessage());
@@ -50,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
-            <h2 style="margin-left: 45%;" class="text-white fw-bold fs-3">🔐 AttachME - Login</h2>
+            <h2 class="text-white fw-bold fs-3" style="margin-left: 45%;">🔐 AttachME - Login</h2>
         </div>
     </nav>
     
@@ -87,7 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php endif; ?>
 
             <!-- Login Form -->
-            <form id="loginForm" class="login-form" method="POST">
+            <form id="loginForm" method="POST">
+                <h6 class="fw-bold text-secondary text-center">👨‍💼 Admin Login</h6>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
                     <div class="input-group">
@@ -103,15 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <span class="input-group-text toggle-password"><i class="fa fa-eye"></i></span>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Select Role</label>
-                    <select name="role" class="form-control" id="role" required>
-                        <option value="">Choose your role</option>
-                        <option value="admin">Admin</option>
-                        <option value="company">Company</option>
-                        <option value="student">Student</option>
-                    </select>
-                </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
             
@@ -120,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </p>
         </div>
     </div>
+    <script src="../js/interact.js"></script>
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
@@ -130,5 +109,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
+    
 </body>
 </html>

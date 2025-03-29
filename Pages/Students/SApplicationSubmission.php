@@ -1,75 +1,66 @@
+<?php
+session_start();
+require "../db.php";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Validate input fields
+    if (empty($_POST["student_name"]) || empty($_POST["student_email"]) || empty($_POST["job_title"]) || empty($_POST["application_details"])) {
+        echo json_encode(["success" => false, "message" => "All fields are required."]);
+        exit();
+    }
+
+    // Validate email format
+    if (!filter_var($_POST["student_email"], FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(["success" => false, "message" => "Invalid email format."]);
+        exit();
+    }
+
+    $student_name = $_POST["student_name"];
+    $student_email = $_POST["student_email"];
+    $job_title = $_POST["job_title"];
+    $application_details = $_POST["application_details"];
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO applications (student_name, student_email, job_title, application_details, created_at) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->execute([$student_name, $student_email, $job_title, $application_details]);
+
+        echo json_encode(["success" => true, "message" => "Application submitted successfully!"]);
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+    }
+}
+?>
+
 <!DOCTYPE html>
-<lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Status - AttachME</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Application Submission - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/student-styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Status</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Students/SDashboard.html" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.html" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
-
-                <li class="nav-item"><a href="../Students/SBrowse.html" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.html" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.html" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.html" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-                <li class="nav-item"><a href="../Students/SSettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
-            </ul>
-        </div>
-    </nav><br><br><br>
-    <div class="container">
-        <link rel="stylesheet" href="../../CSS/SStatus.css">
-        <h1>Application Status</h1>
-
-        <!-- Progress Bar Section -->
-        <div class="status-box">
-            <div id="status-bar" class="status-bar"></div>
-        </div>
-
-        <!-- Status Text -->
-        <div id="status-text" class="status-text">Status: 0%</div>
-
-        <!-- Buttons to simulate different application states -->
-        <div class="buttons">
-            <button onclick="updateStatus('apply')">Apply</button>
-            <button onclick="updateStatus('approved')">Approved</button>
-            <button onclick="updateStatus('picked')">Picked</button>
-            <button onclick="updateStatus('declined')">Declined</button>
-        </div>
+<body>
+    <div class="container mt-5">
+        <h2>Submit Your Application</h2>
+        <form method="POST" action="">
+            <div class="mb-3">
+                <label for="student_name" class="form-label">Your Name</label>
+                <input type="text" class="form-control" name="student_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="student_email" class="form-label">Your Email</label>
+                <input type="email" class="form-control" name="student_email" required>
+            </div>
+            <div class="mb-3">
+                <label for="job_title" class="form-label">Job Title</label>
+                <input type="text" class="form-control" name="job_title" required>
+            </div>
+            <div class="mb-3">
+                <label for="application_details" class="form-label">Application Details</label>
+                <textarea class="form-control" name="application_details" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
     </div>
-
-    <script src="../../Javasript/AApplications.js"></script>
-
-</footer>
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-    <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-    <div class="d-flex justify-content-center gap-4 mt-2">
-        <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-        <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-        <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
-    </div>
-</footer>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom JavaScript -->
-<script src="../../Javasript/CProfile.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom JavaScript -->
-<script src="../../Javasript/CProfile.js"></script>
-
 </body>
 </html>

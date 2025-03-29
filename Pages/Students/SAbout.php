@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - About Us</h2>
-            <a href="../Students/SDashboard.html" class="btn btn-outline-light">🏠 Dashboard</a>
+            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Dashboard</a>
         </div>
     </nav>
     

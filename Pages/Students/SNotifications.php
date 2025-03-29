@@ -22,14 +22,14 @@
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Students/SDashboard.html" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.html" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
+                <li class="nav-item"><a href="../Students/SDashboard.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Students/SAbout.php" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
 
-                <li class="nav-item"><a href="../Students/SBrowse.html" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.html" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.html" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.html" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-                <li class="nav-item"><a href="../Students/SSettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Students/SBrowse.php" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
+                <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
+                <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
+                <li class="nav-item"><a href="../Students/SSettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav>
@@ -73,7 +73,7 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
     

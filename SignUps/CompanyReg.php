@@ -1,3 +1,81 @@
+<?php
+session_start();
+require "../db.php";
+
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Validate input fields
+    if (empty($_POST["company_name"]) || empty($_POST["email"]) || empty($_POST["location"]) || empty($_POST["industry"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {
+        error_log("Registration error: All fields are required.");
+        echo json_encode(["success" => false, "message" => "All fields are required."]);
+        exit();
+    }
+
+    // Validate email format
+    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/', $_POST["email"])) {
+        error_log("Registration error: Invalid email format for email: " . $_POST["email"]);
+
+        echo json_encode(["success" => false, "message" => "Invalid email format"]);
+        exit();
+    }
+
+    // Validate password confirmation
+    if ($_POST["password"] !== $_POST["confirm_password"]) {
+        echo "Passwords do not match.";
+        exit();
+    }
+
+    // Check for duplicate email
+    $email = $_POST["email"];
+    $stmt = $conn->prepare("SELECT * FROM companies WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo json_encode(["success" => false, "message" => "Email is already registered."]);
+        exit();
+    }
+
+    $fullName = $_POST["company_name"];
+    $email = $_POST["email"];
+    $location = $_POST["location"];
+    $industry = $_POST["industry"];
+    $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
+
+    try {
+        $conn->beginTransaction();
+
+        $stmt = $conn->prepare("INSERT INTO companies (company_name, email, location, industry, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+
+        $stmt->execute([$fullName, $email, $location, $industry, $password]);
+        $company_id = $conn->lastInsertId(); // Get the newly inserted company_id
+
+        // Include the user_id in the users table
+        $stmt = $conn->prepare("INSERT INTO users (company_id, email, password_hash, role, created_at) VALUES (?, ?, ?, 'company', NOW())");
+        $stmt->execute([$company_id, $email, $password]);
+        $user_id = $conn->lastInsertId(); // Get the newly inserted user_id
+
+        // Update the companies table with the user_id
+        $stmt = $conn->prepare("UPDATE companies SET user_id = ? WHERE company_id = ?");
+        $stmt->execute([$user_id, $company_id]);
+
+        $_SESSION["user_id"] = $user_id; // Set session user_id to the newly created user_id
+        $_SESSION["role"] = "company"; // Set the role to "company"
+
+        $conn->commit();
+
+        // Redirect to loginn.php after successful registration
+        echo json_encode(["success" => true, "message" => "Registration successful!"]);
+        header("Location: loginn.php");
+        exit();
+    } catch (PDOException $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,8 +96,8 @@
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
-            <h2 style="margin-left: 40%;" class="text-white fw-bold fs-3">🏢 AttachME - Company Sign Up</h2>
-            <a href="index.html" class="btn btn-outline-light">🏠 Home</a>
+            <!-- <h2 style="margin-left: 40%;" class="text-white fw-bold fs-3"> AttachME - Company Sign Up</h2> -->
+            <!-- <a href="index.html" class="btn btn-outline-light"> Home</a> -->
         </div>
     </nav>
     
@@ -42,7 +120,7 @@
                     <label for="companyEmail" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input  name="contact_email" type="email" class="form-control" id="companyEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.company$" placeholder="username@attachme.company" required>
+                        <input name="email" type="email" class="form-control" id="companyEmail" pattern="^[a-zA-Z0-9._%+-]+@attachme\.company$" placeholder="username@gmail.com" quired>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -103,7 +181,7 @@
                     <label for="confirmCompanyPassword" class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input name="password" type="password" class="form-control" id="confirmCompanyPassword" placeholder="Re-enter password" required>
+                        <input name="confirm_password" type="password" class="form-control" id="confirmCompanyPassword" placeholder="Re-enter password" required>
                     </div>
                 </div>
                 <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Company</button>

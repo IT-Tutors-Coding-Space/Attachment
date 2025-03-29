@@ -3,7 +3,12 @@ require_once "../../db.php";
 session_start();
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Admin") {
-    header("Location: ../../SignUps/Login.php");
+    header("Location: ../../SignUps/Alogin.php");
+    exit();
+}
+
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
     exit();
 }
 

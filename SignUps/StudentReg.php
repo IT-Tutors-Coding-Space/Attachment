@@ -2,17 +2,17 @@
 session_start();
 require "../db.php";
 
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
-    if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["level"]) || empty($_POST["gender"]) || empty($_POST["registration_number"]) || empty($_POST["year_of_study"]) || empty($_POST["course"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {
+    if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["level"]) || empty($_POST["year_of_study"]) || empty($_POST["course"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {
+
         echo json_encode(["success" => false, "message" => "All fields are required."]);
         exit();
     }
 
     // Validate email format
-    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["success" => false, "message" => "Invalid email format"]);
+    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/', $_POST["email"])) {
+        echo json_encode(["success" => false, "message" => "Invalid email format. Only @gmail.com is allowed."]);
         exit();
     }
 
@@ -34,8 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $fullName = $_POST["full_name"];
     $email = $_POST["email"];
     $level = $_POST["level"];
-    $gender = $_POST["gender"];
-    $registrationNumber = $_POST["registration_number"];
     $yearOfStudy = $_POST["year_of_study"];
     $course = $_POST["course"];
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
@@ -43,22 +41,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $conn->beginTransaction();
 
-        $stmt = $conn->prepare("INSERT INTO students (full_name, email, level, password_hash, gender, registration_number, year_of_study, course, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $stmt = $conn->prepare("INSERT INTO students (full_name, email, level, password_hash, year_of_study, course, created_at, updated_at) VALUES (?, ?, ?, ?, ?,?, NOW(), NOW())");
 
-        $stmt->execute([$fullName, $email, $level, $password, $gender, $registrationNumber, $yearOfStudy, $course]);
-        $user_id = $conn->lastInsertId(); // Get the newly inserted student_id
+        $stmt->execute([$fullName, $email, $level, $password,$yearOfStudy, $course]);
+        $student_id = $conn->lastInsertId(); // Get the newly inserted student_id
 
-        $_SESSION["user_id"] = $user_id;
-        $_SESSION["role"] = "Student";
-
-        // Include the student_id in the users table
+        // Include the user_id in the users table
         $stmt = $conn->prepare("INSERT INTO users (student_id, email, password_hash, role, created_at) VALUES (?, ?, ?, 'student', NOW())");
-        $stmt->execute([$user_id, $email, $password]);
+        $stmt->execute([$student_id, $email, $password]);
+        $user_id = $conn->lastInsertId(); // Get the newly inserted user_id
+
+        // Update the students table with the user_id
+        $stmt = $conn->prepare("UPDATE students SET user_id = ? WHERE student_id = ?");
+        $stmt->execute([$user_id, $student_id]);
+
+        $_SESSION["user_id"] = $user_id; // Set session user_id to the newly created user_id
+        $_SESSION["role"] = "student";
 
         $conn->commit();
 
         // Redirect to login page after successful registration
-        header("Location: Loginn.php");
+        echo json_encode(["success" => true, "message" => "Registration successful!"]);
+        header(header: "Location: loginn.php");
+
         exit();
     } catch (PDOException $e) {
         if ($conn->inTransaction()) {
@@ -69,3 +74,110 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Sign Up - AttachME</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/signup.css">
+</head>
+<body class="bg-gray-100 d-flex flex-column min-vh-100">
+    
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+        <div class="container-fluid d-flex justify-content-between">
+            <!-- <h2 style="margin-left: 40%;" class="text-white fw-bold fs-3">🎓 AttachME - Student Sign Up</h2> -->
+            <!-- <a href="index.html" class="btn btn-outline-light">Home</a> -->
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container p-5 flex-grow-1 d-flex justify-content-center align-items-center">
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg w-100" style="max-width: 500px;">
+            <h5 class="fw-bold text-center text-primary mb-3">Create Your Student Account</h5>
+            
+            <!-- Student Signup -->
+            <form id="studentSignupForm" class="signup-form" method="POST" action="../SignUps/StudentReg.php">
+                <h6 style="text-align: center;" class="fw-bold text-secondary">🎓 Student Registration</h6>
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input name="full_name" type="text" class="form-control" id="fullName" placeholder="Enter full name" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="studentEmail" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                        <input name="email" type="email" class="form-control" id="studentEmail" placeholder="Enter email" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="studentLevel" class="form-label">Level</label>
+                    <select name="level" class="form-control" id="studentLevel" required>
+                        <option value="">Select Level</option>
+                        <option value="Certificate">Certificate</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Diploma">Degree</option>
+                        <option value="Diploma">Masters</option>
+
+
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="course" class="form-label">Course</label>
+                    <input name="course" type="text" class="form-control" id="course" placeholder="Enter course" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="studentYear" class="form-label">Year of Study</label>
+                    <select name="year_of_study" class="form-control" id="studentYear" required>
+                        <option value="">Select Year</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="studentPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input name="password" type="password" class="form-control" id="studentPassword" placeholder="Create a strong password" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmStudentPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input name="confirm_password" type="password" class="form-control" id="confirmStudentPassword" placeholder="Re-enter password" required>
+                    </div>
+                </div>
+                <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Student</button>
+            </form>
+            
+            <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
+        </div>
+    </div>
+<script src="../Javasript/StudentReg.js"></script>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
+            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "../db.php";
+require_once "../db.php";
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -13,8 +13,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Validate email format
     if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/', $_POST["email"])) {
-        error_log("Registration error: Invalid email format for email: " . $_POST["email"]);
-
         echo json_encode(["success" => false, "message" => "Invalid email format"]);
         exit();
     }
@@ -26,8 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Check for duplicate email
-    $email = $_POST["email"];
-    $stmt = $conn->prepare("SELECT * FROM companies WHERE email = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
     if ($stmt->fetch(PDO::FETCH_ASSOC)) {
         echo json_encode(["success" => false, "message" => "Email is already registered."]);
@@ -38,19 +35,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = $_POST["email"];
     $location = $_POST["location"];
     $industry = $_POST["industry"];
-    $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
+    $password = $_POST["password"]; // Hash the password before storing
+    $hashedpassword = password_hash($password, PASSWORD_DEFAULT); // Hash the password before storing
 
     try {
         $conn->beginTransaction();
+        //insert into companies
 
-        $stmt = $conn->prepare("INSERT INTO companies (company_name, email, location, industry, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
-
-        $stmt->execute([$fullName, $email, $location, $industry, $password]);
+        $stmt = $conn->prepare("INSERT INTO companies (company_name, email, location, industry, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+        $stmt->execute([$fullName, $email, $location, $industry, $hashedpassword]);
         $company_id = $conn->lastInsertId(); // Get the newly inserted company_id
 
         // Include the user_id in the users table
-        $stmt = $conn->prepare("INSERT INTO users (company_id, email, password_hash, role, created_at) VALUES (?, ?, ?, 'company', NOW())");
-        $stmt->execute([$company_id, $email, $password]);
+        $stmt = $conn->prepare("INSERT INTO users (company_id, email, password, role, created_at) VALUES (?, ?, ?, 'company', NOW())");
+        $stmt->execute([$company_id, $email, $hashedpassword]);
         $user_id = $conn->lastInsertId(); // Get the newly inserted user_id
 
         // Update the companies table with the user_id
@@ -64,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Redirect to loginn.php after successful registration
         echo json_encode(["success" => true, "message" => "Registration successful!"]);
-        header("Location: loginn.php");
+        header("Location: Clogin.php");
         exit();
     } catch (PDOException $e) {
         if ($conn->inTransaction()) {

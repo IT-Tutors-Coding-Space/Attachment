@@ -19,14 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && isset($user["password"]) && password_verify($password, $user["password"])) {
+            if ($user && password_verify($password, $user["password"])) {
+                // Debugging: Log the successful verification
+                error_log("Login successful for email: " . $email);
+
+
                 $_SESSION["user_id"] = $user["admin_id"];
                 $_SESSION["role"] = "admin";
 
-                header("Location: ../Pages/Admin/AHome.php");
+                header("Location: ../Pages/Admin/AHome.php"); // Redirect to AHome.php after successful login
                 exit();
             } else {
                 $error = "Invalid email or password. Please check your credentials.";
+                // Debugging: Log the failed login attempt
+                error_log("Failed login attempt for email: " . $email);
+
             }
         } catch (PDOException $e) {
             error_log("Database Error: " . $e->getMessage());

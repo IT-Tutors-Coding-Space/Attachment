@@ -82,6 +82,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success) {
                 window.location.href = "../SignUps/Alogin.php"; // Redirect only on success
             }
+            else{
+                alert(data.message);
+                window.location.href = "../SignUps/Alogin.php"; // Redirect only on failure
+            }
         })
         .catch(error => console.error("Error:", error));
     });

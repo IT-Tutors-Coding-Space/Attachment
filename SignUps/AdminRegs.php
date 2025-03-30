@@ -23,7 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $email = $_POST["email"];
     $adminName = $_POST["full_name"];
-    $password = password_hash($_POST["password"], PASSWORD_BCRYPT); // Secure hashing
+    $password = $_POST["password"]; // Hash the password before storing
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+
+
+
+
+
 
     // Check for duplicate email in `users` table
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
@@ -36,14 +43,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $conn->beginTransaction();
 
+          // Insert into `admins` table
+          $stmt = $conn->prepare("INSERT INTO admins (full_name, email, password, created_at) VALUES (?, ?, ?, NOW())");
+          $stmt->execute([$adminName, $email, $hashedPassword]);
+
+
+          $admin_id=$conn->lastInsertId();
+
         // Insert into `users` table first
-        $stmt = $conn->prepare("INSERT INTO users (email, password_hash, role, created_at) VALUES (?, ?, 'admin', NOW())");
-        $stmt->execute([$email, $password]);
+        $stmt = $conn->prepare("INSERT INTO users (admin_id, email, password, role, created_at) VALUES (?, ?, ?, 'admin', NOW())");
+         $stmt->execute([$admin_id, $email, $hashedPassword]);
+
+
+
         $user_id = $conn->lastInsertId(); // Get the inserted user ID
 
-        // Insert into `admins` table
-        $stmt = $conn->prepare("INSERT INTO admins (user_id, full_name, email, password_hash, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([$user_id, $adminName, $email, $password]);
+      //update the admins table
+      $stmt = $conn->prepare("UPDATE admins SET user_id = ? WHERE admin_id = ?");
+      $stmt->execute([$user_id, $admin_id]);
+
 
         $_SESSION["user_id"] = $user_id;
         $_SESSION["role"] = "admin";
@@ -55,10 +73,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         exit();
     } catch (PDOException $e) {
-        $conn->rollBack();
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
         echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+        exit();
     }
 }
+
 ?>
 
 
@@ -129,26 +151,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
         </div>
     </div>
-<script src="../Javasript/AdminReg.js"></script>
+<script src="/Javasript/AdminReg.js"></script>
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "../db.php";
+require_once "../db.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
@@ -36,21 +36,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $level = $_POST["level"];
     $yearOfStudy = $_POST["year_of_study"];
     $course = $_POST["course"];
-    $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
+    $password= $_POST["password"];
+    $hashedpassword = password_hash($password, PASSWORD_DEFAULT); // Hash the password before storing
 
     try {
         $conn->beginTransaction();
 
-        $stmt = $conn->prepare("INSERT INTO students (full_name, email, level, password_hash, year_of_study, course, created_at, updated_at) VALUES (?, ?, ?, ?, ?,?, NOW(), NOW())");
+    $stmt = $conn->prepare("INSERT INTO students (full_name, email, level, password, year_of_study, course, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+    $stmt->execute([$fullName, $email, $level, $hashedpassword, $yearOfStudy, $course]);
 
-        $stmt->execute([$fullName, $email, $level, $password,$yearOfStudy, $course]);
-        $student_id = $conn->lastInsertId(); // Get the newly inserted student_id
+    $student_id = $conn->lastInsertId(); // Get the newly inserted student_id
 
-        // Include the user_id in the users table
-        $stmt = $conn->prepare("INSERT INTO users (student_id, email, password_hash, role, created_at) VALUES (?, ?, ?, 'student', NOW())");
-        $stmt->execute([$student_id, $email, $password]);
-        $user_id = $conn->lastInsertId(); // Get the newly inserted user_id
-
+    //insert into users table
+    $stmt = $conn->prepare("INSERT INTO users (student_id, email, password, role, created_at) VALUES (?, ?, ?, 'student', NOW())");
+    $stmt->execute([$student_id, $email, $hashedpassword]);
+    $student_id = $conn->lastInsertId(); // Get the newly inserted student_id
+    $user_id = $conn->lastInsertId(); // Get the inserted user ID
         // Update the students table with the user_id
         $stmt = $conn->prepare("UPDATE students SET user_id = ? WHERE student_id = ?");
         $stmt->execute([$user_id, $student_id]);
@@ -62,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Redirect to login page after successful registration
         echo json_encode(["success" => true, "message" => "Registration successful!"]);
-        header(header: "Location: loginn.php");
+        header(header: "Location: Slogin.php");
 
         exit();
     } catch (PDOException $e) {

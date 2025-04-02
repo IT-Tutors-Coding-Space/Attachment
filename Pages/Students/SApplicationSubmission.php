@@ -4,20 +4,20 @@ require "../../db.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
-    if (empty($_POST["student_name"]) || empty($_POST["student_email"]) || empty($_POST["job_title"]) || empty($_POST["application_details"])) {
+    if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["title"]) || empty($_POST["application_details"])) {
         echo json_encode(["success" => false, "message" => "All fields are required."]);
         exit();
     }
 
     // Validate email format
-    if (!filter_var($_POST["student_email"], FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
         echo json_encode(["success" => false, "message" => "Invalid email format."]);
         exit();
     }
 
-    $student_name = $_POST["student_name"];
-    $student_email = $_POST["student_email"];
-    $job_title = $_POST["job_title"];
+    $student_name = $_POST["full_name"];
+    $student_email = $_POST["email"];
+    $job_title = $_POST["title"];
     $application_details = $_POST["application_details"];
 
     try {

@@ -1,3 +1,26 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+// Check if the user is logged in
+// if (!isset($_SESSION['admin_id'])) {
+//     header("Location: Alogin.php"); // Redirect to login page if not authenticated
+//     exit();
+// }
+
+// Fetch analytics data from the database
+$stmt = $conn->query("SELECT COUNT(*) AS totalApplications FROM applications");
+$totalApplications = $stmt->fetchColumn();
+
+$stmt = $conn->query("SELECT COUNT(*) AS acceptedApplications FROM applications WHERE status = 'accepted'");
+$acceptedApplications = $stmt->fetchColumn();
+
+$stmt = $conn->query("SELECT COUNT(*) AS rejectedApplications FROM applications WHERE status = 'rejected'");
+$rejectedApplications = $stmt->fetchColumn();
+
+$stmt = $conn->query("SELECT COUNT(*) AS activeCompanies FROM companies WHERE status = 'active'");
+$activeCompanies = $stmt->fetchColumn();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,13 +43,13 @@
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.html" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.html" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.html" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.html" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.html" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.html" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
+                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
+                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
+                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav>
@@ -96,6 +119,6 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/AAnalytics.js"></script>
+    <script src="../../Javasript/AAnalrrrytics.js"></script>
 </body>
 </html>

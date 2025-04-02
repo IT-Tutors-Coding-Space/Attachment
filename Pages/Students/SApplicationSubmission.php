@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "../db.php";
+require "../../db.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields

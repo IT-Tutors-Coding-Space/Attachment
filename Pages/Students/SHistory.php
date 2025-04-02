@@ -1,3 +1,21 @@
+<?php
+require_once '../../db.php';
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') { 
+    header("Location: ../SignUps/Slogin.php");
+    exit(); 
+} 
+
+    $student_id = $_SESSION['user_id'];
+    try {
+        $stmt = $conn->prepare("SELECT * FROM applications WHERE student_id = ? ORDER BY submitted_at DESC");
+        $stmt->execute([$student_id]);
+        $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +59,30 @@
         <h1>Application History</h1>
 
         <div id="history-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Application ID</th>
+                        <th>Position</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($applications)): ?>
+                        <tr>
+                            <td colspan="5">No applications found.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($applications as $application): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($application['opportunity_id']); ?></td>
+                                <td><?php echo htmlspecialchars($application['status']); ?></td>
+                                <td><?php echo htmlspecialchars($application['submitted_at']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
             <!-- History will be dynamically populated here -->
         </div>
 

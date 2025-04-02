@@ -97,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input name="email" type="email" class="form-control" id="email" placeholder="Enter your email" required>
                     </div>
                 </div>
+                
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">

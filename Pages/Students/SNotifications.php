@@ -1,3 +1,26 @@
+<?php
+require_once '../../db.php';
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') { 
+    header("Location: ../SignUps/Slogin.php");
+    exit(); 
+}
+$student_id = $_SESSION['user_id'];
+try {
+    $stmt = $conn->prepare("SELECT * FROM messages WHERE sender_id = ? ORDER BY sent_at DESC");
+    $stmt->execute([$student_id]);
+    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +57,13 @@
         </div>
     </nav>
     
-    
+    <h1>Notifications</h1>
+    <ul>
+        <?php foreach ($messages as $message): ?>
+            <li><?php echo $message['message']; ?></li>
+        </li>
+        <?php endforeach; ?>
+    </ul>
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1">
         <h4 class="fw-bold text-primary">📩 Messages</h4>

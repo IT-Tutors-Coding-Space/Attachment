@@ -1,3 +1,23 @@
+<?php
+require_once "../../db.php";
+session_start();
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student"){
+    header("Location: ../../SignUps/Slogin.php");
+    exit();
+}
+$student_id = $_SESSION["user_id"];
+try {
+    $stmt = $conn->prepare("SELECT * FROM opportunities");
+    $stmt->execute();
+    $opportunities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,15 +59,17 @@
 
         <!-- Opportunities List --> 
         <div class="row g-4" id="opportunitiesList">
+            <?php foreach ($opportunities as $opportunity):  ?>
             <!-- Sample Opportunity Card -->
             <div class="col-md-6"><br><br>
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">Software Engineering Internship</h5>
-                    <p class="text-muted">Safaricom PLC - Nairobi, Kenya</p>
-                    <p><strong>Deadline:</strong> April 30, 2025</p>
+                    <h5 class="fw-bold"><?php echo htmlspecialchars($opportunity["title"]); ?> </h5>
+                    <p class="text-muted"><?php echo htmlspecialchars($opportunity["company_name"]); ?></p>
+                    <p><strong>Deadline:</strong><?php echo htmlspecialchars($opportunity["deadline"]); ?></p>
                     <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
                 </div>
             </div>
+            <?php endforeach; ?>
             <div class="col-md-6"><br><br>
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
                     <h5 class="fw-bold">Cybersecurity Analyst Internship</h5>
@@ -75,3 +97,4 @@
     <script src="../../Javasript/SBrowse.js"></script>
 </body>
 </html>
+ 

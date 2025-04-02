@@ -29,10 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const rows = userTableBody.querySelectorAll("tr");
 
         rows.forEach(row => {
-            const name = row.children[1].innerText.toLowerCase();
-            const email = row.children[2].innerText.toLowerCase();
+            const email = row.children[1].innerText.toLowerCase();
             
-            if (name.includes(searchText) || email.includes(searchText)) {
+            if (email.includes(searchText)) {
                 row.style.display = "";
             } else {
                 row.style.display = "none";
@@ -40,56 +39,43 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Function to add a new user
-    function addUser() {
-        const name = prompt("Enter user name:");
-        const email = prompt("Enter user email:");
-        const role = prompt("Enter user role (student/company/admin):").toLowerCase();
-
-        if (name && email && (role === "student" || role === "company" || role === "admin")) {
-            const newRow = document.createElement("tr");
-            newRow.setAttribute("data-role", role);
-            newRow.innerHTML = `
-                <td>NEW</td>
-                <td>${name}</td>
-                <td>${email}</td>
-                <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-warning" onclick="editUser(this)">Edit</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(this)">Delete</button>
-                </td>
-            `;
-            userTableBody.appendChild(newRow);
-        } else {
-            alert("Invalid input. User not added.");
-        }
-    }
-
     // Function to edit a user
     window.editUser = function (button) {
         const row = button.closest("tr");
-        const name = prompt("Edit name:", row.children[1].innerText);
-        const email = prompt("Edit email:", row.children[2].innerText);
-
-        if (name && email) {
-            row.children[1].innerText = name;
-            row.children[2].innerText = email;
-        } else {
-            alert("Edit cancelled or invalid input.");
-        }
+        const userId = row.children[0].innerText; // Assuming the first cell contains the user ID
+        // Redirect to edit user page
+        window.location.href = `editUser.php?user_id=${userId}`; 
     }
 
     // Function to delete a user
     window.deleteUser = function (button) {
         const row = button.closest("tr");
+        const userId = row.children[0].innerText; // Assuming the first cell contains the user ID
+
         if (confirm("Are you sure you want to delete this user?")) {
-            row.remove();
+            // Send AJAX request to deleteUser.php
+            fetch('Pages/Admin/deleteUser.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'user_id': userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('User deleted successfully!');
+                    row.remove(); // Remove the row from the table
+                } else {
+                    alert('Failed to delete user: ' + data.message);
+                }
+            });
         }
     }
 
     // Event Listeners
     roleFilter.addEventListener("change", filterUsers);
     searchUsers.addEventListener("keyup", searchUsersFunction);
-    addUserButton.addEventListener("click", addUser);
 });

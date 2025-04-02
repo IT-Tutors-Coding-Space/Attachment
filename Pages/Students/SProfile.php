@@ -1,3 +1,26 @@
+<?php
+// Include database connection file
+require_once('../../db.php');
+
+// Start session        
+session_start();
+// if (isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+//     // User is logged in and is a student
+//     header("Location: ../../SignUps/Slogin.php");
+//     exit();
+// }
+$student_id = $_SESSION['user_id'];
+try {
+    // Fetch student profile data
+    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching data: " . $e->getMessage();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,14 +69,17 @@
                     <button class="btn btn-outline-secondary" id="changeProfileImage">Change Photo</button>
                 </div>
                 <div class="col-md-8">
+
                     <h5 class="fw-bold">Full Name:</h5>
-                    <p id="profileName">John Marie</p>
+                    <p id="profileName"><?php echo $profile['full_name']; ?></p>
                     <h5 class="fw-bold">Email:</h5>
-                    <p id="profileEmail">johnm@gmail.com</p>
+                    <p id="profileEmail"><?php echo $profile['email']; ?></p>
                     <h5 class="fw-bold">Course:</h5>
-                    <p id="profileCourse">BSc. Computer Science</p>
+                    <p id="profileCourse"><?php echo $profile['course']; ?>   </p>
+                    <h5 class="fw-bold">Level:</h5>
+                    <p id="profileCourse"><?php echo $profile['level']; ?>   </p>
                     <h5 class="fw-bold">Year of Study:</h5>
-                    <p id="profileYear">3rd Year</p>
+                    <p id="profileYear"><?php echo $profile['year_of_study']; ?>  </p>
                 </div>
             </div>
         </div>

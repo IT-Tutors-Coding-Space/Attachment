@@ -1,3 +1,21 @@
+<?php
+// Include database connection file
+require_once('../../db.php');
+
+// Start session
+session_start();
+// if (isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+//     // User is logged in and is a student
+//     header("Location: ../SignUps/Slogin.php");
+//     exit();
+// }
+?>
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +82,7 @@
                         <input class="form-check-input" type="checkbox" id="sessionTimeout">
                         <label class="form-check-label fw-bold" for="sessionTimeout">Enable Session Timeout</label>
                     </div>
-                    <button class="btn btn-danger w-100" id="logoutAll">Log Out from All Devices</button>
+                    <a href="SignUps\logout.php" class="btn btn-danger w-100" id="logout">Log Out</a> 
                 </div>
             </div>
         </div>

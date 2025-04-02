@@ -1,3 +1,66 @@
+<?php
+session_start();
+require_once "../../db.php";
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($data['action'])) {
+    $action = $data['action'];
+    $userId = $_SESSION['user_id'];
+
+    if ($action === 'updateCompanyInfo') {
+        try {
+            $companyName = htmlspecialchars($data['companyName']);
+            $location = htmlspecialchars($data['location']);
+            $contact = htmlspecialchars($data['contact']);
+            $industry = htmlspecialchars($data['industry']);
+
+            $sql = "UPDATE companies SET company_name = ?, location = ?, contact_info = ?, industry = ? WHERE company_id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$companyName, $location, $contact, $industry, $userId]);
+
+            echo json_encode(['success' => true, 'message' => 'Company info updated successfully.']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    } elseif ($action === 'updatePassword') {
+        try {
+            $currentPassword = $data['currentPassword'];
+            $newPassword = $data['newPassword'];
+            $confirmPassword = $data['confirmPassword'];
+
+            $sql = "SELECT password FROM users WHERE user_id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!password_verify($currentPassword, $user['password'])) {
+                echo json_encode(['success' => false, 'message' => 'Incorrect current password.']);
+                exit;
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                echo json_encode(['success' => false, 'message' => 'New passwords do not match.']);
+                exit;
+            }
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $sql = "UPDATE users SET password = ? WHERE user_id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$hashedPassword, $userId]);
+
+            echo json_encode(['success' => true, 'message' => 'Password updated successfully.']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 

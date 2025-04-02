@@ -1,87 +1,167 @@
-// opportunities-script.js
+// COpportunities.js
+document.addEventListener('DOMContentLoaded', function() {
+    const opportunityForm = document.getElementById('opportunityForm');
+    const opportunityTable = document.getElementById('opportunityTable');
+    let currentOpportunityId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("Opportunities Page Loaded");
+    function fetchOpportunities() {
+        fetch('COpportunitiess.php?action=getOpportunities')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    opportunityTable.innerHTML = '';
+                    data.forEach(opportunity => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${opportunity.title}</td>
+                            <td>${opportunity.application_deadline}</td>
+                            <td>${opportunity.available_slots}</td>
+                            <td>${opportunity.status}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary view-btn" data-id="${opportunity.opportunity_id}">View</button>
+                                <button class="btn btn-sm btn-secondary copy-btn" data-id="${opportunity.opportunity_id}">Copy</button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${opportunity.opportunity_id}">Delete</button>
+                            </td>
+                            <td>${opportunity.created_at}</td>
+                            <td>${opportunity.updated_at}</td>
+                        `;
+                        opportunityTable.appendChild(row);
+                    });
+                    addDeleteEventListeners();
+                    addViewEventListeners();
+                    addCopyEventListeners();
+                } else {
+                    console.error('Data is not an array:', data);
+                    alert('Error fetching opportunities. Please check the console.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching opportunities:', error);
+                alert('An unexpected error occurred. Please check the console.');
+            });
+    }
 
-    const searchOpportunities = document.getElementById("searchOpportunities");
-    const opportunityTableBody = document.getElementById("opportunityTableBody");
-    const addOpportunityButton = document.getElementById("addOpportunity");
+    function addDeleteEventListeners() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const opportunityId = this.getAttribute('data-id');
+                if (confirm('Are you sure you want to delete this opportunity?')) {
+                    const formData = new FormData();
+                    formData.append('action', 'deleteOpportunity');
+                    formData.append('opportunity_id', opportunityId);
 
-    // Function to search opportunities
-    function searchOpportunitiesFunction() {
-        const searchText = searchOpportunities.value.toLowerCase();
-        const rows = opportunityTableBody.querySelectorAll("tr");
-
-        rows.forEach(row => {
-            const company = row.children[0].innerText.toLowerCase();
-            const title = row.children[1].innerText.toLowerCase();
-            const location = row.children[2].innerText.toLowerCase();
-            
-            if (company.includes(searchText) || title.includes(searchText) || location.includes(searchText)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+                    fetch('COpportunitiess.php', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Opportunity deleted successfully!');
+                            fetchOpportunities();
+                        } else {
+                            alert('Error: ' + data.message);
+                            console.error('Server-side error:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting opportunity:', error);
+                        alert('An unexpected error occurred. Please check the console.');
+                    });
+                }
+            });
         });
     }
 
-    // Function to add a new opportunity
-    function addOpportunity() {
-        const company = prompt("Enter company name:");
-        const title = prompt("Enter opportunity title:");
-        const location = prompt("Enter location:");
-        const deadline = prompt("Enter application deadline:");
-        const slots = prompt("Enter available slots:");
-        
-        if (company && title && location && deadline && slots) {
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td>${company}</td>
-                <td>${title}</td>
-                <td>${location}</td>
-                <td>${deadline}</td>
-                <td>${slots}</td>
-                <td><span class="badge bg-success">Open</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-warning" onclick="editOpportunity(this)">Edit</button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteOpportunity(this)">Delete</button>
-                </td>
-            `;
-            opportunityTableBody.appendChild(newRow);
+    function addViewEventListeners() {
+        const viewButtons = document.querySelectorAll('.view-btn');
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const opportunityId = this.getAttribute('data-id');
+                currentOpportunityId = opportunityId;
+                fetch('COpportunitiess.php?action=getOpportunities')
+                    .then(response => response.json())
+                    .then(data => {
+                        const opportunity = data.find(o => o.opportunity_id === parseInt(opportunityId));
+                        if (opportunity) {
+                            document.getElementById('title').value = opportunity.title;
+                            document.getElementById('deadline').value = opportunity.application_deadline;
+                            document.getElementById('description').value = opportunity.description;
+                            document.getElementById('positions').value = opportunity.available_slots;
+                            $('#createOpportunityModal').modal('show');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching opportunity details:', error);
+                        alert('An unexpected error occurred. Please check the console.');
+                    });
+            });
+        });
+    }
+
+    function addCopyEventListeners() {
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const opportunityId = this.getAttribute('data-id');
+                fetch('COpportunitiess.php?action=getOpportunities')
+                    .then(response => response.json())
+                    .then(data => {
+                        const opportunity = data.find(o => o.opportunity_id === parseInt(opportunityId));
+                        if (opportunity) {
+                            navigator.clipboard.writeText(JSON.stringify(opportunity)).then(() => {
+                                alert('Opportunity data copied to clipboard!');
+                            }).catch(err => {
+                                console.error('Could not copy text: ', err);
+                                alert('Could not copy opportunity data.');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching opportunity details:', error);
+                        alert('An unexpected error occurred. Please check the console.');
+                    });
+            });
+        });
+    }
+
+    opportunityForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(opportunityForm);
+        console.log('Form Data:', formData);
+
+        if (currentOpportunityId) {
+            formData.append('action', 'updateOpportunity');
+            formData.append('opportunity_id', currentOpportunityId);
         } else {
-            alert("Invalid input. Opportunity not added.");
+            formData.append('action', 'createOpportunity');
         }
-    }
 
-    // Function to edit an opportunity
-    window.editOpportunity = function (button) {
-        const row = button.closest("tr");
-        const company = prompt("Edit company name:", row.children[0].innerText);
-        const title = prompt("Edit opportunity title:", row.children[1].innerText);
-        const location = prompt("Edit location:", row.children[2].innerText);
-        const deadline = prompt("Edit deadline:", row.children[3].innerText);
-        const slots = prompt("Edit available slots:", row.children[4].innerText);
+        fetch('COpportunitiess.php', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let message = currentOpportunityId ? 'Opportunity "' + document.getElementById('title').value + '" updated successfully!' : 'Opportunity created successfully!';
+                alert(message);
+                $('#createOpportunityModal').modal('hide');
+                opportunityForm.reset();
+                fetchOpportunities();
+                currentOpportunityId = null;
+            } else {
+                alert('Error: ' + data.message);
+                console.error('Server-side error:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('An unexpected error occurred. Please check the console.');
+        });
+    });
 
-        if (company && title && location && deadline && slots) {
-            row.children[0].innerText = company;
-            row.children[1].innerText = title;
-            row.children[2].innerText = location;
-            row.children[3].innerText = deadline;
-            row.children[4].innerText = slots;
-        } else {
-            alert("Edit cancelled or invalid input.");
-        }
-    }
-
-    // Function to delete an opportunity
-    window.deleteOpportunity = function (button) {
-        const row = button.closest("tr");
-        if (confirm("Are you sure you want to delete this opportunity?")) {
-            row.remove();
-        }
-    }
-
-    // Event Listeners
-    searchOpportunities.addEventListener("keyup", searchOpportunitiesFunction);
-    addOpportunityButton.addEventListener("click", addOpportunity);
+    fetchOpportunities();
 });

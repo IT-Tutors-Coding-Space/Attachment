@@ -9,17 +9,37 @@ session_start();
 // }
 
 // Fetch analytics data from the database
-$stmt = $conn->query("SELECT COUNT(*) AS totalApplications FROM applications");
-$totalApplications = $stmt->fetchColumn();
+$totalApplications = $conn->query("SELECT COUNT(*) FROM applications")->fetchColumn();
+$acceptedApplications = $conn->query("SELECT COUNT(*) FROM applications WHERE status = 'Accepted'")->fetchColumn();
+$rejectedApplications = $conn->query("SELECT COUNT(*) FROM applications WHERE status = 'Rejected'")->fetchColumn();
+$activeCompanies = $conn->query("SELECT COUNT(*) FROM companies WHERE status = 'active'")->fetchColumn();
 
-$stmt = $conn->query("SELECT COUNT(*) AS acceptedApplications FROM applications WHERE status = 'accepted'");
-$acceptedApplications = $stmt->fetchColumn();
+// Get applications per company data
+$applicationsPerCompany = $conn->query("
+    SELECT c.company_name, COUNT(a.applications_id) AS application_count 
+    FROM companies c
+    LEFT JOIN opportunities o ON c.company_id = o.company_id
+    LEFT JOIN applications a ON o.opportunities_id = a.opportunities_id
+    GROUP BY c.company_id
+    ORDER BY application_count DESC
+    LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $conn->query("SELECT COUNT(*) AS rejectedApplications FROM applications WHERE status = 'rejected'");
-$rejectedApplications = $stmt->fetchColumn();
+// Get application status distribution
+$statusDistribution = $conn->query("
+    SELECT status, COUNT(*) AS count 
+    FROM applications 
+    GROUP BY status
+")->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $conn->query("SELECT COUNT(*) AS activeCompanies FROM companies WHERE status = 'active'");
-$activeCompanies = $stmt->fetchColumn();
+// Get applications over time (last 30 days)
+$applicationsOverTime = $conn->query("
+    SELECT DATE(submitted_at) AS date, COUNT(*) AS count
+    FROM applications
+    WHERE submitted_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY DATE(submitted_at)
+    ORDER BY date
+")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -118,7 +138,19 @@ $activeCompanies = $stmt->fetchColumn();
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pass PHP data to JavaScript -->
+    <script>
+        const analyticsData = {
+            totalApplications: <?php echo $totalApplications; ?>,
+            acceptedApplications: <?php echo $acceptedApplications; ?>,
+            rejectedApplications: <?php echo $rejectedApplications; ?>,
+            activeCompanies: <?php echo $activeCompanies; ?>,
+            applicationsPerCompany: <?php echo json_encode($applicationsPerCompany); ?>,
+            statusDistribution: <?php echo json_encode($statusDistribution); ?>
+        };
+    </script>
+    
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/AAnalrrrytics.js"></script>
+    <script src="../../Javasript/AAnalytics.js"></script>
 </body>
 </html>

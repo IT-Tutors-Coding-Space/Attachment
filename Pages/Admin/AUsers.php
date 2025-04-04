@@ -78,10 +78,15 @@ session_start();
                                 <td>{$user['role']}</td>
                                 <td><span class='badge " . ($user['status'] == 'Active' ? 'bg-success' : 'bg-danger') . "'>{$user['status']}</span></td>
                                 <td>
-                                <form method='POST' action='editUser.php'>
-                                    <input type='hidden' name='user_id' value='{$user['user_id']}'>
-                                    <button type='submit' class='btn btn-outline-warning btn-sm w-100'>Edit</button>
-                                </form>
+                                <button type='button' class='btn btn-outline-warning btn-sm w-100 mb-1' 
+                                    onclick='openEditModal(
+                                        \"{$user['user_id']}\",
+                                        \"{$user['email']}\",
+                                        \"{$user['role']}\",
+                                        \"{$user['status']}\"
+                                    )'>
+                                    Edit
+                                </button>
                                 <form method='POST' action='deleteUser.php'>
                                     <input type='hidden' name='user_id' value='{$user['user_id']}'>
                                     <button type='submit' class='btn btn-outline-danger btn-sm w-100'>Delete</button>
@@ -104,7 +109,7 @@ session_start();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addUserForm" method="POST" action="">
+                    <form id="addUserForm" method="POST" action="addUser.php">
                         <div class="mb-3">
                             <label for="userType" class="form-label">Select User Type</label>
                             <select class="form-select" id="userType" name="userType" required>
@@ -114,7 +119,62 @@ session_start();
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        <button type="button" class="btn btn-primary" id="proceedToSignup">Proceed to Signup</button>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proceed to Signup</button>
+                    </form>
+                    <script>
+                        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const userType = document.getElementById('userType').value;
+                            const email = document.getElementById('email').value;
+                            
+                            if (!userType || !email) {
+                                alert('Please select a user type and enter an email');
+                                return;
+                            }
+                            
+                            this.submit();
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="POST" action="editUser.php">
+                        <input type="hidden" name="user_id" id="editUserId">
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRole" class="form-label">Role</label>
+                            <select class="form-select" id="editRole" name="role" required>
+                                <option value="student">Student</option>
+                                <option value="company">Company</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>
             </div>
@@ -154,6 +214,17 @@ session_start();
                     row.style.display = 'none';
                 }
             });
+        }
+    </script>
+    <script>
+        function openEditModal(userId, email, role, status) {
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editRole').value = role;
+            document.getElementById('editStatus').value = status;
+            
+            const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            editModal.show();
         }
     </script>
 </body>

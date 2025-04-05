@@ -3,10 +3,10 @@ require_once "../../db.php";
 session_start();
 
 // Check if the user is logged in
-// if (!isset($_SESSION['admin_id'])) {
-//     header("Location: Alogin.php"); // Redirect to login page if not authenticated
-//     exit();
-// }
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
 
 // Fetch analytics data from the database
 $totalApplications = $conn->query("SELECT COUNT(*) FROM applications")->fetchColumn();

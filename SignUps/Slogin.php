@@ -110,7 +110,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </form>
             
             <p class="text-center mt-3">
-                <a href="forgot-password.html" class="text-primary fw-bold">Forgot Password?</a>
+                <a href="forgot_password.php" class="text-primary fw-bold">Forgot Password?</a>
+            </p>
+            <p class="text-center mt-2">
+                Not registered? <a href="StudentReg.php" class="text-primary fw-bold">Create account</a>
             </p>
         </div>
     </div>

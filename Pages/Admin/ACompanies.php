@@ -7,6 +7,10 @@ session_start();
 //     header("Location: Alogin.php"); // Redirect to login page if not authenticated
 //     exit();
 // }
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

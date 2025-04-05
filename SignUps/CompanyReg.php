@@ -185,7 +185,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Company</button>
             </form>
             
-            <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
+            <p class="text-center mt-3">
+                Already registered? <a href="Clogin.php" class="text-primary fw-bold">Login here</a>
+            </p>
         </div>
     </div>
 <script src="../Javasript/CompanyReg.js"></script>

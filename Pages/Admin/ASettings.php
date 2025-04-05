@@ -1,6 +1,14 @@
 <?php
 require_once "../../db.php";
 session_start();
+// DEBUG: <?php var_dump($_SESSION); 
+// 
+
+
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../../Alogin.php");
+    exit();
+}
 
 // Check maintenance mode
 $stmt = $conn->query("SELECT maintenance_mode FROM system_settings LIMIT 1");
@@ -10,12 +18,40 @@ if ($maintenance['maintenance_mode'] && !isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Get current admin data
+// Get current admin data with proper session validation
 $adminData = [];
-if (isset($_SESSION['admin_id'])) {
-    $stmt = $conn->prepare("SELECT * FROM admins WHERE id = ?");
-    $stmt->execute([$_SESSION['admin_id']]);
-    $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
+if (isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id'])) {
+    try {
+        // First try with user_id since that's what's in the session
+        $stmt = $conn->prepare("SELECT admin_id, full_name, email FROM admins WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$adminData) {
+            // Fallback to admin_id if user_id doesn't work
+            $stmt = $conn->prepare("SELECT admin_id, full_name, email FROM admins WHERE admin_id = ?");
+            $stmt->execute([$_SESSION['admin_id']]);
+            $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        
+        if (!$adminData) {
+            // Debug: Log session and query details
+            error_log("Failed to fetch admin data. Session: " . print_r($_SESSION, true));
+            error_log("Last query: " . $stmt->queryString);
+            session_destroy();
+            header("Location: ../../Alogin.php");
+            exit();
+        } else {
+            // Debug: Log successful data retrieval
+            error_log("Admin data retrieved: " . print_r($adminData, true));
+        }
+    } catch (PDOException $e) {
+        error_log("Database error in ASettings.php: " . $e->getMessage());
+        error_log("SQL Query: SELECT * FROM admins WHERE admin_id = " . $_SESSION['admin_id']);
+        $_SESSION['error'] = "Failed to load admin profile. Please try again.";
+        header("Location: ASettings.php");
+        exit();
+    }
 }
 
 // Ensure system_settings table exists
@@ -61,13 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Update admin details
-            $stmt = $conn->prepare("UPDATE admins SET name = ?, email = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE admins SET full_name = ?, email = ? WHERE admin_id = ?");
             $stmt->execute([$adminName, $adminEmail, $_SESSION['admin_id']]);
             
             // Update password if provided
             if (!empty($adminPassword)) {
                 $hashedPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE admins SET password = ? WHERE id = ?");
+                $stmt = $conn->prepare("UPDATE admins SET password = ? WHERE admin_id = ?");
                 $stmt->execute([$hashedPassword, $_SESSION['admin_id']]);
             }
             
@@ -79,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sessionTimeout = intval($_POST['session_timeout'] ?? 30);
             $maintenanceMode = isset($_POST['maintenance_mode']) ? 1 : 0;
             $emailNotifications = isset($_POST['email_notifications']) ? 1 : 0;
-            $maxLoginAttempts = intval($_POST['max_login_attempts'] ?? 5);
+            $maxLoginAttempts = intval($_POST['max_login_attempts'] ?? 8);
             $passwordResetExpiry = intval($_POST['password_reset_expiry'] ?? 24);
             $fileUploadLimit = intval($_POST['file_upload_limit'] ?? 10);
             $defaultUserRole = $_POST['default_user_role'] ?? 'student';
@@ -115,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Send email notification if enabled
             if ($emailNotifications) {
-                $to = 'admin@example.com'; // Replace with actual admin email
+                $to = 'hedmonachacha@gmail.com'; // Replace with actual admin email
                 $subject = 'System Settings Updated';
                 $message = "The following system settings were updated:\n\n"
                     . "Session Timeout: $sessionTimeout minutes\n"
@@ -133,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle logout all devices
         if (isset($_POST['logout_all'])) {
             // Invalidate all sessions except current
-            $stmt = $conn->prepare("UPDATE admins SET session_token = NULL WHERE id = ? AND session_token != ?");
+            $stmt = $conn->prepare("UPDATE admins SET session_token = NULL WHERE admin_id = ? AND session_token != ?");
             $stmt->execute([$_SESSION['admin_id'], session_id()]);
             
             $_SESSION['success'] = 'Logged out from all other devices.';
@@ -199,12 +235,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                         <?php endif; ?>
                         
-                        <label class="fw-bold">Admin Name</label>
+                        <div class="alert alert-info mb-3">
+                            <strong>Logged in as:</strong> <?php echo htmlspecialchars($adminData['full_name'] ?? 'Administrator'); ?>
+                            <div><small>Admin ID: <?php echo htmlspecialchars($_SESSION['admin_id'] ?? ''); ?></small></div>
+                            <!-- DEBUG: <?php var_dump($adminData); ?> -->
+                        </div>
+                        <label class="fw-bold">Full Name</label>
                         <input type="text" class="form-control mb-3" id="adminName" name="full_name" 
-                            value="<?php echo htmlspecialchars($adminData['name'] ?? ''); ?>" required>
+                            value="<?php echo htmlspecialchars($adminData['full_name'] ?? ''); ?>" 
+                            required>
                         <label class="fw-bold">Email Address</label>
                         <input type="email" class="form-control mb-3" id="adminEmail" name="email" 
-                            value="<?php echo htmlspecialchars($adminData['email'] ?? ''); ?>" required>
+                            value="<?php echo htmlspecialchars($adminData['email'] ?? ''); ?>" 
+                            pattern="[a-zA-Z0-9._%+-]+@admin\.attachme$" 
+                            title="Admin email must be in format username@admin.attachme" required>
                         <label class="fw-bold">Change Password</label>
                         <input type="password" class="form-control mb-3" id="adminPassword" name="password" placeholder="Enter new password">
                         <button type="submit" name="update_profile" class="btn btn-primary w-100">Save Changes</button>
@@ -269,7 +313,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="d-grid gap-2">
                             <button type="submit" name="update_settings" class="btn btn-primary">Update System Settings</button>
-                            <button type="submit" name="logout_all" class="btn btn-danger">Log Out from All Devices</button>
                         </div>
                     </div>
                 </div>

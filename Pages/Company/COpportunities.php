@@ -82,12 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">🏠
                         Dashboard</a></li>
-                <li class="nav-item"><a href="COpportunities.php"
-                        class="nav-link text-white fw-bold fs-5 active">📢 Opportunities</a></li>
+                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5 active">📢
+                        Opportunities</a></li>
                 <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5">📄
                         Applications</a></li>
-                <li class="nav-item"><a href="CNotifications.php"
-                        class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">💬
+                        Messages</a></li>
                 <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5">🏢
                         Profile</a></li>
             </ul>

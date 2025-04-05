@@ -1,0 +1,82 @@
+/* General Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Example modern font */
+}
+
+/* Navbar Customization */
+.navbar .nav-link {
+    transition: color 0.2s ease-in-out;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: #ffffff !important;
+    /* Brighter white on hover/active */
+}
+
+/* Card Styling */
+.card {
+    border-radius: .5rem;
+    /* Slightly less rounded */
+    /* Ensure consistent styling for the card */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Styling */
+.form-label.fw-semibold {
+    color: #343a40;
+    /* Darker gray label */
+    margin-bottom: 0.3rem;
+    /* Adjust spacing */
+}
+
+.form-control-lg {
+    font-size: 1rem;
+    /* Adjust size if needed */
+    padding: 0.6rem 1rem;
+}
+
+/* Input focus glow */
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Custom styles for feedback messages */
+#formFeedback {
+    padding: 0.8rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    margin-bottom: 1rem;
+    /* Ensure spacing */
+    font-size: 0.95rem;
+}
+
+#formFeedback.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+#formFeedback.alert-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+/* Add a subtle hover effect to the submit button */
+#opportunityForm button[type="submit"]:hover {
+    opacity: 0.9;
+}
+
+/* Footer Customization */
+footer a.text-white-50:hover {
+    color: #dee2e6 !important;
+    text-decoration: underline;
+}
+
+footer .small {
+    font-size: 0.85em;
+}

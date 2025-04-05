@@ -1,3 +1,14 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
+    header("Location:  ../SignUps/SLogin.php");
+    exit();
+}
+
+$student_id = $_SESSION["user_id"];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

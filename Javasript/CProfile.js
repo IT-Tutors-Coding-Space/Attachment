@@ -1,61 +1,47 @@
-<<<<<<< HEAD
-document.getElementById("saveProfile").addEventListener("click", function () {
-    alert("Profile updated successfully!");
-  });
-  
-  document
-    .getElementById("updatePassword")
-    .addEventListener("click", function () {
-      const currentPassword = document.getElementById("currentPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-  
-      if (newPassword !== confirmPassword) {
-        alert("New passwords do not match!");
-        return;
-      }
-      alert("Password updated successfully!");
-    });
-  
-=======
 document.addEventListener("DOMContentLoaded", function () {
-  const saveProfileBtn = document.getElementById("saveProfile");
-  const updatePasswordBtn = document.getElementById("updatePassword");
+  const profileSettingsForm = document.getElementById("profileSettingsForm");
 
-  saveProfileBtn.addEventListener("click", function () {
-      const companyName = document.getElementById("companyName").value.trim();
-      const location = document.getElementById("location").value.trim();
-      const contact = document.getElementById("contact").value.trim();
+  if (profileSettingsForm) {
+    profileSettingsForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
 
-      if (!companyName || !location || !contact) {
-          alert("Please fill in all fields before saving.");
-          return;
+      // Collect form data
+      const formData = new FormData(profileSettingsForm);
+
+      try {
+        const response = await fetch("CProfile.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          // Handle HTTP errors (e.g., 400, 500)
+          const errorText = await response.text(); // Get the error message from the response.
+          console.error("HTTP Error:", response.status, errorText);
+          alert(
+            "An HTTP error occurred. Please check the console for details."
+          );
+          return; // Stop further execution.
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(result.success);
+          profileSettingsForm.reset(); // Clear the form fields after successful update
+        } else if (result.error) {
+          alert(result.error);
+        } else {
+          // Handle unexpected response format
+          console.error("Unexpected response:", result);
+          alert("An unexpected error occurred.");
+        }
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        alert(
+          "An error occurred while updating the profile. Please check the console for details."
+        );
       }
-
-      alert("Profile updated successfully!");
-  });
-
-  updatePasswordBtn.addEventListener("click", function () {
-      const currentPassword = document.getElementById("currentPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-
-      if (!currentPassword || !newPassword || !confirmPassword) {
-          alert("Please fill in all password fields.");
-          return;
-      }
-
-      if (newPassword.length < 6) {
-          alert("Password must be at least 6 characters long.");
-          return;
-      }
-
-      if (newPassword !== confirmPassword) {
-          alert("New password and confirm password do not match.");
-          return;
-      }
-
-      alert("Password updated successfully!");
-  });
+    });
+  }
 });
->>>>>>> origin/main

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../db.php";
+require_once "../../db.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
@@ -167,7 +167,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Student</button>
             </form>
             
-            <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
+            <p class="text-center mt-3">
+                Already registered? <a href="Slogin.php" class="text-primary fw-bold">Login here</a>
+            </p>
         </div>
     </div>
 <script src="../Javasript/StudentReg.js"></script>

@@ -1,3 +1,46 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+// Check if the user is logged in
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
+
+// Fetch analytics data from the database
+$totalApplications = $conn->query("SELECT COUNT(*) FROM applications")->fetchColumn();
+$acceptedApplications = $conn->query("SELECT COUNT(*) FROM applications WHERE status = 'Accepted'")->fetchColumn();
+$rejectedApplications = $conn->query("SELECT COUNT(*) FROM applications WHERE status = 'Rejected'")->fetchColumn();
+$activeCompanies = $conn->query("SELECT COUNT(*) FROM companies WHERE status = 'active'")->fetchColumn();
+
+// Get applications per company data
+$applicationsPerCompany = $conn->query("
+    SELECT c.company_name, COUNT(a.applications_id) AS application_count 
+    FROM companies c
+    LEFT JOIN opportunities o ON c.company_id = o.company_id
+    LEFT JOIN applications a ON o.opportunities_id = a.opportunities_id
+    GROUP BY c.company_id
+    ORDER BY application_count DESC
+    LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
+
+// Get application status distribution
+$statusDistribution = $conn->query("
+    SELECT status, COUNT(*) AS count 
+    FROM applications 
+    GROUP BY status
+")->fetchAll(PDO::FETCH_ASSOC);
+
+// Get applications over time (last 30 days)
+$applicationsOverTime = $conn->query("
+    SELECT DATE(submitted_at) AS date, COUNT(*) AS count
+    FROM applications
+    WHERE submitted_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY DATE(submitted_at)
+    ORDER BY date
+")->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,13 +63,13 @@
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.html" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.html" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.html" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.html" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.html" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.html" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
+                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
+                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
+                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav>
@@ -95,6 +138,18 @@
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Pass PHP data to JavaScript -->
+    <script>
+        const analyticsData = {
+            totalApplications: <?php echo $totalApplications; ?>,
+            acceptedApplications: <?php echo $acceptedApplications; ?>,
+            rejectedApplications: <?php echo $rejectedApplications; ?>,
+            activeCompanies: <?php echo $activeCompanies; ?>,
+            applicationsPerCompany: <?php echo json_encode($applicationsPerCompany); ?>,
+            statusDistribution: <?php echo json_encode($statusDistribution); ?>
+        };
+    </script>
+    
     <!-- Custom JavaScript -->
     <script src="../../Javasript/AAnalytics.js"></script>
 </body>

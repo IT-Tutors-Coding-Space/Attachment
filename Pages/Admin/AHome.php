@@ -2,11 +2,6 @@
 require_once "../../db.php";
 session_start();
 
-// if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Admin") {
-//     header("Location: ../../SignUps/Alogin.php");
-//     exit();
-// }
-
 if ($_SESSION["role"] !== "admin") {
     header("Location: ../SignUps/Alogin.php");
     exit();
@@ -48,13 +43,13 @@ try {
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.html" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.html" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.html" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.html" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.html" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.html" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.html" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
+                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
+                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
+                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav>
@@ -64,13 +59,13 @@ try {
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Admin Dashboard</h1>
             <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" placeholder="Search...">
-                <button class="btn btn-outline-primary fw-bold fs-5">🔔 Notifications</button>
+                <!-- <input type="text" class="form-control w-50" placeholder="Search..."> -->
+                <!-- <button class="btn btn-outline-primary fw-bold fs-5">🔔 Notifications</button> -->
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle fw-bold fs-5" type="button" data-bs-toggle="dropdown">Admin</button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#profile">Profile</a></li>
-                        <li><a class="dropdown-item" href="#logout">Logout</a></li>
+                        <!-- <li><a class="dropdown-item" href="#profile">Profile</a></li> -->
+                        <li><a class="dropdown-item" href="../api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -118,6 +113,51 @@ try {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/ADashboard.js"></script>
+    <script src="../../Javascript/ADashboard.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.querySelector("input[placeholder='Search...']");
+            const dropdown = document.createElement("div");
+            dropdown.classList.add("dropdown-menu");
+            searchInput.parentNode.insertBefore(dropdown, searchInput.nextSibling);
+
+            searchInput.addEventListener("input", function() {
+                const query = searchInput.value;
+                console.log("Search query:", query); // Debugging log
+                if (query.length > 0) {
+                    fetch(`api/search.php?query=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Search results:", data); // Debugging log
+                            dropdown.innerHTML = ""; // Clear previous results
+                            if (data.length > 0) {
+                                data.forEach(item => {
+                                    const suggestion = document.createElement("a");
+                                    suggestion.classList.add("dropdown-item");
+                                    suggestion.href = "#"; // Add appropriate link if needed
+                                    suggestion.textContent = item.name; // Display user name
+                                    dropdown.appendChild(suggestion);
+                                });
+                            } else {
+                                dropdown.innerHTML = "<div class='dropdown-item'>No results found</div>";
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    dropdown.innerHTML = ""; // Clear dropdown if input is empty
+                }
+            });
+
+            // Logout functionality
+            const logoutButton = document.querySelector(".dropdown-item[href='#logout']");
+            logoutButton.addEventListener("click", function() {
+                fetch("api/logout.php") // Create a logout.php file to handle logout
+                    .then(() => {
+                        window.location.href = "../../SignUps/Alogin.php"; // Redirect to login page
+                    })
+                    .catch(error => console.error('Logout error:', error));
+            });
+        });
+    </script>
 </body>
 </html>

@@ -2,7 +2,8 @@
 $host = "localhost";
 $dbname = "attachme";
 $username = "root";
-$password = "Attachme@Admin";
+$password = "";
+
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

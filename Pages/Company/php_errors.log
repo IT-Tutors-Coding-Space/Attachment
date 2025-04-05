@@ -1,0 +1,15 @@
+[02-Apr-2025 20:52:32 UTC] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known.  in C:\wamp64\www\Attachment\Pages\Company\CProfile.php on line 26
+[02-Apr-2025 20:52:32 UTC] PHP Stack trace:
+[02-Apr-2025 20:52:32 UTC] PHP   1. {main}() C:\wamp64\www\Attachment\Pages\Company\CProfile.php:0
+[02-Apr-2025 20:52:32 UTC] PHP   2. mysqli->__construct($hostname = 'your_servername', $username = 'your_username', $password = '[Sensitive Parameter]', $database = 'your_dbname') C:\wamp64\www\Attachment\Pages\Company\CProfile.php:26
+[02-Apr-2025 20:52:32 UTC] php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known. 
+[02-Apr-2025 20:52:39 UTC] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known.  in C:\wamp64\www\Attachment\Pages\Company\CProfile.php on line 26
+[02-Apr-2025 20:52:39 UTC] PHP Stack trace:
+[02-Apr-2025 20:52:39 UTC] PHP   1. {main}() C:\wamp64\www\Attachment\Pages\Company\CProfile.php:0
+[02-Apr-2025 20:52:39 UTC] PHP   2. mysqli->__construct($hostname = 'your_servername', $username = 'your_username', $password = '[Sensitive Parameter]', $database = 'your_dbname') C:\wamp64\www\Attachment\Pages\Company\CProfile.php:26
+[02-Apr-2025 20:52:39 UTC] php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known. 
+[02-Apr-2025 20:52:50 UTC] PHP Warning:  mysqli::__construct(): php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known.  in C:\wamp64\www\Attachment\Pages\Company\CProfile.php on line 26
+[02-Apr-2025 20:52:50 UTC] PHP Stack trace:
+[02-Apr-2025 20:52:50 UTC] PHP   1. {main}() C:\wamp64\www\Attachment\Pages\Company\CProfile.php:0
+[02-Apr-2025 20:52:50 UTC] PHP   2. mysqli->__construct($hostname = 'your_servername', $username = 'your_username', $password = '[Sensitive Parameter]', $database = 'your_dbname') C:\wamp64\www\Attachment\Pages\Company\CProfile.php:26
+[02-Apr-2025 20:52:50 UTC] php_network_getaddresses: getaddrinfo for your_servername failed: No such host is known. 

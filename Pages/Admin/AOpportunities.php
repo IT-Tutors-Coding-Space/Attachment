@@ -7,6 +7,11 @@ session_start();
 //     header("Location: Slogin.php"); // Redirect to login page if not authenticated
 //     exit();
 // }
+
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
 // ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,15 +49,15 @@ session_start();
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Manage Opportunities</h1>
             <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="Search opportunities...">
-                <button class="btn btn-primary fw-bold fs-5" id="addOpportunity">+ Post Opportunity</button>
+                <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="Search opportunities..." onkeyup="searchOpportunities()">
+                <!-- <a href="OpportunityReg.php" class="btn btn-primary fw-bold fs-5">+ Post Opportunity</a> -->
             </div>
         </header>
 
         <!-- Opportunities Table -->
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
             <h5 class="fw-bold fs-5 mb-3">Opportunities List</h5>
-            <p class="text-muted">Below is a list of available attachment opportunities. You can filter, edit, or remove them as needed.</p>
+            <p class="text-muted">Below is a list of available attachment opportunities. You can filter or remove them as needed.</p>
             <table class="table table-striped">
                 <thead class="bg-dark text-white">
                     <tr>
@@ -70,21 +75,69 @@ session_start();
                     $opportunitiesStmt = $conn->query("SELECT * FROM opportunities");
                     while ($opportunity = $opportunitiesStmt->fetch(PDO::FETCH_ASSOC)) {
                         echo "<tr>
-                                <td>{$opportunity['company']}</td>
+                                <td>{$opportunity['company_id']}</td>
                                 <td>{$opportunity['title']}</td>
                                 <td>{$opportunity['location']}</td>
-                                <td>{$opportunity['deadline']}</td>
-                                <td>{$opportunity['slots']}</td>
+                                <td>{$opportunity['application_deadline']}</td>
+                                <td>{$opportunity['available_slots']}</td>
                                 <td><span class='badge " . ($opportunity['status'] == 'Open' ? 'bg-success' : 'bg-danger') . "'>{$opportunity['status']}</span></td>
                                 <td>
-                                    <button class='btn btn-sm btn-outline-warning'>Edit</button>
-                                    <button class='btn btn-sm btn-outline-danger'>Delete</button>
+                                    
+                                    <form method='POST' action='deleteOpportunity.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this opportunity?\")'>
+                                        <input type='hidden' name='opportunities_id' value='{$opportunity['opportunities_id']}'>
+                                        <button type='submit' class='btn btn-sm btn-outline-danger'>Delete</button>
+                                    </form>
                                 </td>
                               </tr>";
                     }
                 ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Edit Opportunity Modal -->
+    <div class="modal fade" id="editOpportunityModal" tabindex="-1" aria-labelledby="editOpportunityModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOpportunityModalLabel">Edit Opportunity</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editOpportunityForm" method="POST" action="editOpportunity.php" onsubmit="return validateEditForm()">
+                        <input type="hidden" name="opportunities_id" id="editOpportunityId">
+                        <div class="mb-3">
+                            <label for="editTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editTitle" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="editLocation" name="location" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDeadline" class="form-label">Application Deadline</label>
+                            <input type="date" class="form-control" id="editDeadline" name="application_deadline" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSlots" class="form-label">Available Slots</label>
+                            <input type="number" class="form-control" id="editSlots" name="available_slots" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="Open">Open</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -100,7 +153,61 @@ session_start();
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="../../Javasript/AOpportunities.js"></script>
+    <script>
+        function validateEditForm() {
+            const title = document.getElementById('editTitle').value.trim();
+            const description = document.getElementById('editDescription').value.trim();
+            const location = document.getElementById('editLocation').value.trim();
+            const deadline = document.getElementById('editDeadline').value;
+            const slots = document.getElementById('editSlots').value;
+            
+            if (!title || !description || !location || !deadline || !slots) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            if (slots < 1) {
+                alert('Available slots must be at least 1');
+                return false;
+            }
+            return true;
+        }
+
+        // Display success/error messages if present in URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            if (success) {
+                alert(success);
+                // Remove success param from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            if (error) {
+                alert(error);
+                // Remove error param from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
+        function searchOpportunities() {
+            const input = document.getElementById('searchOpportunities').value.toLowerCase();
+            const rows = document.querySelectorAll('#opportunityTableBody tr');
+            
+            rows.forEach(row => {
+                const title = row.cells[1].textContent.toLowerCase();
+                const location = row.cells[2].textContent.toLowerCase();
+                const deadline = row.cells[3].textContent.toLowerCase();
+                
+                if (title.includes(input) || location.includes(input) || deadline.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        
+    </script>
 </body>
 </html>

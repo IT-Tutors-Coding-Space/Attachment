@@ -1,13 +1,23 @@
 <?php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once "../../db.php";
 session_start();
 
 // Check if the user is logged in
-// if (!isset($_SESSION['admin_id'])) {
-//     header("Location: Alogin.php"); // Redirect to login page if not authenticated
-//     exit();
-// }
-// ?>
+
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
+
+// Debug database connection
+if (!$conn) {
+    die("Database connection failed: " . print_r($conn->errorInfo(), true));
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,23 +75,92 @@ session_start();
                 </thead>
                 <tbody id="applicationsTableBody">
                 <?php
-                    $applicationsStmt = $conn->query("SELECT * FROM applications");
-                    while ($application = $applicationsStmt->fetch(PDO::FETCH_ASSOC)) {
-                        echo "<tr>
-                                <td>{$application['full_name']}</td>
-                                <td>{$application['opportunity_title']}</td>
-                                <td>{$application['company_name']}</td>
-                                <td>{$application['application_date']}</td>
-                                <td><span class='badge " . ($application['status'] == 'Accepted' ? 'bg-success' : 'bg-warning') . "'>{$application['status']}</span></td>
-                                <td>
-                                    <button class='btn btn-sm btn-outline-success'>Accept</button>
-                                    <button class='btn btn-sm btn-outline-danger'>Reject</button>
-                                </td>
-                              </tr>";
+                    // Get applications with joined data
+                    $sql = "SELECT a.*, s.full_name, s.email, 
+                            o.title AS opportunity_title, c.company_name AS company_name
+                            FROM applications a
+                            JOIN students s ON a.student_id = s.student_id
+                            JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+                            JOIN companies c ON o.company_id = c.company_id
+                            ORDER BY a.submitted_at DESC";
+                    
+                    echo "<!-- SQL Query: $sql -->";
+                    
+                    try {
+                        $applicationsStmt = $conn->query($sql);
+                        if (!$applicationsStmt) {
+                            throw new Exception("Query failed: " . implode(" ", $conn->errorInfo()));
+                        }
+                        
+                        $rowCount = $applicationsStmt->rowCount();
+                        echo "<!-- Found $rowCount applications -->";
+                        
+                        if ($rowCount === 0) {
+                            echo "<!-- No applications found in database -->";
+                            echo "<tr><td colspan='6' class='text-center'>No applications found</td></tr>";
+                        }
+                        
+                        while ($application = $applicationsStmt->fetch(PDO::FETCH_ASSOC)) {
+                            $statusClass = '';
+                            if ($application['status'] == 'Accepted') {
+                                $statusClass = 'bg-success';
+                            } elseif ($application['status'] == 'Rejected') {
+                                $statusClass = 'bg-danger';
+                            } else {
+                                $statusClass = 'bg-warning';
+                            }
+                            
+                            echo "<tr>
+                                    <td>
+                                        {$application['full_name']}<br>
+                                        <small class='text-muted'>{$application['email']}</small>
+                                    </td>
+                                    <td>{$application['opportunity_title']}</td>
+                                    <td>{$application['company_name']}</td>
+                                    <td>{$application['application_date']}</td>
+                                    <td><span class='badge {$statusClass}'>{$application['status']}</span></td>
+                                    <td>
+                                        <form method='POST' action='updateApplicationStatus.php' style='display:inline;'>
+                                            <input type='hidden' name='application_id' value='{$application['application_id']}'>
+                                            <input type='hidden' name='status' value='Accepted'>
+                                            <button type='submit' class='btn btn-sm btn-outline-success'>Accept</button>
+                                        </form>
+                                        <form method='POST' action='updateApplicationStatus.php' style='display:inline;'>
+                                            <input type='hidden' name='application_id' value='{$application['application_id']}'>
+                                            <input type='hidden' name='status' value='Rejected'>
+                                            <button type='submit' class='btn btn-sm btn-outline-danger'>Reject</button>
+                                        </form>
+                                        <button class='btn btn-sm btn-outline-primary' data-bs-toggle='modal' 
+                                            data-bs-target='#applicationModal{$application['application_id']}'>View</button>
+                                    </td>
+                                  </tr>";
+                        }
+                    } catch (Exception $e) {
+                        echo "<!-- Error: " . htmlspecialchars($e->getMessage()) . " -->";
+                        echo "<tr><td colspan='6' class='text-danger'>Error loading applications: " . 
+                             htmlspecialchars($e->getMessage()) . "</td></tr>";
                     }
                 ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Application Details Modal -->
+    <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Application Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="applicationDetails">
+                    <!-- Content will be loaded via AJAX -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

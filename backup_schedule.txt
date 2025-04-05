@@ -1,0 +1,26 @@
+# Database Backup Schedule
+
+## Backup Type: Incremental  
+## Frequency: Daily  
+## Retention:  
+  - Daily backups: 7 days  
+  - Weekly backups: 4 weeks  
+  - Monthly backups: 12 months  
+
+## Storage Locations:  
+  - Local: C:\backups\database  
+  - Cloud: To be configured  
+
+## Automation:  
+  - Windows Task Scheduler to run daily at 2:00 AM  
+  - Command: C:\wamp64\bin\mysql\mysql8.1.31\bin\mysqldump.exe -u root -pAttachme@Admin attachme > C:\backups\database\backup_%DATE%.sql  
+
+## Monitoring:  
+  - Backup success/failure notifications  
+  - Log file: C:\backups\database\backup.log  
+
+## Next Steps:  
+1. Create C:\backups\database directory  
+2. Set up Windows Task Scheduler job  
+3. Configure cloud storage  
+4. Set up monitoring and alerts

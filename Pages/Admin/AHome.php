@@ -59,13 +59,13 @@ try {
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Admin Dashboard</h1>
             <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" placeholder="Search...">
-                <button class="btn btn-outline-primary fw-bold fs-5">🔔 Notifications</button>
+                <!-- <input type="text" class="form-control w-50" placeholder="Search..."> -->
+                <!-- <button class="btn btn-outline-primary fw-bold fs-5">🔔 Notifications</button> -->
                 <div class="dropdown">
                     <button class="btn btn-dark dropdown-toggle fw-bold fs-5" type="button" data-bs-toggle="dropdown">Admin</button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#profile">Profile</a></li>
-                        <li><a class="dropdown-item" href="#logout">Logout</a></li>
+                        <!-- <li><a class="dropdown-item" href="#profile">Profile</a></li> -->
+                        <li><a class="dropdown-item" href="../api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>

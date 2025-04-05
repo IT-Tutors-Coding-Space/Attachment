@@ -1,3 +1,14 @@
+<?php
+require_once "../../db.php";
+session_start();
+
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
+    header("Location:  ../SignUps/SLogin.php");
+    exit();
+}
+
+$student_id = $_SESSION["user_id"];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +62,7 @@
             <ul>
                 <li>🎓 <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
                 <li>🏢 <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
-                <li>📊 <strong>For Admins:</strong> Oversee platform operations, ensure compliance, and provide support.</li>
+                <li>📊 <strong>For Admins:</strong> Oversee platform operations.</li>
             </ul>
         </div>
 
@@ -64,12 +75,11 @@
                 <li>✅ Secure application process with real-time updates.</li>
                 <li>✅ Dedicated support system for both students and recruiters.</li>
             </ul>
-<<<<<<< HEAD
             <p>As students, we are continuously learning and growing as we build this application. Our enthusiasm and commitment drive us to overcome challenges and achieve our goals.</p>
         </section>
     </main>
      
-=======
+
         </div>
 
         <!-- Team Section -->
@@ -81,35 +91,35 @@
                     <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
                         <img src="../../Images/logo.png" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Hedmon Achacha">
                         <h6 class="fw-bold mt-2">Hedmon Achacha</h6>
-                        <p class="text-muted">Project Lead</p>
+                        <!-- <p class="text-muted">Project Lead</p> -->
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
                         <img src="images/vincent.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Vincent Owuor">
                         <h6 class="fw-bold mt-2">Vincent Owuor</h6>
-                        <p class="text-muted">Backend Developer</p>
+                        <!-- <p class="text-muted">Backend Developer</p> -->
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
                         <img src="images/richard.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Richard Ochieng">
                         <h6 class="fw-bold mt-2">Richard Ochieng</h6>
-                        <p class="text-muted">Frontend Developer</p>
+                        <!-- <p class="text-muted">Frontend Developer</p> -->
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
                         <img src="images/vera.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Vera Brenda">
                         <h6 class="fw-bold mt-2">Vera Brenda</h6>
-                        <p class="text-muted">UI/UX Designer</p>
+                        <!-- <p class="text-muted">UI/UX Designer</p> -->
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="card border-0 shadow-sm p-3 bg-light rounded-lg">
                         <img src="images/pheniuis.jpg" class="rounded-circle mx-auto d-block" width="100" height="100" alt="Pheniuis Mutiga">
-                        <h6 class="fw-bold mt-2">Pheniuis Mutiga</h6>
-                        <p class="text-muted">System Analyst</p>
+                        <h6 class="fw-bold mt-2">Phenius Mutiga</h6>
+                        <!-- <p class="text-muted">System Analyst</p> -->
                     </div>
                 </div>
             </div>
@@ -122,9 +132,8 @@
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
->>>>>>> origin/main
 </body>
 </html>

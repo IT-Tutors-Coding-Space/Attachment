@@ -7,6 +7,10 @@ session_start();
 //     header("Location: Alogin.php"); // Redirect to login page if not authenticated
 //     exit();
 // }
+if ($_SESSION["role"] !== "admin") {
+    header("Location: ../SignUps/Alogin.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,8 +48,8 @@ session_start();
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Manage Companies</h1>
             <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" id="searchCompanies" placeholder="Search companies...">
-                <button class="btn btn-primary fw-bold fs-5">+ Add Company</button>
+                <input type="text" class="form-control w-50" id="searchCompanies" placeholder="Search companies..." onkeyup="searchCompanies()">
+                <a href="../../SignUps/CompanyReg.php" class="btn btn-primary fw-bold fs-5">+ Add Company</a>
             </div>
         </header>
 
@@ -76,14 +80,66 @@ session_start();
                                 <td>{$company['location']}</td>
                                 <td><span class='badge " . ($company['status'] == 'Active' ? 'bg-success' : 'bg-danger') . "'>{$company['status']}</span></td>
                                 <td>
-                                    <button class='btn btn-sm btn-outline-warning'>Edit</button>
-                                    <button class='btn btn-sm btn-outline-danger'>Delete</button>
+                                    <button class='btn btn-sm btn-outline-warning mb-1' 
+                                        onclick='openEditCompanyModal(
+                                            \"{$company['company_id']}\",
+                                            \"{$company['company_name']}\",
+                                            \"{$company['email']}\",
+                                            \"{$company['industry']}\",
+                                            \"{$company['location']}\",
+                                            \"{$company['status']}\"
+                                        )'>Edit</button>
+                                    <form method='POST' action='deleteCompany.php' style='display:inline;'>
+                                        <input type='hidden' name='company_id' value='{$company['company_id']}'>
+                                        <button type='submit' class='btn btn-sm btn-outline-danger'>Delete</button>
+                                    </form>
                                 </td>
                               </tr>";
                     }
                 ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Edit Company Modal -->
+    <div class="modal fade" id="editCompanyModal" tabindex="-1" aria-labelledby="editCompanyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCompanyModalLabel">Edit Company</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCompanyForm" method="POST" action="editCompany.php">
+                        <input type="hidden" name="company_id" id="editCompanyId">
+                        <div class="mb-3">
+                            <label for="editCompanyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="editCompanyName" name="company_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIndustry" class="form-label">Industry</label>
+                            <input type="text" class="form-control" id="editIndustry" name="industry" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="editLocation" name="location" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -99,7 +155,37 @@ session_start();
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="../../Javasript/"></script>
+    <script>
+        function searchCompanies() {
+            const input = document.getElementById('searchCompanies').value.toLowerCase();
+            const rows = document.querySelectorAll('#companyTableBody tr');
+            
+            rows.forEach(row => {
+                const companyName = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+                const industry = row.cells[3].textContent.toLowerCase();
+                const location = row.cells[4].textContent.toLowerCase();
+                
+                if (companyName.includes(input) || email.includes(input) || 
+                    industry.includes(input) || location.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function openEditCompanyModal(companyId, companyName, email, industry, location, status) {
+            document.getElementById('editCompanyId').value = companyId;
+            document.getElementById('editCompanyName').value = companyName;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editIndustry').value = industry;
+            document.getElementById('editLocation').value = location;
+            document.getElementById('editStatus').value = status;
+            
+            const editModal = new bootstrap.Modal(document.getElementById('editCompanyModal'));
+            editModal.show();
+        }
+    </script>
 </body>
 </html>

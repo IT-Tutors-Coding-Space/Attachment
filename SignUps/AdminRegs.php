@@ -10,8 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Validate email format
-    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["success" => false, "message" => "Invalid email format."]);
+    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || 
+        !preg_match("/@admin\.attachme$/", $_POST["email"])) {
+        echo json_encode(["success" => false, "message" => "Admin email must be in format username@admin.attachme"]);
         exit();
     }
 
@@ -128,7 +129,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <label for="adminEmail" class="form-label">Email Address</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input name="email" type="email" class="form-control" id="adminEmail" placeholder="Enter email" required>
+                        <input name="email" type="email" class="form-control" id="adminEmail" 
+                            placeholder="username@admin.attachme" 
+                            pattern="[a-zA-Z0-9._%+-]+@admin\.attachme$" 
+                            title="Admin email must be in format username@admin.attachme" required>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -148,7 +152,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button name="submit" type="submit" class="btn btn-primary w-100">Sign Up as Admin</button>
             </form>
             
-            <p class="text-center mt-3">Already have an account? <a href="login.html" class="text-primary fw-bold">Log In</a></p>
+            <p class="text-center mt-3">
+                Already registered? <a href="Alogin.php" class="text-primary fw-bold">Login here</a>
+            </p>
         </div>
     </div>
 <script src="/Javasript/AdminReg.js"></script>

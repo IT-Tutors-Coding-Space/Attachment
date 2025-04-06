@@ -130,9 +130,9 @@ $student_id = $_SESSION["user_id"];
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
+            <a href="../Students/Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Students/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
 </body>

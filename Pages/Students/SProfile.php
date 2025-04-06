@@ -4,11 +4,11 @@ require_once('../../db.php');
 
 // Start session        
 session_start();
-// if (isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-//     // User is logged in and is a student
-//     header("Location: ../../SignUps/Slogin.php");
-//     exit();
-// }
+if (isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+    // User is logged in and is a student
+   header("Location: ../../SignUps/Slogin.php");
+     exit();
+ }
 $student_id = $_SESSION['user_id'];
 try {
     // Fetch student profile data

@@ -15,12 +15,6 @@ try {
 }
 ?>
 
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 

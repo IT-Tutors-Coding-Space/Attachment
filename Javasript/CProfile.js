@@ -1,61 +1,52 @@
-<<<<<<< HEAD
-document.getElementById("saveProfile").addEventListener("click", function () {
-    alert("Profile updated successfully!");
-  });
-  
-  document
-    .getElementById("updatePassword")
-    .addEventListener("click", function () {
-      const currentPassword = document.getElementById("currentPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-  
-      if (newPassword !== confirmPassword) {
-        alert("New passwords do not match!");
-        return;
-      }
-      alert("Password updated successfully!");
-    });
-  
-=======
 document.addEventListener("DOMContentLoaded", function () {
-  const saveProfileBtn = document.getElementById("saveProfile");
-  const updatePasswordBtn = document.getElementById("updatePassword");
+const profileSettingsForm = document.getElementById("profileSettingsForm");
 
-  saveProfileBtn.addEventListener("click", function () {
-      const companyName = document.getElementById("companyName").value.trim();
-      const location = document.getElementById("location").value.trim();
-      const contact = document.getElementById("contact").value.trim();
+// Fetch company data from PHP (encoded in JSON format)
+const companyData = <?php echo json_encode($companyDetails); ?>;
 
-      if (!companyName || !location || !contact) {
-          alert("Please fill in all fields before saving.");
-          return;
-      }
+// Populate the readonly fields with the company data
+if (companyData) {
+document.getElementById("companyName").value = companyData.company_name;
+document.getElementById("location").value = companyData.location;
+document.getElementById("email").value = companyData.email;
+}
 
-      alert("Profile updated successfully!");
-  });
+// Handle form submission
+if (profileSettingsForm) {
+profileSettingsForm.addEventListener("submit", async function (event) {
+event.preventDefault();
 
-  updatePasswordBtn.addEventListener("click", function () {
-      const currentPassword = document.getElementById("currentPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+// Collect form data
+const formData = new FormData(profileSettingsForm);
 
-      if (!currentPassword || !newPassword || !confirmPassword) {
-          alert("Please fill in all password fields.");
-          return;
-      }
-
-      if (newPassword.length < 6) {
-          alert("Password must be at least 6 characters long.");
-          return;
-      }
-
-      if (newPassword !== confirmPassword) {
-          alert("New password and confirm password do not match.");
-          return;
-      }
-
-      alert("Password updated successfully!");
-  });
+try {
+const response = await fetch("CProfile.php", {
+method: "POST",
+body: formData,
 });
->>>>>>> origin/main
+
+if (!response.ok) {
+const errorText = await response.text();
+console.error("HTTP Error:", response.status, errorText);
+alert(`HTTP Error ${response.status}: ${errorText}`);
+return;
+}
+
+const result = await response.json();
+
+if (result.success) {
+alert(result.success);
+profileSettingsForm.reset();
+} else if (result.error) {
+alert(result.error);
+} else {
+console.error("Unexpected response:", result);
+alert("An unexpected error occurred.");
+}
+} catch (error) {
+console.error("Fetch Error:", error.message);
+alert(`An error occurred: ${error.message}`);
+}
+});
+}
+});

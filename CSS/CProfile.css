@@ -64,7 +64,6 @@ body {
     flex-direction: column;
 }
 
-<<<<<<< HEAD
 /* Push content to fill available space */
 .content {
     flex: 1;
@@ -97,6 +96,16 @@ footer {
     color:#007bff;
     text-align: center;
     padding: 10px;
-    font-weight: bold;
->>>>>>> origin/main
+    font-weight: bold;}
+}
+.footer p{
+    margin: 0;
+    font-size: 0.8em;
+}
+.footer a{
+    color: #007bff;
+    text-decoration: none;
+}
+.footer a:hover{
+    text-decoration: underline;
 }

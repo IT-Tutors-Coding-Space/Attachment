@@ -3,7 +3,7 @@ require_once "../../db.php";
 session_start();
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    header("Location:  ../SignUps/Loginn.php");
+    header("Location:  ../SignUps/Slogin.php");
     exit();
 }
 

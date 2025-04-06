@@ -65,7 +65,7 @@ try {
                     <button class="btn btn-dark dropdown-toggle fw-bold fs-5" type="button" data-bs-toggle="dropdown">Admin</button>
                     <ul class="dropdown-menu">
                         <!-- <li><a class="dropdown-item" href="#profile">Profile</a></li> -->
-                        <li><a class="dropdown-item" href="../SignUps/logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="../api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>

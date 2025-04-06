@@ -60,12 +60,12 @@ try {
         <!-- Opportunities List --> 
         <div class="row g-4" id="opportunitiesList">
             <?php foreach ($opportunities as $opportunity):  ?>
-            <!-- Sample Opportunity Card -->
+            <!-- Opportunity Card -->
             <div class="col-md-6"><br><br>
-                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg" data-opportunity-id="<?php echo htmlspecialchars($opportunity["opportunities_id"]); ?>">
                     <h5 class="fw-bold"><?php echo htmlspecialchars($opportunity["title"]); ?> </h5>
                     <p class="text-muted"><?php echo htmlspecialchars($opportunity["company_name"]); ?></p>
-                    <p><strong>Deadline:</strong><?php echo htmlspecialchars($opportunity["deadline"]); ?></p>
+                    <p><strong>Deadline:</strong><?php echo htmlspecialchars($opportunity["application_deadline"]); ?></p>
                     <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
                 </div>
             </div>
@@ -94,7 +94,7 @@ try {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/SBrowse.js"></script>
+    <script src="../../Javasript/SBrowse.js?v=<?= time() ?>"></script>
 </body>
 </html>
  

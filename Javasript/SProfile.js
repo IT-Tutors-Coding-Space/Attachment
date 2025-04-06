@@ -1,29 +1,29 @@
-// student-profile.js
-
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Student Profile Page Loaded");
 
-    const editProfileBtn = document.getElementById("editProfileBtn");
-    const profileName = document.getElementById("profileName");
-    const profileEmail = document.getElementById("profileEmail");
-    const profileCourse = document.getElementById("profileCourse");
-    const profileYear = document.getElementById("profileYear");
-    const profileImage = document.getElementById("profileImage");
-    const uploadProfileImage = document.getElementById("uploadProfileImage");
-    const changeProfileImage = document.getElementById("changeProfileImage");
+    // Password validation
+    const passwordForm = document.querySelector("form[name='change_password']");
+    if (passwordForm) {
+        passwordForm.addEventListener("submit", (e) => {
+            const newPassword = passwordForm.querySelector("input[name='new_password']").value;
+            const confirmPassword = passwordForm.querySelector("input[name='confirm_password']").value;
 
-    let isEditing = false;
+            // Check password match
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                showToast("New passwords don't match", "error");
+                return;
+            }
 
-    // Function to toggle edit mode
-    editProfileBtn.addEventListener("click", () => {
-        if (!isEditing) {
-            profileName.innerHTML = `<input type='text' class='form-control' value='${profileName.innerText}'>`;
-            profileEmail.innerHTML = `<input type='email' class='form-control' value='${profileEmail.innerText}'>`;
-            profileCourse.innerHTML = `<input type='text' class='form-control' value='${profileCourse.innerText}'>`;
-            profileYear.innerHTML = `<input type='text' class='form-control' value='${profileYear.innerText}'>`;
-            editProfileBtn.innerText = "Save Profile";
-        } else {
-            profileName.innerText = profileName.querySelector("input").value;
+            // Check password strength
+            if (newPassword.length < 8) {
+                e.preventDefault();
+                showToast("Password must be at least 8 characters", "error");
+                return;
+            }
+        });
+    }
+
             profileEmail.innerText = profileEmail.querySelector("input").value;
             profileCourse.innerText = profileCourse.querySelector("input").value;
             profileYear.innerText = profileYear.querySelector("input").value;

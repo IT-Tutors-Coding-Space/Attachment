@@ -2,31 +2,46 @@
 session_start();
 require "../../db.php";
 
+// Check if user is logged in as student
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
+    header("Location: ../../SignUps/Slogin.php");
+    exit();
+}
+
+// Get student info from session
+$student_id = $_SESSION["user_id"];
+$opportunity_id = $_GET["opportunity_id"] ?? null;
+
+// Get opportunity details if ID is provided
+$opportunity = null;
+if ($opportunity_id) {
+    try {
+        $stmt = $conn->prepare("SELECT title, company_name FROM opportunities WHERE opportunities_id = ?");
+        $stmt->execute([$opportunity_id]);
+        $opportunity = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $error = "Error fetching opportunity details: " . $e->getMessage();
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Validate input fields
-    if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["title"]) || empty($_POST["application_details"])) {
-        echo json_encode(["success" => false, "message" => "All fields are required."]);
-        exit();
-    }
-
-    // Validate email format
-    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["success" => false, "message" => "Invalid email format."]);
-        exit();
-    }
-
-    $student_name = $_POST["full_name"];
-    $student_email = $_POST["email"];
-    $job_title = $_POST["title"];
-    $application_details = $_POST["application_details"];
+    $application_details = $_POST["application_details"] ?? '';
+    $opportunity_id = $_POST["opportunities_id"] ?? null;
 
     try {
-        $stmt = $conn->prepare("INSERT INTO applications (student_name, student_email, job_title, application_details, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([$student_name, $student_email, $job_title, $application_details]);
+        // Insert application
+        $stmt = $conn->prepare("
+            INSERT INTO applications 
+            (student_id, opportunities_id, application_details, status, created_at) 
+            VALUES (?, ?, ?, 'Pending', NOW())
+        ");
+        $stmt->execute([$student_id, $opportunity_id, $application_details]);
 
-        echo json_encode(["success" => true, "message" => "Application submitted successfully!"]);
+        $_SESSION["success_message"] = "Application submitted successfully!";
+        header("Location: SApplicationSubmission.php?success=1");
+        exit();
     } catch (PDOException $e) {
-        echo json_encode(["success" => false, "message" => "Error: " . $e->getMessage()]);
+        $error = "Error submitting application: " . $e->getMessage();
     }
 }
 ?>
@@ -38,28 +53,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Submission - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../../Javasript/SApplicationSubmission.js"></script>
 </head>
 <body>
     <div class="container mt-5">
+        <?php if (isset($_GET["success"])): ?>
+            <div class="alert alert-success">
+                <?= $_SESSION["success_message"] ?? "Application submitted successfully!" ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+
         <h2>Submit Your Application</h2>
-        <form method="POST" action="">
-            <div class="mb-3">
-                <label for="student_name" class="form-label">Your Name</label>
-                <input type="text" class="form-control" name="student_name" required>
+        <?php if ($opportunity): ?>
+            <div class="alert alert-info mb-4">
+                <h4>Applying for: <?= htmlspecialchars($opportunity["title"]) ?></h4>
+                <p>Company: <?= htmlspecialchars($opportunity["company_name"]) ?></p>
             </div>
+        <?php endif; ?>
+
+        <form id="applicationForm" method="POST" action="">
+            <input type="hidden" name="opportunity_id" value="<?= htmlspecialchars($opportunity_id) ?>">
+            
             <div class="mb-3">
-                <label for="student_email" class="form-label">Your Email</label>
-                <input type="email" class="form-control" name="student_email" required>
+                <label class="form-label">Application Details</label>
+                <textarea class="form-control" name="application_details" required 
+                    placeholder="Explain why you're a good fit for this opportunity..."></textarea>
             </div>
-            <div class="mb-3">
-                <label for="job_title" class="form-label">Job Title</label>
-                <input type="text" class="form-control" name="job_title" required>
-            </div>
-            <div class="mb-3">
-                <label for="application_details" class="form-label">Application Details</label>
-                <textarea class="form-control" name="application_details" required></textarea>
-            </div>
+            
             <button type="submit" class="btn btn-primary">Submit Application</button>
+            <a href="SBrowse.php" class="btn btn-secondary">Back to Opportunities</a>
         </form>
     </div>
 </body>

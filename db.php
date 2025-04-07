@@ -2,7 +2,7 @@
 $host = "localhost";
 $dbname = "attachme";
 $username = "root";
-$password = "Attachme@Admin";
+$password = "";
 
 
 try {

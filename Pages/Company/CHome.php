@@ -3,7 +3,7 @@ require_once "../../db.php";
 session_start();
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "company") {
-    header("Location: ../../SignUps/Clogin.php");
+    header("Location: ../../SignUps/CLogin.php");
     exit();
 }
 
@@ -128,15 +128,15 @@ try {
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="#help" class="text-white fw-bold">Help Center</a>
-            <a href="#terms" class="text-white fw-bold">Terms of Service</a>
-            <a href="#contact" class="text-white fw-bold">Contact Support</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/CHome.js"></script>
+    <script src="../../Javascript/CHome.js"></script>
 </body>
 </html>

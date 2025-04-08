@@ -145,9 +145,9 @@ if ($_SESSION["role"] !== "admin") {
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="#help" class="text-white fw-bold">Help Center</a>
-            <a href="#terms" class="text-white fw-bold">Terms of Service</a>
-            <a href="#contact" class="text-white fw-bold">Contact Support</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     

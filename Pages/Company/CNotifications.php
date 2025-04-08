@@ -90,16 +90,16 @@
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/CNotifications.js"></script>
+    <script src="../../Javascript/CNotifications.js"></script>
     <script>
         document.getElementById("clearNotificationsBtn").addEventListener("click", function() {
             if (typeof clearNotifications === "function") {

@@ -4,55 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Student Applications</title>
-    <link rel="stylesheet" href="CTrack.css">
-</head>
-
-<body>
-    <div class="container">
-        <h2>Student Applications Tracking</h2>
-
-        <input type="text" id="searchInput" placeholder="Search by name...">
-        <select id="filterStatus">
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Rejected</option>
-        </select>
-
-        <table>
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)">Student Name</th>
-                    <th onclick="sortTable(1)">Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="applicationTable">
-                <!-- Data will be dynamically inserted -->
-            </tbody>
-        </table>
-    </div>
-
-    <div id="applicationModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Application Details</h3>
-            <p id="studentDetails"></p>
-            <button class="status-btn" data-status="accepted">Accept</button>
-            <button class="status-btn" data-status="rejected">Reject</button>
-        </div>
-    </div>
-
-    <script src="CTrack.js"></script>
-    <footer>
-        <p>&copy; 2025 AttachME. All rights reserved.</p>
-    </footer>
-</body>
-
-</html>
-=======
     <title>Student Applications - AttachME</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -138,9 +89,9 @@
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     
@@ -151,4 +102,3 @@
 </body>
 
 </html>
->>>>>>> origin/main

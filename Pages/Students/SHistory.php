@@ -91,6 +91,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
         </div>
     </div>
 
-    <script src="../../Javasript/SHistory.js"></script>
+    <script src="../../Javascript/SHistory.js"></script>
 </body>
 </html>

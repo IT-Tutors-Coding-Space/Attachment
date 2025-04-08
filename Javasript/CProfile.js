@@ -1,77 +1,108 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput");
-  const filterStatus = document.getElementById("filterStatus");
-  const applicationTable = document.getElementById("applicationTable");
-  const applicationModal = new bootstrap.Modal(document.getElementById("applicationModal"));
-  const studentDetails = document.getElementById("studentDetails");
-  
-  let applications = [
-      { name: "Phenius Mutiga", status: "pending" },
-      { name: "Richard Ochieng'", status: "accepted" },
-      { name: "Hedmon Achacha", status: "rejected" },
-      { name: "Vincent Owuor", status: "pending" }
-  ];
-  
-  function renderApplications() {
-      applicationTable.innerHTML = "";
-      applications.forEach((app, index) => {
-          if (filterStatus.value === "all" || filterStatus.value === app.status) {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                  <td>${app.name}</td>
-                  <td><span class="badge bg-${app.status === 'accepted' ? 'success' : app.status === 'rejected' ? 'danger' : 'warning'}">${app.status}</span></td>
-                  <td>
-                      <button class="btn btn-info btn-sm view-btn" data-index="${index}"><i class="fa fa-eye"></i></button>
-                      <button class="btn btn-warning btn-sm edit-btn" data-index="${index}"><i class="fa fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm delete-btn" data-index="${index}"><i class="fa fa-trash"></i></button>
-                  </td>
-              `;
-              applicationTable.appendChild(row);
-          }
-      });
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Company Profile Page Loaded");
+
+  // Password form handling
+  const passwordForm = document.getElementById("passwordForm");
+  if (passwordForm) {
+    passwordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      // Ensure logout redirects properly
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        window.location.href = '../../auth/logout.php';
+
+      // Client-side validation
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      const newPassword = form.querySelector(
+        "input[name='new_password']"
+      ).value;
+      const confirmPassword = form.querySelector(
+        "input[name='confirm_password']"
+      ).value;
+
+      // Check password match
+      if (newPassword !== confirmPassword) {
+        alert("New passwords don't match");
+        return;
+      }
+
+      // Check password strength
+      if (newPassword.length < 8) {
+        alert("Password must be at least 8 characters");
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(window.location.href, {
+          method: "POST",
+          body: formData,
+        });
+
+        // Reload to show success/error message
+        window.location.reload();
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error updating password");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    });
   }
-  
-  searchInput.addEventListener("input", function () {
-      const searchText = searchInput.value.toLowerCase();
-      applications.forEach((app, index) => {
-          const row = applicationTable.rows[index];
-          if (app.name.toLowerCase().includes(searchText)) {
-              row.style.display = "";
-          } else {
-              row.style.display = "none";
-          }
-      });
-  });
-  
-  filterStatus.addEventListener("change", renderApplications);
-  
-  applicationTable.addEventListener("click", function (event) {
-      if (event.target.closest(".view-btn")) {
-          const index = event.target.closest(".view-btn").getAttribute("data-index");
-          const app = applications[index];
-          studentDetails.textContent = `Name: ${app.name} | Status: ${app.status}`;
-          applicationModal.show();
+
+  // Account deletion with confirmation
+  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", async () => {
+      if (
+        !confirm(
+          "WARNING: This will permanently delete your company account and all related data.\n\nAre you absolutely sure?"
+        )
+      ) {
+        return;
       }
 
-      if (event.target.closest(".edit-btn")) {
-          const index = event.target.closest(".edit-btn").getAttribute("data-index");
-          const newStatus = prompt("Update application status (pending, accepted, rejected):", applications[index].status);
-          if (newStatus && ["pending", "accepted", "rejected"].includes(newStatus.toLowerCase())) {
-              applications[index].status = newStatus.toLowerCase();
-              renderApplications();
-          } else {
-              alert("Invalid status entered.");
-          }
+      const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+      if (confirmation !== "DELETE") {
+        alert("Account deletion cancelled");
+        return;
       }
 
-      if (event.target.closest(".delete-btn")) {
-          const index = event.target.closest(".delete-btn").getAttribute("data-index");
-          if (confirm("Are you sure you want to delete this application?")) {
-              applications.splice(index, 1);
-              renderApplications();
-          }
+      const btn = deleteAccountBtn;
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...';
+
+      try {
+        const formData = new FormData();
+        formData.append("delete_account", "true");
+
+        const response = await fetch(window.location.href, {
+          method: "POST",
+          body: formData,
+        });
+
+        // Redirect to login page after deletion
+        window.location.href = "../../SignUps/Clogin.php";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error deleting account");
+        btn.disabled = false;
+        btn.innerHTML = originalText;
       }
-  });
-  
-  renderApplications();
+    });
+  }
 });

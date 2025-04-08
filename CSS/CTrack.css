@@ -1,143 +1,115 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 50px;
-    background-color: #f4f4f4;
+/* Application Card Styles */
+.application-card {
+    transition: all 0.3s ease;
 }
 
-.container {
-    width: 50%;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.application-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-    text-align: center;
+/* Status Badges */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
 }
 
-input,
-select {
-    display: block;
-    width: 100%;
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-accepted {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Document Preview */
+.document-preview {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table,
-th,
-td {
-    border: 1px solid #ddd;
-}
-
-th,
-td {
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background: #007bff;
-    color: white;
-    cursor: pointer;
-}
-
-.modal {
-    display: none;
+/* Loading Overlay */
+#loadingOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
     justify-content: center;
     align-items: center;
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
+#loadingOverlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
 }
 
-<<<<<<< HEAD
-/* Ensure the entire page takes full height */
-html,
-body {
-   height: 100%;
-   margin: 0;
-   display: flex;
-   flex-direction: column;
+/* Table Styles */
+.table-responsive {
+    overflow-x: auto;
 }
 
-/* Push content to fill available space */
-.content {
-   flex: 1;
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Footer Styling */
-footer {
-   background-color: #007bff;
-   /* Blue background */
-   color: white;
-   /* White text */
-   text-align: center;
-   /* Center align text */
-   padding: 15px 0;
-   /* Top and bottom padding */
-   font-size: 16px;
-   /* Professional font size */
-   width: 100%;
-   /* Full width */
-   position: absolute;
-   bottom: 0;
-   left: 0;
-}
-=======
-/*Copyright */
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    color:#007bff;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-} 
-
->>>>>>> origin/main
-.close {
-    float: right;
-    cursor: pointer;
-    font-size: 20px;
-}
- 
-button {
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Alert Styles */
+.alert {
+    border-radius: 0.375rem;
 }
 
-button[data-status="accepted"] {
-    background: #28a745;
+/* Button Styles */
+.btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
     color: white;
 }
 
-button[data-status="rejected"] {
-    background: #dc3545;
+.btn-outline-success {
+    border-color: #198754;
+    color: #198754;
+}
+
+.btn-outline-success:hover {
+    background-color: #198754;
     color: white;
-   }
+}
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Text Muted */
+.text-muted {
+    color: #6c757d !important;
+}

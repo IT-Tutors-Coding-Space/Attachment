@@ -1,187 +1,123 @@
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("Document loaded, initializing application tracking...");
+ // Initialize auto-dismiss for existing alerts
+  autoDismissAlerts();
 
-  const searchInput = document.getElementById("searchInput");
-  const filterStatus = document.getElementById("filterStatus");
-  const applicationTable = document.getElementById("applicationTable");
-  const applicationModal = new bootstrap.Modal(
-    document.getElementById("applicationModal")
-  );
-  const studentDetails = document.getElementById("studentDetails");
-  const acceptBtn = document.getElementById("acceptBtn");
-  const rejectBtn = document.getElementById("rejectBtn");
+  // Form submission handling
+  const opportunityForm = document.getElementById("opportunityForm");
 
-  let applications = [];
-  let currentAppId = null;
+  if (opportunityForm) {
+    opportunityForm.addEventListener("submit", function (e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
 
-  // Fetch applications from server
-  async function fetchApplications() {
-    console.log("Fetching applications...");
-    try {
-      const response = await fetch("getApplications.php");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      applications = await response.json();
-      console.log("Fetched applications:", applications);
-      renderApplications();
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-      alert(
-        "Failed to load applications. Please try again or contact support."
-      );
-    }
-  }
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Posting...';
 
-  // Render applications to the table
-  function renderApplications() {
-    console.log("Rendering applications...");
-    applicationTable.innerHTML = "";
-    const searchTerm = searchInput.value.toLowerCase();
-    const statusFilter = filterStatus.value;
+      // For AJAX form submission
+      e.preventDefault();
 
-    if (applications.length === 0) {
-      applicationTable.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center py-4">No applications found</td>
-                </tr>
-            `;
-      return;
-    }
+      const formData = new FormData(this);
 
-    applications.forEach((app) => {
-      if (
-        (statusFilter === "all" || app.status === statusFilter) &&
-        (app.student_name.toLowerCase().includes(searchTerm) ||
-          app.opportunity_title.toLowerCase().includes(searchTerm))
-      ) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-                    <td>${app.student_name}</td>
-                    <td>${app.opportunity_title}</td>
-                    <td><span class="badge ${getStatusBadgeClass(
-                      app.status
-                    )}">${
-          app.status.charAt(0).toUpperCase() + app.status.slice(1)
-        }</span></td>
-                    <td>${new Date(
-                      app.application_date
-                    ).toLocaleDateString()}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-btn" data-id="${
-                          app.id
-                        }">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                    </td>
-                `;
-        applicationTable.appendChild(row);
-      }
+      fetch(this.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            showAlert(data.message, "success");
+            // Reset form after 2 seconds
+            setTimeout(() => {
+              this.reset();
+              // Hide form if success
+              if (window.location.search.includes("create=true")) {
+                window.location.href = "COpportunities.php";
+              }
+            }, 2000);
+          } else {
+            showAlert(data.message, "danger");
+            // Highlight fields with errors
+            if (data.message.includes("title already exists")) {
+              const titleField = document.getElementById("title");
+              titleField.classList.add("is-invalid");
+              titleField.focus();
+            }
+            if (data.fieldErrors && data.fieldErrors.duration) {
+              const durationField = document.getElementById("duration");
+              durationField.classList.add("is-invalid");
+            }
+          }
+        })
+        .catch((error) => {
+          showAlert(
+            "An unexpected error occurred. Please try again.",
+            "danger"
+          );
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        });
     });
   }
 
-  function getStatusBadgeClass(status) {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "badge-pending";
-      case "accepted":
-        return "badge-accepted";
-      case "rejected":
-        return "badge-rejected";
-      default:
-        return "badge-secondary";
-    }
-  }
+  // Enhanced alert function
+  function showAlert(message, type) {
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll(".alert");
+    existingAlerts.forEach((alert) => alert.remove());
 
-  async function updateApplicationStatus(status) {
-    if (!currentAppId) {
-      console.error("No application ID selected");
-      return;
-    }
+    // Create new alert
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = "alert";
+    alertDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas ${
+                  type === "success"
+                    ? "fa-check-circle"
+                    : "fa-exclamation-triangle"
+                } me-2"></i>
+                <div>${message}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
 
-    console.log(`Updating application ${currentAppId} to status ${status}`);
+    // Add to DOM
+    const container = document.querySelector(".container");
+    if (container) {
+      container.insertBefore(alertDiv, container.firstChild);
 
-    try {
-      const response = await fetch("CTrack.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: currentAppId,
-          status: status,
-        }),
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+        bsAlert.close();
+      }, 10000);
+
+      // Also close when clicked
+      alertDiv.querySelector(".btn-close").addEventListener("click", () => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+        bsAlert.close();
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      if (result.success) {
-        console.log("Update successful:", result.message);
-        fetchApplications();
-        applicationModal.hide();
-      } else {
-        throw new Error(result.message || "Update failed");
-      }
-    } catch (error) {
-      console.error("Error updating application:", error);
-      alert("Failed to update application. Please try again.");
     }
   }
 
-  // Event listeners
-  searchInput.addEventListener("input", renderApplications);
-  filterStatus.addEventListener("change", renderApplications);
+  // Remove error class when user interacts with fields
+  const titleField = document.getElementById("title");
+  if (titleField) {
+    titleField.addEventListener("input", function () {
+      this.classList.remove("is-invalid");
+    });
+  }
 
-  applicationTable.addEventListener("click", function (e) {
-    const viewBtn = e.target.closest(".view-btn");
-    if (viewBtn) {
-      const appId = viewBtn.dataset.id;
-      const application = applications.find((app) => app.id == appId);
-
-      if (application) {
-        currentAppId = appId;
-        console.log("Viewing application:", application);
-        studentDetails.innerHTML = `
-                    <h5>${application.student_name}</h5>
-                    <p><strong>Email:</strong> ${
-                      application.student_email || "N/A"
-                    }</p>
-                    <p><strong>Opportunity:</strong> ${
-                      application.opportunity_title
-                    }</p>
-                    <p><strong>Status:</strong> <span class="badge ${getStatusBadgeClass(
-                      application.status
-                    )}">${
-          application.status.charAt(0).toUpperCase() +
-          application.status.slice(1)
-        }</span></p>
-                    <p><strong>Applied:</strong> ${new Date(
-                      application.application_date
-                    ).toLocaleString()}</p>
-                    <hr>
-                    <h6>Cover Letter</h6>
-                    <div class="border p-2 bg-light">${
-                      application.cover_letter || "No cover letter provided"
-                    }</div>
-                `;
-        applicationModal.show();
-      }
-    }
-  });
-
-  acceptBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to accept this application?")) {
-      updateApplicationStatus("accepted");
-    }
-  });
-
-  rejectBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to reject this application?")) {
-      updateApplicationStatus("rejected");
-    }
-  });
-
-  // Initial load
-  fetchApplications();
+  const durationField = document.getElementById("duration");
+  if (durationField) {
+    durationField.addEventListener("change", function () {
+      this.classList.remove("is-invalid");
+    });
+  }
 });

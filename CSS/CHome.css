@@ -1,4 +1,4 @@
-/* styles.css */
+/* CSS/CHome.css */
 
 /* General Styling */
 * {
@@ -6,196 +6,151 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+html,
 body {
-    --bs-body-font-family: var(--bs-font-monospace);
-    --bs-body-line-height: 1.4;
-    --bs-body-bg: var(--bs-gray-100);
-  }
-  
-  .table {
-    --bs-table-color: var(--bs-gray-600);
-    --bs-table-bg: var(--bs-gray-100);
-    --bs-table-border-color: transparent;
-  }
-
-
-
-
+    height: 100%;
+}
 
 body {
     font-family: 'Inter', sans-serif;
     background: #f9fafb;
     color: #333;
-    padding:5px;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Header */
-.header {
-    display: flex;
+.navbar {
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.nav-link {
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 2rem;
     width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    background: #007bff;
-    color: #fff;
-    padding: 30px;
-    font-weight: 600;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.header .logo {
-    display: flex;
-    align-items: center;
-}
-
-.header .logo img {
-    height: 50px;
-    margin-right: 10px;
-}
-
-.nav ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-}
-
-.nav ul li a {
-    text-decoration: none;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.nav ul li a:hover {
-    background: #0056b3;
-}
-
-/* Dropdown Menu */
-nav ul .dropdown-menu {
-    display:flexbox;
-    position: relative;
-    top:0;
-    left: 1%;
-    background: #0677e9;
-    border-radius: 5px;
-    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-    z-index: 1;
-}
-
-nav ul .dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-/* Main Section */
-.main {
-
-    margin-top: 150px;
-    /* display: grid; */
-    gap: 20px;
-    padding: 20px;
-    width: fit-content;
-}
-
-.quick-stats {
-    display: flex;
-    gap: 20px;
-}
-
+/* Stats Cards */
 .stat-card {
-    background: #fff;
-    padding: 20px;
-    font-weight: 600;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
     text-align: center;
-    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    height: 100%;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
 }
 
-/* Table */
+.stat-card h5 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card h2 {
+    font-size: 2rem;
+    margin-bottom: 0;
+}
+
+/* Application Table */
 .application-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
 }
 
-.application-table th, .application-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
+.application-table th,
+.application-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .application-table th {
-    background: #007bff;
-    color: #fff;
+    background-color: #1e40af;
+    color: white;
+    font-weight: 600;
 }
 
-/* Ensure the entire page takes full height */
-html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+.application-table tr:hover {
+    background-color: #f3f4f6;
 }
 
-/* Push content to fill available space */
-.content {
-    flex: 1;
-}
-
-/* Footer Styling */
+/* Footer */
 footer {
-    background-color: #007bff;
+    background-color: #1e40af;
     color: white;
+    padding: 1.5rem;
     text-align: center;
-    padding: 15px 0;
-    font-size: 16px;
-    width: 100%;
-    position: relative;
-    /* Change from absolute to relative */
+    margin-top: auto;
 }
 
-/* Copyright section */
-.footer {
-    background-color: #007bff;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    position: relative;
-    /* Remove fixed positioning */
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
 }
 
-.footer p {
-    margin: 0;
-    font-size: 0.8em;
-}
-
-.footer a {
+.footer-links a {
     color: white;
     text-decoration: none;
+    transition: opacity 0.3s ease;
 }
 
-.footer a:hover {
+.footer-links a:hover {
+    opacity: 0.8;
     text-decoration: underline;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
-    .header, .main{
-        flex-direction: column;
+    .navbar {
+        padding: 1rem;
     }
 
-    .quick-stats {
+    .navbar-nav {
         flex-direction: column;
+        gap: 0.5rem;
     }
 
-    .nav ul {
-        flex-direction: row;
+    .main-content {
+        padding: 1rem;
+    }
+
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }

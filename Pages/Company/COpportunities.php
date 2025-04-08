@@ -2,10 +2,10 @@
 session_start();
 require_once "../../db.php";
 
-// Check if the user is authenticated and is a company
+// Check if user is authenticated
 if (!isset($_SESSION["user_id"])) {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-        http_response_code(403); // Forbidden
+        http_response_code(403);
         echo json_encode(["success" => false, "message" => "Unauthorized access."]);
         exit();
     } else {
@@ -14,7 +14,7 @@ if (!isset($_SESSION["user_id"])) {
     }
 }
 
-// Check for flash messages from redirect
+// Check for flash messages
 if (isset($_SESSION['flash_message'])) {
     $message = $_SESSION['flash_message'];
     $messageType = $_SESSION['flash_type'];
@@ -27,10 +27,11 @@ $messageType = $messageType ?? null;
 $showForm = isset($_GET['create']) ? true : false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Validate input fields
+    // Validate input fields (including duration)
     if (
         empty($_POST["title"]) || empty($_POST["description"]) || empty($_POST["requirements"]) ||
-        empty($_POST["available_slots"]) || empty($_POST["application_deadline"]) || empty($_POST["location"])
+        empty($_POST["available_slots"]) || empty($_POST["application_deadline"]) ||
+        empty($_POST["location"]) || empty($_POST["duration"])
     ) {
         $message = "All fields are required.";
         $messageType = "danger";
@@ -58,8 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $conn->beginTransaction();
 
             $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
-                                   available_slots, application_deadline, status, location, created_at, updated_at) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                                   available_slots, application_deadline, status, location, duration, created_at, updated_at) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $stmt->execute([
                 $companyId,
                 $_POST["title"],
@@ -68,7 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_POST["available_slots"],
                 $_POST["application_deadline"],
                 "open",
-                $_POST["location"]
+                $_POST["location"],
+                $_POST["duration"]
             ]);
 
             $conn->commit();
@@ -77,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $messageType = "success";
             $showForm = false;
 
-            // For AJAX requests
+            // AJAX response
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                 echo json_encode([
                     "success" => true,
@@ -87,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 exit();
             }
 
-            // For regular form submission - redirect to prevent resubmission
+            // Regular form submission
             $_SESSION['flash_message'] = $message;
             $_SESSION['flash_type'] = $messageType;
             header("Location: COpportunities.php");
@@ -98,11 +100,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $conn->rollBack();
             }
 
-            // Handle duplicate title error specifically
             if (strpos($e->getMessage(), '1062 Duplicate entry') !== false && strpos($e->getMessage(), 'title') !== false) {
-                $message = "An opportunity with the title '" . htmlspecialchars($_POST["title"]) . "' already exists. Please choose a different title.";
+                $message = "An opportunity with this title already exists. Please choose a different title.";
                 $messageType = "danger";
-                $duplicateTitle = true; // Flag for highlighting the field
+                $duplicateTitle = true;
             } else {
                 $message = "An error occurred while posting the opportunity: " . htmlspecialchars($e->getMessage());
                 $messageType = "danger";
@@ -125,7 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "fieldErrors" => [
                     "title" => strpos($message, "title") !== false,
                     "deadline" => strpos($message, "deadline") !== false,
-                    "slots" => strpos($message, "slots") !== false
+                    "slots" => strpos($message, "slots") !== false,
+                    "duration" => strpos($message, "duration") !== false
                 ]
             ]);
             exit();
@@ -133,11 +135,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// Fetch all opportunities for this company
+// Fetch all opportunities (including duration)
 $opportunities = [];
 try {
     $stmt = $conn->prepare("SELECT company_id, title, requirements, available_slots, 
-                           application_deadline, status, location 
+                           application_deadline, status, location, duration 
                            FROM opportunities 
                            WHERE company_id = ? 
                            ORDER BY created_at DESC");
@@ -179,16 +181,16 @@ try {
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-white" href="CHome.php">🏢 AttachME - Opportunities</a>
+            <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
+                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">Dashboard</a></li>
                 <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5 active">📢
                         Opportunities</a></li>
-                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a>
+                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5"> Applications</a>
                 </li>
-                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">💬
-                        Messages</a></li>
-                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5">🏢 Profile</a></li>
+                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5"> Messages</a>
+                </li>
+                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5"> Profile</a></li>
             </ul>
         </div>
     </nav>
@@ -241,6 +243,15 @@ try {
                         <input type="text" class="form-control" id="location" name="location" required
                             value="<?php echo isset($_POST['location']) ? htmlspecialchars($_POST['location']) : ''; ?>">
                     </div>
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Duration</label>
+                        <select class="form-select" id="duration" name="duration" required>
+                            <option value="" disabled selected>Select duration period</option>
+                            <option value="Jan-March" <?php echo isset($_POST['duration']) && $_POST['duration'] === 'Jan-March' ? 'selected' : ''; ?>>January - March</option>
+                            <option value="May-July" <?php echo isset($_POST['duration']) && $_POST['duration'] === 'May-July' ? 'selected' : ''; ?>>May - July</option>
+                            <option value="Aug-Dec" <?php echo isset($_POST['duration']) && $_POST['duration'] === 'Aug-Dec' ? 'selected' : ''; ?>>August - December</option>
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="available_slots" class="form-label">Available Slots</label>
@@ -273,6 +284,7 @@ try {
                                     <th>Title</th>
                                     <th>Requirements</th>
                                     <th>Location</th>
+                                    <th>Duration</th>
                                     <th>Available Slots</th>
                                     <th>Deadline</th>
                                     <th>Status</th>
@@ -285,6 +297,7 @@ try {
                                         <td><?php echo nl2br(htmlspecialchars(substr($opportunity['requirements'], 0, 100) . (strlen($opportunity['requirements']) > 100 ? '...' : ''))); ?>
                                         </td>
                                         <td><?php echo htmlspecialchars($opportunity['location']); ?></td>
+                                        <td><?php echo htmlspecialchars($opportunity['duration']); ?></td>
                                         <td><?php echo htmlspecialchars($opportunity['available_slots']); ?></td>
                                         <td><?php echo htmlspecialchars(date('M j, Y', strtotime($opportunity['application_deadline']))); ?>
                                         </td>
@@ -318,7 +331,7 @@ try {
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../../contact.php" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="../../contact.php" class="text-white fw-bold">Contact Support: attachme@admin</a>
         </div>
     </footer>
 

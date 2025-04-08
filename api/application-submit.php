@@ -13,13 +13,25 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
 }
 
 $student_id = $_SESSION["user_id"];
-$opportunity_id = $_POST["opportunity_id"] ?? null;
-$cover_letter = $_POST["cover_letter"] ?? null;
+
+// Validate POST data
+if (!isset($_POST["opportunities_id"]) || !isset($_POST["cover_letter"])) {
+    http_response_code(400);
+    exit(json_encode(["error" => "Missing required fields"]));
+}
+
+$opportunities_id = $_POST["opportunities_id"];
+$cover_letter = $_POST["cover_letter"];
+
+if (empty($opportunities_id) || empty($cover_letter)) {
+    http_response_code(400);
+    exit(json_encode(["error" => "Opportunity ID and cover letter cannot be empty"]));
+}
 
 // Validate file upload
 if (!isset($_FILES["resume"]) || $_FILES["resume"]["error"] !== UPLOAD_ERR_OK) {
     http_response_code(400);
-    exit("Resume upload required");
+    exit(json_encode(["error" => "Resume upload required"]));
 }
 
 $resume = $_FILES["resume"];
@@ -31,32 +43,23 @@ if (!in_array($resume["type"], $allowed_types) || $resume["size"] > $max_size) {
     exit("Invalid resume file. Only PDFs under 5MB are allowed");
 }
 
-// Save resume to uploads directory
-$upload_dir = "../uploads/resumes/";
-if (!file_exists($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
-}
-
-$resume_name = "resume_" . $student_id . "_" . time() . ".pdf";
-$resume_path = $upload_dir . $resume_name;
-
-if (!move_uploaded_file($resume["tmp_name"], $resume_path)) {
+// Read resume file contents
+$resume_data = file_get_contents($resume["tmp_name"]);
+if ($resume_data === false) {
     http_response_code(500);
-    exit("Error saving resume");
+    exit("Error reading resume file");
 }
 
 try {
     // Insert application into database
     $stmt = $conn->prepare("INSERT INTO applications 
-                          (student_id, opportunities_id, cover_letter, resume_path, status, application_date) 
+                          (student_id, opportunities_id, cover_letter, resume, status, submitted_at) 
                           VALUES (?, ?, ?, ?, 'Pending', NOW())");
-    $stmt->execute([$student_id, $opportunity_id, $cover_letter, $resume_path]);
+    $stmt->execute([$student_id, $opportunities_id, $cover_letter, $resume_data]);
     
     http_response_code(201);
     echo "Application submitted successfully!";
 } catch (PDOException $e) {
-    // Delete uploaded file if DB insert fails
-    unlink($resume_path);
     http_response_code(500);
     echo "Error submitting application: " . $e->getMessage();
 }

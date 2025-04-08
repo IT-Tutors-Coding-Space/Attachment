@@ -13,7 +13,28 @@ try {
     $stmt->execute([$student_id]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $applicationsStmt = $conn->prepare("SELECT * FROM applications WHERE student_id = ?");
+    // Get application counts
+    $countStmt = $conn->prepare("
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'Accepted' THEN 1 ELSE 0 END) as accepted,
+            SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending
+        FROM applications 
+        WHERE student_id = ?
+    ");
+    $countStmt->execute([$student_id]);
+    $counts = $countStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Get application details
+    $applicationsStmt = $conn->prepare("
+        SELECT a.*, o.title, c.company_name 
+        FROM applications a
+        LEFT JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+        LEFT JOIN companies c ON o.company_id = c.company_id
+        WHERE a.student_id = ?
+        ORDER BY a.submitted_at DESC
+        LIMIT 10
+    ");
     $applicationsStmt->execute([$student_id]);
     $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -63,19 +84,19 @@ try {
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-primary text-white rounded-lg text-center">
                     <h5 class="fw-bold fs-5">Total Applications</h5>
-                    <h2 id="totalApplications" class="fw-bold fs-3">0</h2>
+                    <h2 id="totalApplications" class="fw-bold fs-3"><?php echo $counts['total'] ?? 0; ?></h2>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-success text-white rounded-lg text-center">
                     <h5 class="fw-bold fs-5">Accepted Applications</h5>
-                    <h2 id="acceptedApplications" class="fw-bold fs-3">0</h2>
+                    <h2 id="acceptedApplications" class="fw-bold fs-3"><?php echo $counts['accepted'] ?? 0; ?></h2>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-warning text-white rounded-lg text-center">
                     <h5 class="fw-bold fs-5">Pending Applications</h5>
-                    <h2 id="pendingApplications" class="fw-bold fs-3">0</h2>
+                    <h2 id="pendingApplications" class="fw-bold fs-3"><?php echo $counts['pending'] ?? 0; ?></h2>
                 </div>
             </div>
         </div><br><br><br>
@@ -95,8 +116,8 @@ try {
                 <tbody id="recentApplicationsTable">
                     <?php foreach ($applications as $application): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($application["title"]); ?></td>
-                            <td><?php echo htmlspecialchars($application["company_name"]); ?></td>
+                            <td><?php echo isset($application["title"]) ? htmlspecialchars($application["title"]) : "Opportunity Not Found"; ?></td>
+                            <td><?php echo isset($application["company_name"]) ? htmlspecialchars($application["company_name"]) : "Company Not Found"; ?></td>
                             <td><span class="badge bg-<?php echo $application["status"] === "Accepted" ? "success" : ($application["status"] === "Pending" ? "warning" : "danger"); ?>">
                                 <?php echo htmlspecialchars($application["status"]); ?>
                             </span></td>
@@ -112,9 +133,9 @@ try {
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.html" class="text-white fw-bold">Help Center</a>
-            <a href="../Students/Terms of servive.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Students/Contact Support.html" class="text-white fw-bold">Contact Support</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Students/Terms of servive.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     

@@ -54,74 +54,80 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (empty($message)) {
         $companyId = $_SESSION["user_id"];
 
-        // Check for duplicate opportunities
         try {
-            $checkStmt = $conn->prepare("SELECT company_id FROM opportunities 
-                                       WHERE company_id = ? AND title = ? 
-                                       AND description = ? AND requirements = ?
-                                       AND location = ?
-                                       ORDER BY created_at DESC LIMIT 1");
-            $checkStmt->execute([
+            $conn->beginTransaction();
+
+            $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
+                                   available_slots, application_deadline, status, location, created_at, updated_at) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([
                 $companyId,
                 $_POST["title"],
                 $_POST["description"],
                 $_POST["requirements"],
+                $_POST["available_slots"],
+                $_POST["application_deadline"],
+                "open",
                 $_POST["location"]
             ]);
 
-            if ($checkStmt->fetch()) {
-                $message = "You've already posted an identical opportunity.";
-                $messageType = "danger";
-            } else {
-                $conn->beginTransaction();
+            $conn->commit();
 
-                $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
-                                       available_slots, application_deadline, status, location, created_at, updated_at) 
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                $stmt->execute([
-                    $companyId,
-                    $_POST["title"],
-                    $_POST["description"],
-                    $_POST["requirements"],
-                    $_POST["available_slots"],
-                    $_POST["application_deadline"],
-                    "open",
-                    $_POST["location"]
+            $message = "Opportunity posted successfully!";
+            $messageType = "success";
+            $showForm = false;
+
+            // For AJAX requests
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                echo json_encode([
+                    "success" => true,
+                    "message" => $message,
+                    "title" => htmlspecialchars($_POST["title"])
                 ]);
-
-                $conn->commit();
-
-                $message = "Opportunity posted successfully!";
-                $messageType = "success";
-                $showForm = false;
-
-                // For AJAX requests
-                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                    echo json_encode(["success" => true, "message" => $message]);
-                    exit();
-                }
-
-                // For regular form submission - redirect to prevent resubmission
-                $_SESSION['flash_message'] = $message;
-                $_SESSION['flash_type'] = $messageType;
-                header("Location: COpportunities.php");
                 exit();
             }
+
+            // For regular form submission - redirect to prevent resubmission
+            $_SESSION['flash_message'] = $message;
+            $_SESSION['flash_type'] = $messageType;
+            header("Location: COpportunities.php");
+            exit();
+
         } catch (PDOException $e) {
             if ($conn->inTransaction()) {
                 $conn->rollBack();
             }
-            $message = "Error: " . $e->getMessage();
-            $messageType = "danger";
+
+            // Handle duplicate title error specifically
+            if (strpos($e->getMessage(), '1062 Duplicate entry') !== false && strpos($e->getMessage(), 'title') !== false) {
+                $message = "An opportunity with the title '" . htmlspecialchars($_POST["title"]) . "' already exists. Please choose a different title.";
+                $messageType = "danger";
+                $duplicateTitle = true; // Flag for highlighting the field
+            } else {
+                $message = "An error occurred while posting the opportunity: " . htmlspecialchars($e->getMessage());
+                $messageType = "danger";
+            }
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                echo json_encode(["success" => false, "message" => $message]);
+                echo json_encode([
+                    "success" => false,
+                    "message" => $message,
+                    "duplicateTitle" => isset($duplicateTitle)
+                ]);
                 exit();
             }
         }
     } else {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            echo json_encode(["success" => false, "message" => $message]);
+            echo json_encode([
+                "success" => false,
+                "message" => $message,
+                "fieldErrors" => [
+                    "title" => strpos($message, "title") !== false,
+                    "deadline" => strpos($message, "deadline") !== false,
+                    "slots" => strpos($message, "slots") !== false
+                ]
+            ]);
             exit();
         }
     }

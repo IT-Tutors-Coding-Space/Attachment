@@ -2,87 +2,65 @@
 require_once "../db.php";
 session_start();
 
-// Check and add application_link column if missing
-try {
-    $stmt = $conn->query("PRAGMA table_info(opportunities)");
-    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $hasApplicationLink = false;
-    
-    foreach ($columns as $col) {
-        if ($col['name'] === 'application_link') {
-            $hasApplicationLink = true;
-            break;
-        }
-    }
-    
-    if (!$hasApplicationLink) {
-        $conn->exec("ALTER TABLE opportunities ADD COLUMN application_link VARCHAR(255)");
-    }
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(["error" => "Database configuration error"]);
-    exit();
-}
-
-// Validate user is logged in as student
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    http_response_code(403);
-    echo json_encode(["error" => "Unauthorized"]);
-    exit();
-}
-
-// Validate request method
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
-    echo json_encode(["error" => "Method not allowed"]);
-    exit();
+    exit("Method not allowed");
 }
 
-// Get input data
-$data = json_decode(file_get_contents("php://input"), true);
-$student_id = $_SESSION["user_id"];
-$opportunity_id = $data["opportunities_id"] ?? null;
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
+    http_response_code(403);
+    exit("Unauthorized");
+}
 
-// Validate input
-if (!$opportunity_id) {
+$student_id = $_SESSION["user_id"];
+
+// Validate POST data
+if (!isset($_POST["opportunities_id"]) || !isset($_POST["cover_letter"])) {
     http_response_code(400);
-    echo json_encode(["error" => "Opportunity ID is required"]);
-    exit();
+    exit(json_encode(["error" => "Missing required fields"]));
+}
+
+$opportunities_id = $_POST["opportunities_id"];
+$cover_letter = $_POST["cover_letter"];
+
+if (empty($opportunities_id) || empty($cover_letter)) {
+    http_response_code(400);
+    exit(json_encode(["error" => "Opportunity ID and cover letter cannot be empty"]));
+}
+
+// Validate file upload
+if (!isset($_FILES["resume"]) || $_FILES["resume"]["error"] !== UPLOAD_ERR_OK) {
+    http_response_code(400);
+    exit(json_encode(["error" => "Resume upload required"]));
+}
+
+$resume = $_FILES["resume"];
+$allowed_types = ["application/pdf"];
+$max_size = 5 * 1024 * 1024; // 5MB
+
+if (!in_array($resume["type"], $allowed_types) || $resume["size"] > $max_size) {
+    http_response_code(400);
+    exit("Invalid resume file. Only PDFs under 5MB are allowed");
+}
+
+// Read resume file contents
+$resume_data = file_get_contents($resume["tmp_name"]);
+if ($resume_data === false) {
+    http_response_code(500);
+    exit("Error reading resume file");
 }
 
 try {
-    // Check if application already exists
-    $checkStmt = $conn->prepare("SELECT applications_id FROM applications WHERE student_id = ? AND opportunities_id = ?");
-    $checkStmt->execute([$student_id, $opportunity_id]);
+    // Insert application into database
+    $stmt = $conn->prepare("INSERT INTO applications 
+                          (student_id, opportunities_id, cover_letter, resume, status, submitted_at) 
+                          VALUES (?, ?, ?, ?, 'Pending', NOW())");
+    $stmt->execute([$student_id, $opportunities_id, $cover_letter, $resume_data]);
     
-    if ($checkStmt->rowCount() > 0) {
-        http_response_code(409);
-        echo json_encode(["error" => "Application already exists"]);
-        exit();
-    }
-
-    // Insert new application
-    $insertStmt = $conn->prepare("INSERT INTO applications (student_id, opportunities_id, status) VALUES (?, ?, 'Pending')");
-    $insertStmt->execute([$student_id, $opportunity_id]);
-    
-    // Get company name for response
-    $companyStmt = $conn->prepare("
-        SELECT c.company_name, o.title 
-        FROM opportunities o
-        JOIN companies c ON o.company_id = c.company_id
-        WHERE o.opportunities_id = ?
-    ");
-    $companyStmt->execute([$opportunity_id]);
-    $opportunity = $companyStmt->fetch(PDO::FETCH_ASSOC);
-
     http_response_code(201);
-    echo json_encode([
-        "message" => "Application submitted successfully",
-        "opportunity" => $opportunity["title"],
-        "company" => $opportunity["company_name"]
-    ]);
+    echo "Application submitted successfully!";
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Database error: " . $e->getMessage()]);
+    echo "Error submitting application: " . $e->getMessage();
 }
 ?>

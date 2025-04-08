@@ -1,12 +1,27 @@
 <?php
+// Start output buffering to prevent stray output
+ob_start();
 session_start();
 require_once "../db.php";
+<<<<<<< HEAD
+
+// Remove any accidental SMTP configuration output
+if (ob_get_contents()) {
+    ob_clean();
+}
+=======
+>>>>>>> 6f3d3a023608c00074b8df5b85ab0c12241a24bd
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
     if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["level"]) || empty($_POST["year_of_study"]) || empty($_POST["course"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {
-
         echo json_encode(["success" => false, "message" => "All fields are required."]);
+        exit();
+    }
+
+    // Validate name format
+    if (!preg_match('/^[a-zA-Z][a-zA-Z \'-]{1,48}[a-zA-Z]$/', $_POST["full_name"])) {
+        echo json_encode(["success" => false, "message" => "Invalid name format. Only letters, spaces, hyphens or apostrophes allowed (3-50 characters)."]);
         exit();
     }
 

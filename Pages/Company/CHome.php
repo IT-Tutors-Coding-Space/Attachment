@@ -26,7 +26,7 @@ try {
                                         FROM applications 
                                         JOIN students ON applications.student_id = students.student_id
                                         JOIN opportunities ON applications.opportunities_id = opportunities.opportunities_id
-                                        WHERE applications.student_id = ?");
+                                        WHERE opportunities.company_id = ?");
     $applicationsStmt->execute([$company_id]);
     $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -106,8 +106,8 @@ try {
                 <tbody id="recentApplicationsTable">
                     <?php foreach ($applications as $application): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($application["student_name"]); ?></td>
-                            <td><?php echo htmlspecialchars($application["opportunity_title"]); ?></td>
+                            <td><?php echo htmlspecialchars($application["full_name"]); ?></td>
+                            <td><?php echo htmlspecialchars($application["title"]); ?></td>
                             <td>
                                 <span class="badge bg-<?php 
                                     echo ($application["status"] === "Accepted") ? "success" :
@@ -139,6 +139,6 @@ try {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/CHome.js"></script>
+    <script src="../../Javasggript/CHome.js"></script>
 </body>
 </html>

@@ -9,6 +9,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
+    // Validate admin name format
+    if (!preg_match('/^[a-zA-Z][a-zA-Z \'-]{1,48}[a-zA-Z]$/', $_POST["full_name"])) {
+        echo json_encode(["success" => false, "message" => "Invalid name format. Only letters, spaces, hyphens or apostrophes allowed (3-50 characters)."]);
+        exit();
+    }
+
     // Validate email format
     if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || 
         !preg_match("/@admin\.attachme$/", $_POST["email"])) {

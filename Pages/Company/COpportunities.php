@@ -14,25 +14,36 @@ if (!isset($_SESSION["user_id"])) {
     }
 }
 
-$message = null;
-$messageType = null; // 'success' or 'danger'
+// Check for flash messages from redirect
+if (isset($_SESSION['flash_message'])) {
+    $message = $_SESSION['flash_message'];
+    $messageType = $_SESSION['flash_type'];
+    unset($_SESSION['flash_message']);
+    unset($_SESSION['flash_type']);
+}
+
+$message = $message ?? null;
+$messageType = $messageType ?? null;
 $showForm = isset($_GET['create']) ? true : false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
-    if (empty($_POST["title"]) || empty($_POST["description"]) || empty($_POST["requirements"]) || empty($_POST["available_slots"]) || empty($_POST["application_deadline"])) {
+    if (
+        empty($_POST["title"]) || empty($_POST["description"]) || empty($_POST["requirements"]) ||
+        empty($_POST["available_slots"]) || empty($_POST["application_deadline"]) || empty($_POST["location"])
+    ) {
         $message = "All fields are required.";
         $messageType = "danger";
     }
 
-    // Validate application deadline (must be in the future)
+    // Validate application deadline
     $deadline = $_POST["application_deadline"];
     if (empty($message) && strtotime($deadline) <= time()) {
         $message = "Application deadline must be in the future.";
         $messageType = "danger";
     }
 
-    // Validate available slots (must be a positive integer)
+    // Validate available slots
     $slots = $_POST["available_slots"];
     if (empty($message) && (!ctype_digit($slots) || intval($slots) <= 0)) {
         $message = "Available slots must be a positive integer.";
@@ -42,26 +53,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // If no validation errors, proceed with database insertion
     if (empty($message)) {
         $companyId = $_SESSION["user_id"];
-        $status = "open";
 
+        // Check for duplicate opportunities
         try {
-            $conn->beginTransaction();
+            $checkStmt = $conn->prepare("SELECT company_id FROM opportunities 
+                                       WHERE company_id = ? AND title = ? 
+                                       AND description = ? AND requirements = ?
+                                       AND location = ?
+                                       ORDER BY created_at DESC LIMIT 1");
+            $checkStmt->execute([
+                $companyId,
+                $_POST["title"],
+                $_POST["description"],
+                $_POST["requirements"],
+                $_POST["location"]
+            ]);
 
-            $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, available_slots, application_deadline, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$companyId, $_POST["title"], $_POST["description"], $_POST["requirements"], $_POST["available_slots"], $_POST["application_deadline"], $status]);
+            if ($checkStmt->fetch()) {
+                $message = "You've already posted an identical opportunity.";
+                $messageType = "danger";
+            } else {
+                $conn->beginTransaction();
 
-            $conn->commit();
+                $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
+                                       available_slots, application_deadline, status, location, created_at, updated_at) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt->execute([
+                    $companyId,
+                    $_POST["title"],
+                    $_POST["description"],
+                    $_POST["requirements"],
+                    $_POST["available_slots"],
+                    $_POST["application_deadline"],
+                    "open",
+                    $_POST["location"]
+                ]);
 
-            $message = "Opportunity posted successfully!";
-            $messageType = "success";
-            $showForm = false; // Hide form after success
+                $conn->commit();
 
-            // For AJAX requests, return JSON response
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                echo json_encode(["success" => true, "message" => $message]);
+                $message = "Opportunity posted successfully!";
+                $messageType = "success";
+                $showForm = false;
+
+                // For AJAX requests
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                    echo json_encode(["success" => true, "message" => $message]);
+                    exit();
+                }
+
+                // For regular form submission - redirect to prevent resubmission
+                $_SESSION['flash_message'] = $message;
+                $_SESSION['flash_type'] = $messageType;
+                header("Location: COpportunities.php");
                 exit();
             }
-
         } catch (PDOException $e) {
             if ($conn->inTransaction()) {
                 $conn->rollBack();
@@ -69,14 +114,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $message = "Error: " . $e->getMessage();
             $messageType = "danger";
 
-            // For AJAX requests, return JSON response
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
                 echo json_encode(["success" => false, "message" => $message]);
                 exit();
             }
         }
     } else {
-        // For AJAX requests, return JSON response for validation errors
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
             echo json_encode(["success" => false, "message" => $message]);
             exit();
@@ -87,7 +130,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Fetch all opportunities for this company
 $opportunities = [];
 try {
-    $stmt = $conn->prepare("SELECT title, requirements, available_slots, application_deadline, status FROM opportunities WHERE company_id = ? ORDER BY created_at DESC");
+    $stmt = $conn->prepare("SELECT company_id, title, requirements, available_slots, 
+                           application_deadline, status, location 
+                           FROM opportunities 
+                           WHERE company_id = ? 
+                           ORDER BY created_at DESC");
     $stmt->execute([$_SESSION["user_id"]]);
     $opportunities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -95,7 +142,6 @@ try {
     $messageType = "danger";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -142,7 +188,6 @@ try {
     </nav>
 
     <div class="container p-5 flex-grow-1">
-        <!-- Message display area -->
         <?php if (!empty($message)): ?>
             <div class="alert alert-<?php echo $messageType === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show mb-4"
                 role="alert">
@@ -160,7 +205,6 @@ try {
             <?php endif; ?>
         </div>
 
-        <!-- Create Opportunity Form (shown only when $showForm is true) -->
         <?php if ($showForm): ?>
             <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mb-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -186,6 +230,11 @@ try {
                         <textarea class="form-control" id="requirements" name="requirements" rows="3"
                             required><?php echo isset($_POST['requirements']) ? htmlspecialchars($_POST['requirements']) : ''; ?></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" required
+                            value="<?php echo isset($_POST['location']) ? htmlspecialchars($_POST['location']) : ''; ?>">
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="available_slots" class="form-label">Available Slots</label>
@@ -208,7 +257,6 @@ try {
             </div>
         <?php endif; ?>
 
-        <!-- Opportunities Table -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-0">
                 <?php if (count($opportunities) > 0): ?>
@@ -218,6 +266,7 @@ try {
                                 <tr>
                                     <th>Title</th>
                                     <th>Requirements</th>
+                                    <th>Location</th>
                                     <th>Available Slots</th>
                                     <th>Deadline</th>
                                     <th>Status</th>
@@ -229,6 +278,7 @@ try {
                                         <td><?php echo htmlspecialchars($opportunity['title']); ?></td>
                                         <td><?php echo nl2br(htmlspecialchars(substr($opportunity['requirements'], 0, 100) . (strlen($opportunity['requirements']) > 100 ? '...' : ''))); ?>
                                         </td>
+                                        <td><?php echo htmlspecialchars($opportunity['location']); ?></td>
                                         <td><?php echo htmlspecialchars($opportunity['available_slots']); ?></td>
                                         <td><?php echo htmlspecialchars(date('M j, Y', strtotime($opportunity['application_deadline']))); ?>
                                         </td>
@@ -246,7 +296,7 @@ try {
                 <?php else: ?>
                     <div class="text-center py-5">
                         <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted"> No opportunities posted yet</h5>
+                        <h5 class="text-muted">No opportunities posted yet</h5>
                         <p class="text-muted">Click "Create Opportunity" to post your first opportunity</p>
                         <a href="COpportunities.php?create=true" class="btn btn-primary mt-3">
                             <i class="fas fa-plus me-2"></i>Create Opportunity
@@ -266,8 +316,8 @@ try {
         </div>
     </footer>
 
-    <!-- Include Bootstrap JS for alert dismissal -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../Javascript/COpportunities.js?v=<?= time() ?>"></script>
 </body>
+
 </html>

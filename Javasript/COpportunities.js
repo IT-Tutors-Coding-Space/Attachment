@@ -1,61 +1,82 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Prevent form resubmission on page refresh
+  if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+  }
+
+  // Form submission handling
   const opportunityForm = document.getElementById("opportunityForm");
 
   if (opportunityForm) {
-    opportunityForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
+    opportunityForm.addEventListener("submit", function (e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
 
       // Show loading state
-      const submitButton = opportunityForm.querySelector(
-        'button[type="submit"]'
-      );
-      const originalButtonText = submitButton.innerHTML;
-      submitButton.disabled = true;
-      submitButton.innerHTML =
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Posting...';
 
-      try {
-        const formData = new FormData(opportunityForm);
-
-        const response = await fetch("COpportunities.php", {
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-          },
-        });
-
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Show success message and reload the page to update the table
-          window.location.href =
-            "COpportunities.php?success=" + encodeURIComponent(result.message);
-        } else {
-          // Show error message
-          alert(result.message);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("An error occurred. Please try again.");
-      } finally {
-        // Restore button state
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.innerHTML = originalButtonText;
-        }
-      }
+      // For AJAX form submission (uncomment if you want AJAX)
+      /*
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    // Reset form or redirect
+                    if (!data.redirect) {
+                        this.reset();
+                    } else {
+                        window.location.href = data.redirect;
+                    }
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('An error occurred. Please try again.', 'danger');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            });
+            */
     });
   }
 
-  // Check for success message in URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const successMessage = urlParams.get("success");
-  if (successMessage) {
-    alert(successMessage);
-    // Remove the success parameter from URL
-    window.history.replaceState({}, document.title, window.location.pathname);
+  // Function to show alert messages
+  function showAlert(message, type) {
+    const existingAlerts = document.querySelectorAll(".alert");
+    existingAlerts.forEach((alert) => alert.remove());
+
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = "alert";
+    alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+    const container = document.querySelector(".container");
+    if (container) {
+      container.insertBefore(alertDiv, container.firstChild);
+
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alertDiv);
+        bsAlert.close();
+      }, 5000);
+    }
   }
 });

@@ -69,24 +69,6 @@ body {
     flex: 1;
 }
 
-/* Footer Styling */
-footer {
-    background-color: #007bff;
-    /* Blue background */
-    color: white;
-    /* White text */
-    text-align: center;
-    /* Center align text */
-    padding: 15px 0;
-    /* Top and bottom padding */
-    font-size: 16px;
-    /* Professional font size */
-    width: 100%;
-    /* Full width */
-    position: absolute;
-    bottom: 0;
-    left: 0;
-=======
 /*Copyright */
 .footer {
     position: fixed;
@@ -96,7 +78,7 @@ footer {
     color:#007bff;
     text-align: center;
     padding: 10px;
-    font-weight: bold;}
+    font-weight: bold;
 }
 .footer p{
     margin: 0;

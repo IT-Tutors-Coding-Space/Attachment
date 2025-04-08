@@ -149,15 +149,39 @@ html, body {
 
 /* Footer Styling */
 footer {
-    background-color: #007bff; /* Blue background */
-    color: white; /* White text */
-    text-align: center; /* Center align text */
-    padding: 15px 0; /* Top and bottom padding */
-    font-size: 16px; /* Professional font size */
-    width: 100%; /* Full width */
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 16px;
+    width: 100%;
+    position: relative;
+    /* Change from absolute to relative */
+}
+
+/* Copyright section */
+.footer {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    position: relative;
+    /* Remove fixed positioning */
+}
+
+.footer p {
+    margin: 0;
+    font-size: 0.8em;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
 
 

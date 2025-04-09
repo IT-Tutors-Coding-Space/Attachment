@@ -71,12 +71,12 @@ try {
 
         $message = "Application status updated successfully!";
         $messageType = "success";
-    } 
-catch (Exception $e) {
+    }
+}catch (Exception $e) {
         $message = "Error updating application status: " . $e->getMessage();
         $messageType = "danger";
-    }
 }
+
 
 // Fetch all applications for this company's opportunities with joined data
 try {

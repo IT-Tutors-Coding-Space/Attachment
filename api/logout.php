@@ -1,6 +1,6 @@
 <?php
 session_start();
 session_destroy();
-header("Location: ../../SignUps/Alogin.php");
+header("Location: ../../SignUps/ALogin.php");
 exit();
 ?>

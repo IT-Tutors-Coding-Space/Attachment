@@ -251,7 +251,19 @@ try {
     });
     </script>
 
+<<<<<<< HEAD
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../Help Center.html" class="text-white fw-bold">Help Center</a>
+            <a href="../Students/Terms of service.html" class="text-white fw-bold">Terms of Service</a>
+            <a href="tel:+254700234362" class="text-white fw-bold">Contact Support:</a>
+        </div>
+    </footer>
+=======
     <?php require "../../Components/StudentFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

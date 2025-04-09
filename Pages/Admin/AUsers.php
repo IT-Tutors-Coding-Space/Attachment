@@ -3,7 +3,7 @@ require_once "../../db.php";
 session_start();
 
 if ($_SESSION["role"] !== "admin") {
-    header("Location: ../SignUps/Alogin.php");
+    header("Location: ../SignUps/ALogin.php");
     exit();
 }
 
@@ -75,6 +75,39 @@ $users = $conn->query("
         }
     </style>
 </head>
+<<<<<<< HEAD
+<body class="bg-gray-100 d-flex flex-column min-vh-100">
+    
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+        <div class="container-fluid d-flex justify-content-between">
+            <h2 class="text-white fw-bold fs-3">AttachME</h2>
+            <ul class="navbar-nav d-flex flex-row gap-4">
+                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
+                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5 active"> Users</a></li>
+                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5"> Companies</a></li>
+                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5"> Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5"> Analytics</a></li>
+                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5"> Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="container p-5 flex-grow-1">
+        <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
+            <h1 class="text-3xl fw-bold">Manage Users</h1>
+            <div class="d-flex align-items-center gap-3">
+                <select id="roleFilter" class="form-select w-auto" onchange="filterUsers()">
+                    <option value="all">All Roles</option>
+                    <option value="student">Student</option>
+                    <option value="company">Company</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <input type="text" class="form-control w-50" id="searchUsers" placeholder="Search users..." onkeyup="searchUsers()">
+                <button class="btn btn-primary fw-bold fs-5" data-bs-toggle="modal" data-bs-target="#addUserModal">+ Add User</button>
+=======
 <body class="bg-light">
     <?php require "../../Components/AdminNav.php"; ?>
 
@@ -84,6 +117,7 @@ $users = $conn->query("
             <div class="mb-3 mb-md-0">
                 <h1 class="h3 mb-1 text-gray-800">User Management</h1>
                 <p class="mb-0 text-muted">Manage all system users</p>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
             </div>
             <div class="d-flex flex-column flex-md-row gap-3 w-100 w-md-auto">
                 <div class="position-relative flex-grow-1">
@@ -176,7 +210,56 @@ $users = $conn->query("
         </div>
     </div>
 
+<<<<<<< HEAD
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="POST" action="editUser.php">
+                        <input type="hidden" name="user_id" id="editUserId">
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRole" class="form-label">Role</label>
+                            <select class="form-select" id="editRole" name="role" required>
+                                <option value="student">Student</option>
+                                <option value="company">Company</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
+        </div>
+    </footer>
+=======
     <?php require "../../Components/AdminFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>

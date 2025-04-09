@@ -73,7 +73,12 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>Profile & Settings - AttachME</title>
+    <!-- Bootstrap 5 CSS -->
+=======
     <title>Company Profile - AttachME</title>
+>>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -253,9 +258,15 @@ try {
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
+<<<<<<< HEAD
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
+=======
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
             <a href="../../contact.php" class="text-white fw-bold">Contact Support</a>
+>>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
         </div>
     </footer>
 
@@ -264,5 +275,9 @@ try {
     <!-- Custom JavaScript -->
     <script src="../../Javascript/CProfile.js?v=<?= time() ?>"></script>
 </body>
+<<<<<<< HEAD
+</html>
+=======
 
 </html>
+>>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669

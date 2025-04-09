@@ -42,17 +42,17 @@ $student_id = $_SESSION["user_id"];
         <!-- About Section -->
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
             <h5 class="fw-bold text-primary">Our Mission</h5>
-            <p>AttachME is committed to revolutionizing the way students connect with companies for industrial attachments. We strive to equip students with real-world skills and experiences to enhance their professional journeys.</p>
+            <p>We're changing the game when it comes to student internships at AttachME. Our goal is simple: to connect you with companies so you can gain the real-world skills and experiences you need to shine in your career..</p>
             
             <h5 class="fw-bold text-primary">Our Vision</h5>
-            <p>To be the leading platform that bridges the gap between students and the corporate world by providing verified, accessible, and growth-oriented attachment opportunities.</p>
+            <p>We want to be the leading platform where students can easily find real, trustworthy internship opportunities that help them grow and connect with the professional world.</p>
             
             <h5 class="fw-bold text-primary">Core Values</h5>
             <ul>
-                <li>🌍 <strong>Innovation:</strong> Continuously improving our platform to meet industry demands.</li>
-                <li>🤝 <strong>Integrity:</strong> Ensuring transparency and fairness in all applications.</li>
-                <!-- <li>📚 <strong>Empowerment:</strong> Providing students with the resources to excel.</li> -->
-                <li>🚀 <strong>Accessibility:</strong> Making opportunities available to all students.</li>
+                <li> <strong>Innovation:</strong> Continuously improving our platform to meet industry demands.</li>
+                <li> <strong>Integrity:</strong> Ensuring transparency and fairness in all applications.</li>
+                <!-- <li> <strong>Empowerment:</strong> Providing students with the resources to excel.</li> -->
+                <li> <strong>Accessibility:</strong> Making opportunities available to all students.</li>
             </ul>
         </div>
 
@@ -60,9 +60,9 @@ $student_id = $_SESSION["user_id"];
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mt-4">
             <h5 class="fw-bold text-primary">How It Works</h5>
             <ul>
-                <li>🎓 <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
-                <li>🏢 <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
-                <li>📊 <strong>For Admins:</strong> Oversee platform operations.</li>
+                <li> <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
+                <li> <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
+                <li> <strong>For Admins:</strong> Oversee platform operations.</li>
             </ul>
         </div>
 

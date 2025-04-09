@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is logged in
 if ($_SESSION["role"] !== "admin") {
-    header("Location: ../SignUps/Alogin.php");
+    header("Location: ../SignUps/ALogin.php");
     exit();
 }
  ?>

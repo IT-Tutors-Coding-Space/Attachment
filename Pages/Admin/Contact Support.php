@@ -1,14 +1,14 @@
-<?php
-require_once "../../db.php";
-session_start();
+//<?php
+//require_once "../../db.php";
+//session_start();
 
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    header("Location:  ../SignUps/ALogin.php");
-    exit();
-}
+//if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Admin") {
+   // header("Location:  ../SignUps/ALogin.php");
+    //exit();
+//}
 
-$student_id = $_SESSION["user_id"];
-?>
+//$student_id = $_SESSION["user_id"];
+//?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +29,7 @@ $student_id = $_SESSION["user_id"];
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Contact Support</h2>
-            <a href="../Pages/Admin/AHome.php" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Admin/AHome.php" class="btn btn-outline-light">🏠 Home</a>
         </div>
     </nav>
     
@@ -91,15 +91,15 @@ $student_id = $_SESSION["user_id"];
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="..Pages/Admin/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
+<a href="..Help Center.php" class="text-white fw-bold">Help Center</a>
+<a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+<a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/Contact Support.js"></script>
+    <script src="../../Javasript/Contact Support.js"></script>
 </body>
 </html>

@@ -38,6 +38,6 @@ $student_id = $_SESSION["user_id"];
         </div>
     </div>
 
-    <script src="../../Javascript/CNotifications.js"></script>
+    <script src="../../Javasript/CNotifications.js"></script>
 </body>
 </html>

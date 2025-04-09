@@ -108,6 +108,6 @@ if (isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/SSettings.js"></script>
+    <script src="../../Javasript/SSettings.js"></script>
 </body>
 </html>

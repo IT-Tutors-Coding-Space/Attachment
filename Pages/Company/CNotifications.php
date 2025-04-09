@@ -99,7 +99,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/CNotifications.js"></script>
+    <script src="../../Javasript/CNotifications.js"></script>
     <script>
         document.getElementById("clearNotificationsBtn").addEventListener("click", function() {
             if (typeof clearNotifications === "function") {

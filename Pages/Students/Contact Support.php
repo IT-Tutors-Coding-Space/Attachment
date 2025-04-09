@@ -100,6 +100,6 @@ $student_id = $_SESSION["user_id"];
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/Contact Support.js"></script>
+    <script src="../../Javasript/Contact Support.js"></script>
 </body>
 </html>

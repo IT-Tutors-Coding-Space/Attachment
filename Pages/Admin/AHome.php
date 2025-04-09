@@ -65,7 +65,7 @@ try {
                     <button class="btn btn-dark dropdown-toggle fw-bold fs-5" type="button" data-bs-toggle="dropdown">Admin</button>
                     <ul class="dropdown-menu">
                         <!-- <li><a class="dropdown-item" href="#profile">Profile</a></li> -->
-                        <li><a class="dropdown-item" href="../api/logout.php">Logout</a></li>
+<li><a class="dropdown-item" href="#" id="logoutButton">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -113,7 +113,7 @@ try {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/ADashboard.js"></script>
+    <script src="../Javasript/ADashboard.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const searchInput = document.querySelector("input[placeholder='Search...']");

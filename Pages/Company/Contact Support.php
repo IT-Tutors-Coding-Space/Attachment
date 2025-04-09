@@ -1,14 +1,4 @@
-<?php
-require_once "../../db.php";
-session_start();
 
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    header("Location:  ../SignUps/CLogin.php");
-    exit();
-}
-
-$student_id = $_SESSION["user_id"];
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,13 +83,13 @@ $student_id = $_SESSION["user_id"];
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
             <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
+            <a href="../Contact Support.php" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/Contact Support.js"></script>
+    <script src="../../Javasript/Contact Support.js"></script>
 </body>
 </html>

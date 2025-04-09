@@ -1,14 +1,4 @@
-<?php
-require_once "../../db.php";
-session_start();
 
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    header("Location:  ../SignUps/ALogin.php");
-    exit();
-}
-
-$student_id = $_SESSION["user_id"];
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,9 +81,9 @@ $student_id = $_SESSION["user_id"];
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms & Privacy</a>
-            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
+<a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+<a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms & Privacy</a>
+<a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     

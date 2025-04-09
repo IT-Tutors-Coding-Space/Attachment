@@ -4,38 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Profile & Settings</title>
-    <link rel="stylesheet" href=CProfile.css">
-</head>
-
-<body>
-    <div class="container">
-        <h2>Hello there, here is AttachME</h2>
-        <div class="profile-section">
-            <input type="text" id="companyName" placeholder="Company Name">
-            <input type="text" id="location" placeholder="Location">
-            <input type="text" id="contact" placeholder="Contact Info">
-            <button id="saveProfile">Save Changes</button>
-        </div>
-
-        <h2>Update your personal details</h2>
-        <div class="security-section">
-            <input type="password" id="currentPassword" placeholder="Current Password">
-            <input type="password" id="newPassword" placeholder="New Password">
-            <input type="password" id="confirmPassword" placeholder="Confirm New Password">
-            <button id="updatePassword">Update Password</button>
-        </div>
-    </div>
-
-    <script src="CProfile.js"></script>
-        <footer>
-            <p>&copy; 2025 AttachME. All rights reserved.</p>
-        </footer>
-</body>
-
-</html>
-=======
     <title>Profile & Settings - AttachME</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -105,4 +73,3 @@
     <script src="../../Javasript/CProfile.js"></script>
 </body>
 </html>
->>>>>>> origin/main

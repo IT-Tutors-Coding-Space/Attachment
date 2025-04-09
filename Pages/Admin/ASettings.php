@@ -6,7 +6,7 @@ session_start();
 
 
 if ($_SESSION["role"] !== "admin") {
-    header("Location: ../../Alogin.php");
+    header("Location: ../../ALogin.php");
     exit();
 }
 
@@ -166,8 +166,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Handle logout all devices
-        if (isset($_POST['logout_all'])) {
+if (isset($_POST['logout'])) {
+    // Destroy the session and redirect to login
+    session_destroy();
+    header("Location: ../../Alogin.php");
+    exit();
+}
+
+if (isset($_POST['delete_account'])) {
+    // Delete the admin account
+    $stmt = $conn->prepare("DELETE FROM admins WHERE admin_id = ?");
+    $stmt->execute([$_SESSION['admin_id']]);
+    
+    // Destroy the session and redirect to login
+    session_destroy();
+    header("Location: ../../Alogin.php");
+    exit();
+}
+
+if (isset($_POST['logout_all'])) {
             // Invalidate all sessions except current
             $stmt = $conn->prepare("UPDATE admins SET session_token = NULL WHERE admin_id = ? AND session_token != ?");
             $stmt->execute([$_SESSION['admin_id'], session_id()]);
@@ -252,6 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="fw-bold">Change Password</label>
                         <input type="password" class="form-control mb-3" id="adminPassword" name="password" placeholder="Enter new password">
                         <button type="submit" name="update_profile" class="btn btn-primary w-100">Save Changes</button>
+                        <button type="submit" name="delete_account" class="btn btn-danger w-100 mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
                     </div>
                 </div>
                 
@@ -333,6 +351,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javascript/ASettings.js"></script>
+    <script src="../../Javasript/ASettings.js"></script>
 </body>
 </html>

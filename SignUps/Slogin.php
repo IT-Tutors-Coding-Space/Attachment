@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3" style="margin-left: 45%;">🔐 AttachME - Login</h2>
+            <h2 class="text-white fw-bold fs-3" style="margin-left: 45%;"> AttachME - Login</h2>
         </div>
     </nav>
     
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <!-- Login Form -->
             <form id="loginForm" method="POST">
 
-                <h6 class="fw-bold text-secondary text-center">👨Student Login</h6>
+                <h6 class="fw-bold text-secondary text-center">Student Login</h6>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
@@ -115,15 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
     <script src="../js/interact.js"></script>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
-        </div>
-    </footer>
+
     
 </body>
 </html>

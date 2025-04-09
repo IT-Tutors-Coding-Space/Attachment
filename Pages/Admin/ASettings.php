@@ -309,13 +309,7 @@ if (isset($_POST['logout_all'])) {
                                 <input type="number" class="form-control" name="system_log_retention" 
                                     value="<?php echo $systemSettings['system_log_retention'] ?? 30; ?>" min="1" max="365">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">Default User Role</label>
-                                <select class="form-select" name="default_user_role">
-                                    <option value="student" <?php echo ($systemSettings['default_user_role'] ?? 'student') === 'student' ? 'selected' : ''; ?>>Student</option>
-                                    <option value="company" <?php echo ($systemSettings['default_user_role'] ?? 'student') === 'company' ? 'selected' : ''; ?>>Company</option>
-                                </select>
-                            </div>
+                           
                         </div>
 
                         <div class="form-check form-switch mb-3">
@@ -323,11 +317,7 @@ if (isset($_POST['logout_all'])) {
                                 <?php echo ($systemSettings['maintenance_mode'] ?? 0) ? 'checked' : ''; ?>>
                             <label class="form-check-label fw-bold" for="maintenanceMode">Maintenance Mode</label>
                         </div>
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" name="email_notifications" id="emailNotifications" 
-                                <?php echo ($systemSettings['email_notifications'] ?? 0) ? 'checked' : ''; ?>>
-                            <label class="form-check-label fw-bold" for="emailNotifications">Email Notifications</label>
-                        </div>
+                       
 
                         <div class="d-grid gap-2">
                             <button type="submit" name="update_settings" class="btn btn-primary">Update System Settings</button>

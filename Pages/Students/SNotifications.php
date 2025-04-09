@@ -46,12 +46,11 @@ try {
                 <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
                 <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
                 <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-                <li class="nav-item"><a href="../Students/SSettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav>
     
-    <h1>Notifications</h1>
+    <h1>Chat with a company</h1>
     <ul>
         <?php foreach ($messages as $message): ?>
             <li><?php echo $message['message']; ?></li>
@@ -64,31 +63,79 @@ try {
         <p class="text-muted">View and respond to messages from companies.</p>
         
         <div class="card shadow p-3 mb-4">
-            <div class="d-flex align-items-center border-bottom pb-2">
-                <img src="../../Images/logo.png" alt="Profile Picture" class="rounded-circle" width="40" height="40">
-                <h6 class="ms-2">Company HR - AttachME</h6>
-            </div>
-            <div class="chat-box" id="messageList" style="max-height: 300px; overflow-y: auto;">
-                <div class="p-2 bg-light rounded mb-2">
-                    <strong>HR Manager:</strong> Hello, John. Your application is under review.
+            <div class="chat-box" id="messageList" style="max-height: 500px; overflow-y: auto;">
+                <?php foreach ($messages as $message): 
+                    $is_sender = ($message['sender_id'] == $student_id);
+                    $stmt = $conn->prepare("SELECT company_name FROM companies WHERE company_id = ?");
+                    $stmt->execute([$is_sender ? $message['receiver_id'] : $message['sender_id']]);
+                    $company = $stmt->fetch(PDO::FETCH_ASSOC);
+                ?>
+                <div class="p-2 mb-2 <?= $is_sender ? 'bg-primary text-white text-end' : 'bg-light' ?> rounded">
+                    <strong><?= $is_sender ? 'You' : htmlspecialchars($company['company_name']) ?>:</strong>
+                    <?= htmlspecialchars($message['message']) ?>
+                    <div class="small text-muted">
+                        <?= date('M j, g:i a', strtotime($message['sent_at'])) ?>
+                    </div>
                 </div>
-                <div class="p-2 bg-primary text-white rounded mb-2 text-end">
-                    <strong>You:</strong> Thank you for the update. Looking forward to it!
-                </div>
-                <div class="p-2 bg-light rounded mb-2">
-                    <strong>HR Manager:</strong> Please ensure your documents are up to date.
-                </div>
-                <div class="p-2 bg-primary text-white rounded mb-2 text-end">
-                    <strong>You:</strong> Yes, I have uploaded the latest documents. Let me know if anything else is needed.
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
         
-        <div class="input-group">
-            <input type="text" id="messageInput" class="form-control" placeholder="Type your message...">
-            <button class="btn btn-primary" id="sendMessage"><i class="fa fa-paper-plane"></i> Send</button>
-        </div>
+        <form id="messageForm" class="input-group">
+            <input type="hidden" name="sender_id" value="<?= $student_id ?>">
+            <select name="receiver_id" class="form-select" required>
+                <option value="">Select company...</option>
+                <?php
+                $stmt = $conn->prepare("
+                    SELECT DISTINCT c.company_id, c.company_name 
+                    FROM applications a
+                    JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+                    JOIN companies c ON o.company_id = c.company_id
+                    WHERE a.student_id = ?
+                    AND a.status IN ('submitted', 'under_review', 'accepted')
+                ");
+                $stmt->execute([$student_id]);
+                $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                foreach ($companies as $company): ?>
+                    <option value="<?= $company['company_id'] ?>">
+                        <?= htmlspecialchars($company['company_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <input type="text" name="message" class="form-control" placeholder="Type your message..." required>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send</button>
+        </form>
     </div>
+
+    <script>
+    document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch('../../api/send-message.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Failed to send message'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the message');
+        });
+    });
+
+    // Auto-refresh messages every 5 seconds
+    setInterval(() => {
+        location.reload();
+    }, 5000);
+    </script>
     
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">

@@ -72,10 +72,10 @@ if ($_SESSION["role"] !== "admin") {
                 </thead>
                 <tbody id="opportunityTableBody">
                 <?php
-                    $opportunitiesStmt = $conn->query("SELECT * FROM opportunities");
+                    $opportunitiesStmt = $conn->query("SELECT o.*, c.company_name FROM opportunities o JOIN companies c ON o.company_id = c.company_id");
                     while ($opportunity = $opportunitiesStmt->fetch(PDO::FETCH_ASSOC)) {
                         echo "<tr>
-                                <td>{$opportunity['company_id']}</td>
+                                <td>{$opportunity['company_name']} ({$opportunity['company_id']})</td>
                                 <td>{$opportunity['title']}</td>
                                 <td>{$opportunity['location']}</td>
                                 <td>{$opportunity['application_deadline']}</td>

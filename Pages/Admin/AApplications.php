@@ -7,7 +7,6 @@ require_once "../../db.php";
 session_start();
 
 // Check if the user is logged in
-
 if ($_SESSION["role"] !== "admin") {
     header("Location: ../SignUps/ALogin.php");
     exit();
@@ -54,7 +53,7 @@ if (!$conn) {
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Manage Applications</h1>
             <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" id="searchApplications" placeholder="Search applications...">
+                <input type="text" class="form-control w-50" id="searchApplications" placeholder="Search applications..." onkeyup="searchApplications()">
             </div>
         </header>
 
@@ -117,21 +116,23 @@ if (!$conn) {
                                     </td>
                                     <td>{$application['opportunity_title']}</td>
                                     <td>{$application['company_name']}</td>
-                                    <td>{$application['application_date']}</td>
+                                    <td>{$application['submitted_at']}</td>
                                     <td><span class='badge {$statusClass}'>{$application['status']}</span></td>
                                     <td>
-                                        <form method='POST' action='updateApplicationStatus.php' style='display:inline;'>
-                                            <input type='hidden' name='application_id' value='{$application['application_id']}'>
+                                        <form method='POST' action='../../updateApplicationStatus_new.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to accept this application?\")'>
+                                            <input type='hidden' name='applications_id' value='{$application['applications_id']}'>
                                             <input type='hidden' name='status' value='Accepted'>
                                             <button type='submit' class='btn btn-sm btn-outline-success'>Accept</button>
                                         </form>
-                                        <form method='POST' action='updateApplicationStatus.php' style='display:inline;'>
-                                            <input type='hidden' name='application_id' value='{$application['application_id']}'>
+                                        <form method='POST' action='../../updateApplicationStatus_new.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to reject this application?\")'>
+                                            <input type='hidden' name='applications_id' value='{$application['applications_id']}'>
                                             <input type='hidden' name='status' value='Rejected'>
                                             <button type='submit' class='btn btn-sm btn-outline-danger'>Reject</button>
                                         </form>
-                                        <button class='btn btn-sm btn-outline-primary' data-bs-toggle='modal' 
-                                            data-bs-target='#applicationModal{$application['application_id']}'>View</button>
+                                        <form method='GET' action='get-application-details.php' style='display:inline;' target='_blank'>
+                                            <input type='hidden' name='id' value='{$application['applications_id']}'>
+                                            <button type='submit' class='btn btn-sm btn-outline-primary'>View Details</button>
+                                        </form>
                                     </td>
                                   </tr>";
                         }
@@ -177,6 +178,66 @@ if (!$conn) {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="Javasript\AUser.js"></script>
+    <script>
+        // Handle view application button clicks
+        document.querySelectorAll('.view-application').forEach(button => {
+            button.addEventListener('click', function() {
+                const applicationId = this.getAttribute('data-id');
+                fetch(`../get-application-details.php?id=${applicationId}`)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('applicationDetails').innerHTML = data;
+                    })
+                    .catch(error => {
+                        document.getElementById('applicationDetails').innerHTML = 
+                            `<div class="alert alert-danger">Error loading application details</div>`;
+                    });
+            });
+        });
+
+        // Live search functionality
+        function searchApplications() {
+            const input = document.getElementById('searchApplications');
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById('applicationsTableBody');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j]) {
+                        const txtValue = cells[j].textContent || cells[j].innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Display success/error messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const success = urlParams.get('success');
+            const error = urlParams.get('error');
+            
+            if (success) {
+                alert(success);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            if (error) {
+                alert(error);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Initialize search on page load
+            document.getElementById('searchApplications').addEventListener('keyup', searchApplications);
+        });
+    </script>
 </body>
 </html>

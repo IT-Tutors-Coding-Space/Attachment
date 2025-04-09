@@ -11,6 +11,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
+    // Validate company name format
+    if (!preg_match('/^[a-zA-Z][a-zA-Z \'-]{1,48}[a-zA-Z]$/', $_POST["company_name"])) {
+        echo json_encode(["success" => false, "message" => "Invalid company name format. Only letters, spaces, hyphens or apostrophes allowed (3-50 characters)."]);
+        exit();
+    }
+
     // Validate email format
     if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) || !preg_match('/@gmail\.com$/', $_POST["email"])) {
         echo json_encode(["success" => false, "message" => "Invalid email format"]);
@@ -161,13 +167,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="mb-3">
                     <label for="companyIndustry" class="form-label">Industry</label>
-                    <select name="industry" class="form-control" id="companyIndustry" required>
-                        <option value="">Select Industry</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Healthcare">Healthcare</option>
-                    </select>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-industry"></i></span>
+                        <input name="industry" type="text" class="form-control" id="companyIndustry" placeholder="Enter industry" required>
+                    </div>
                 </div>
+                        
                 <div class="mb-3">
                     <label for="companyPassword" class="form-label">Password</label>
                     <div class="input-group">
@@ -197,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="help-center.html" class="text-white fw-bold">Help Center</a>
             <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
+            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
 </body>

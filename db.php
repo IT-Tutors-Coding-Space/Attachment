@@ -1,15 +1,13 @@
 <?php
-$host = "localhost";
-$dbname = "attachme";
-$username = "root";
-$password = "Attachme@Admin";
-
+$host = 'localhost';
+$dbname = 'attachme'; // Adjust database name as needed
+$username = 'root'; // Default WAMP MySQL username
+$password = ''; // Default WAMP MySQL password (empty)
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    error_log("Database connection failed: " . $e->getMessage());
-    die("Database connection failed.");
+} catch(PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 ?>

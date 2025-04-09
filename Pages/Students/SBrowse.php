@@ -45,7 +45,6 @@ try {
                 <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
                 <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
                 <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-                <li class="nav-item"><a href="../Students/SSettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
             </ul>
         </div>
     </nav><br><br><br>
@@ -57,28 +56,81 @@ try {
             <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="🔍 Search by title, company, or location...">
         </header>
 
-        <!-- Opportunities List --> 
+        <!-- Opportunities List -->
         <div class="row g-4" id="opportunitiesList">
-            <?php foreach ($opportunities as $opportunity):  ?>
-            <!-- Sample Opportunity Card -->
-            <div class="col-md-6"><br><br>
+            <?php foreach ($opportunities as $opportunity): ?>
+            <div class="col-md-12 mb-4">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold"><?php echo htmlspecialchars($opportunity["title"]); ?> </h5>
-                    <p class="text-muted"><?php echo htmlspecialchars($opportunity["company_name"]); ?></p>
-                    <p><strong>Deadline:</strong><?php echo htmlspecialchars($opportunity["deadline"]); ?></p>
-                    <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3 class="fw-bold"><?php echo htmlspecialchars($opportunity["title"]); ?></h3>
+                            <h5 class="text-muted"><?php echo htmlspecialchars($opportunity["company_name"]); ?></h5>
+                            <p class="mt-3"><strong>Description:</strong><br><?php echo htmlspecialchars($opportunity["description"]); ?></p>
+                            <p><strong>Requirements:</strong><br><?php echo htmlspecialchars($opportunity["requirements"]); ?></p>
+                            <p><strong>Duration:</strong> <?php echo htmlspecialchars($opportunity["duration"]); ?> months</p>
+                            <p><strong>Location:</strong> <?php echo htmlspecialchars($opportunity["location"]); ?></p>
+                            <p><strong>Deadline:</strong> <?php echo htmlspecialchars($opportunity["application_deadline"]); ?></p>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <button class="btn btn-primary btn-lg apply-btn" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#applyModal"
+                                    data-opportunity-id="<?php echo htmlspecialchars($opportunity["opportunities_id"]); ?>">
+                                Apply Now
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <?php endforeach; ?>
-            <div class="col-md-6"><br><br>
-                <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">Cybersecurity Analyst Internship</h5>
-                    <p class="text-muted">KCB Group - Nairobi, Kenya</p>
-                    <p><strong>Deadline:</strong> March 25, 2025</p>
-                    <button class="btn btn-primary w-100 apply-btn">Apply Now</button>
+        </div>
+
+        <!-- Application Modal -->
+        <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Apply for Opportunity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="applicationForm" action="/Attachment/api/application-submit.php" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="student_id" value="<?php echo $student_id; ?>">
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Upload Cover Letter (PDF only)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" class="form-control" name="cover_letter" accept=".pdf" required>
+                                    <small class="text-muted">Max size: 5MB</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Upload Resume (PDF only)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" class="form-control" name="resume" accept=".pdf" required>
+                                    <small class="text-muted">Max size: 5MB</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Submit Application</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <script>
+        // Set opportunity ID when apply button clicked
+        document.querySelectorAll('.apply-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('modalOpportunityId').value = 
+                    this.getAttribute('data-opportunity-id');
+            });
+        });
+        </script>
     </div>
 
     <!-- Footer -->
@@ -94,7 +146,7 @@ try {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="../../Javasript/SBrowse.js"></script>
+    <script src="../../Javasript/SBrowse.js?v=<?= time() ?>"></script>
 </body>
 </html>
  

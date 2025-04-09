@@ -2,9 +2,6 @@
 require_once "../db.php";
 session_start();
 
-// SMTP Configuration would be added here
-$sender_email = "istechmyname@gmail.com";
-$project_name = "AttachME";
 
 $error = "";
 $success = "";

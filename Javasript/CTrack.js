@@ -1,151 +1,123 @@
-<<<<<<< HEAD
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    const filterStatus = document.getElementById("filterStatus");
-    const applicationTable = document.getElementById("applicationTable");
-    const modal = document.getElementById("applicationModal");
-    const studentDetails = document.getElementById("studentDetails");
-    const closeModalButton = document.getElementById("closeModalButton");
-    const statusButtons = document.querySelectorAll(".status-btn");
-    let applications = [
-      { name: "Vincent Omondi", status: "Pending" },
-      { name: "Hedmon Achacha", status: "Accepted" },
-      { name: "Vera Brenda", status: "Rejected" },
-    ];
-  
-    function renderTable() {
-      applicationTable.innerHTML = "";
-      applications.forEach((app, index) => {
-        if (
-          filterStatus.value !== "all" &&
-          app.status.toLowerCase() !== filterStatus.value
-        )
-          return;
-        if (!app.name.toLowerCase().includes(searchInput.value.toLowerCase()))
-          return;
-  
-        let row = `<tr>
-                  <td>${app.name}</td>
-                  <td class="status">${app.status}</td>
-                  <td><button class="view-btn" onclick="openModal(${index})">View</button></td>
-              </tr>`;
-        applicationTable.innerHTML += row;
+ // Initialize auto-dismiss for existing alerts
+  autoDismissAlerts();
+
+  // Form submission handling
+  const opportunityForm = document.getElementById("opportunityForm");
+
+  if (opportunityForm) {
+    opportunityForm.addEventListener("submit", function (e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Posting...';
+
+      // For AJAX form submission
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch(this.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            showAlert(data.message, "success");
+            // Reset form after 2 seconds
+            setTimeout(() => {
+              this.reset();
+              // Hide form if success
+              if (window.location.search.includes("create=true")) {
+                window.location.href = "COpportunities.php";
+              }
+            }, 2000);
+          } else {
+            showAlert(data.message, "danger");
+            // Highlight fields with errors
+            if (data.message.includes("title already exists")) {
+              const titleField = document.getElementById("title");
+              titleField.classList.add("is-invalid");
+              titleField.focus();
+            }
+            if (data.fieldErrors && data.fieldErrors.duration) {
+              const durationField = document.getElementById("duration");
+              durationField.classList.add("is-invalid");
+            }
+          }
+        })
+        .catch((error) => {
+          showAlert(
+            "An unexpected error occurred. Please try again.",
+            "danger"
+          );
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        });
+    });
+  }
+
+  // Enhanced alert function
+  function showAlert(message, type) {
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll(".alert");
+    existingAlerts.forEach((alert) => alert.remove());
+
+    // Create new alert
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = "alert";
+    alertDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas ${
+                  type === "success"
+                    ? "fa-check-circle"
+                    : "fa-exclamation-triangle"
+                } me-2"></i>
+                <div>${message}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+
+    // Add to DOM
+    const container = document.querySelector(".container");
+    if (container) {
+      container.insertBefore(alertDiv, container.firstChild);
+
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+        bsAlert.close();
+      }, 10000);
+
+      // Also close when clicked
+      alertDiv.querySelector(".btn-close").addEventListener("click", () => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+        bsAlert.close();
       });
     }
-  
-    searchInput.addEventListener("input", renderTable);
-    filterStatus.addEventListener("change", renderTable);
-  
-    window.sortTable = (n) => {
-      applications.sort((a, b) =>
-        a[Object.keys(a)[n]].localeCompare(b[Object.keys(b)[n]])
-      );
-      renderTable();
-    };
-  
-    window.openModal = (index) => {
-      studentDetails.textContent = `Name: ${applications[index].name}\nStatus: ${applications[index].status}`;
-      modal.style.display = "flex";
-  
-      statusButtons.forEach((button) => {
-        button.onclick = () => {
-          applications[index].status =
-            button.dataset.status.charAt(0).toUpperCase() +
-            button.dataset.status.slice(1);
-          renderTable();
-          closeModal();
-        };
-      });
-    };
-  
-    window.closeModal = () => {
-      modal.style.display = "none";
-    };
-  
-    closeModalButton.addEventListener("click", closeModal);
-    window.addEventListener("click", (event) => {
-      if (event.target === modal) closeModal();
-    });
-  
-    renderTable();
-  });
-  
-=======
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput");
-  const filterStatus = document.getElementById("filterStatus");
-  const applicationTable = document.getElementById("applicationTable");
-  const applicationModal = new bootstrap.Modal(document.getElementById("applicationModal"));
-  const studentDetails = document.getElementById("studentDetails");
-  
-  let applications = [
-      { name: "Phenius Mutiga", status: "pending" },
-      { name: "Richard Ochieng'", status: "accepted" },
-      { name: "Hedmon Achacha", status: "rejected" },
-      { name: "Vincent Owuor", status: "pending" }
-  ];
-  
-  function renderApplications() {
-      applicationTable.innerHTML = "";
-      applications.forEach((app, index) => {
-          if (filterStatus.value === "all" || filterStatus.value === app.status) {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                  <td>${app.name}</td>
-                  <td><span class="badge bg-${app.status === 'accepted' ? 'success' : app.status === 'rejected' ? 'danger' : 'warning'}">${app.status}</span></td>
-                  <td>
-                      <button class="btn btn-info btn-sm view-btn" data-index="${index}"><i class="fa fa-eye"></i></button>
-                      <button class="btn btn-warning btn-sm edit-btn" data-index="${index}"><i class="fa fa-edit"></i></button>
-                      <button class="btn btn-danger btn-sm delete-btn" data-index="${index}"><i class="fa fa-trash"></i></button>
-                  </td>
-              `;
-              applicationTable.appendChild(row);
-          }
-      });
   }
-  
-  searchInput.addEventListener("input", function () {
-      const searchText = searchInput.value.toLowerCase();
-      applications.forEach((app, index) => {
-          const row = applicationTable.rows[index];
-          if (app.name.toLowerCase().includes(searchText)) {
-              row.style.display = "";
-          } else {
-              row.style.display = "none";
-          }
-      });
-  });
-  
-  filterStatus.addEventListener("change", renderApplications);
-  
-  applicationTable.addEventListener("click", function (event) {
-      if (event.target.closest(".view-btn")) {
-          const index = event.target.closest(".view-btn").getAttribute("data-index");
-          const app = applications[index];
-          studentDetails.textContent = `Name: ${app.name} | Status: ${app.status}`;
-          applicationModal.show();
-      }
 
-      if (event.target.closest(".edit-btn")) {
-          const index = event.target.closest(".edit-btn").getAttribute("data-index");
-          const newStatus = prompt("Update application status (pending, accepted, rejected):", applications[index].status);
-          if (newStatus && ["pending", "accepted", "rejected"].includes(newStatus.toLowerCase())) {
-              applications[index].status = newStatus.toLowerCase();
-              renderApplications();
-          } else {
-              alert("Invalid status entered.");
-          }
-      }
+  // Remove error class when user interacts with fields
+  const titleField = document.getElementById("title");
+  if (titleField) {
+    titleField.addEventListener("input", function () {
+      this.classList.remove("is-invalid");
+    });
+  }
 
-      if (event.target.closest(".delete-btn")) {
-          const index = event.target.closest(".delete-btn").getAttribute("data-index");
-          if (confirm("Are you sure you want to delete this application?")) {
-              applications.splice(index, 1);
-              renderApplications();
-          }
-      }
-  });
-  
-  renderApplications();
+  const durationField = document.getElementById("duration");
+  if (durationField) {
+    durationField.addEventListener("change", function () {
+      this.classList.remove("is-invalid");
+    });
+  }
 });
->>>>>>> origin/main

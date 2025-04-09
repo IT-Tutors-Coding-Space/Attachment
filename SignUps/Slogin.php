@@ -1,9 +1,6 @@
 <?php
 require_once "../db.php";
 session_start();
-
-$error = ""; // Initialize error variable
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate email
     if (empty($_POST["email"]) || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
@@ -23,8 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 // Debugging: Log the successful verification
                 error_log("Login successful for email: " . $email);
 
-                // Debugging: Log the successful verification
-                error_log("Login successful for email: " . $email);
+         
 
 
                 $_SESSION["user_id"] = $user["student_id"];

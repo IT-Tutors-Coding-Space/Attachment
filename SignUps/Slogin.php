@@ -1,6 +1,8 @@
 <?php
 require_once "../db.php";
 session_start();
+
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate email
     if (empty($_POST["email"]) || !filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {

@@ -127,7 +127,7 @@ $opportunities = $conn->query("
                                 <th>Company</th>
                                 <th>Timeline</th>
                                 <th>Applications</th>
-                                <th>Status</th>
+                                <!-- <th>Status</th> -->
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -168,11 +168,11 @@ $opportunities = $conn->query("
                                         <?= $opp['application_count'] ?>
                                     </span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span class="badge bg-<?= $opp['status'] == 'Open' ? 'success' : 'danger' ?>">
                                         <?= $opp['status'] ?>
                                     </span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-primary" 
@@ -239,12 +239,12 @@ $opportunities = $conn->query("
                                 <label for="editSlots" class="form-label">Available Slots*</label>
                                 <input type="number" class="form-control" id="editSlots" name="available_slots" min="1" required>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <!-- <div class="col-md-4 mb-3">
                                 <label for="editStatus" class="form-label">Status*</label>
                                 <select class="form-select" id="editStatus" name="status" required>
                                     <option value="Open">Open</option>
                                     <option value="Closed">Closed</option>
-                                </select>
+                                </select> -->
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">
@@ -256,19 +256,7 @@ $opportunities = $conn->query("
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
-=======
     <?php require "../../Components/AdminFooter.php"; ?>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>

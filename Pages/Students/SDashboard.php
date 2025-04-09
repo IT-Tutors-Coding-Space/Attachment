@@ -57,7 +57,7 @@ try {
 <body>
     <main class="container p-5 flex-grow-1">
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Welcome, <?php echo htmlspecialchars($student["full_name"] ?? "Guest"); ?>!</h1>
+            <h3 class="text-3xl fw-bold">Welcome, <?php echo htmlspecialchars($student["full_name"] ?? "Guest"); ?>!</h3>
             <p class="text-muted">Track your applications, explore new opportunities, and manage your profile.</p>
         </header><br><br><br>
 
@@ -92,7 +92,7 @@ try {
                         <th>Opportunity</th>
                         <th>Company</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <!-- <th>Actions</th> -->
                     </tr>
                 </thead>
                 <tbody id="recentApplicationsTable">
@@ -103,28 +103,14 @@ try {
                             <td><span class="badge bg-<?php echo $application["status"] === "Accepted" ? "success" : ($application["status"] === "Pending" ? "warning" : "danger"); ?>">
                                 <?php echo htmlspecialchars($application["status"]); ?>
                             </span></td>
-                            <td><button class="btn btn-sm btn-outline-secondary">View</button></td>
+                            <!-- <td><button class="btn btn-sm btn-outline-secondary">View</button></td> -->
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-<<<<<<< HEAD
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Students/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
-=======
     </main>
     <?php require "../../Components/StudentFooter.php"; ?>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

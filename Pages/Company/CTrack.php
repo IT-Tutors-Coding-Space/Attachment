@@ -43,7 +43,7 @@ try {
 
     $query = "
         SELECT 
-            a.applications_id, a.status, a.submitted_at, a.cover_letter,
+            a.applications_id, a.status, a.submitted_at, a.cover_letter, a.resume,
             s.student_id, s.full_name, s.email, s.course, s.year_of_study,
             o.opportunities_id, o.title AS opportunity_title,
             c.company_id, c.company_name
@@ -83,17 +83,13 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Student Applications - AttachME</title>
-    <!-- Bootstrap 5 CSS -->
-=======
     <title>Application Tracking - AttachME</title>
->>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/CTrack.css">
 </head>
+
 
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     <!-- Loading Overlay -->
@@ -165,41 +161,51 @@ try {
                             </thead>
                             <tbody>
                                 <?php foreach ($applications as $app): ?>
-                                    <tr class="application-card">
-                                        <td>
-                                            <strong><?= htmlspecialchars($app['full_name']) ?></strong><br>
-                                            <small class="text-muted"><?= htmlspecialchars($app['email']) ?></small><br>
-                                            <small><?= htmlspecialchars($app['course']) ?>, Year
-                                                <?= htmlspecialchars($app['year_of_study']) ?></small>
+                                    <tr class="application-card hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="py-4">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-user text-blue-600"></i>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="font-medium text-gray-900"><?= htmlspecialchars($app['full_name']) ?></div>
+                                                    <div class="text-sm text-gray-500"><?= htmlspecialchars($app['email']) ?></div>
+                                                    <div class="text-xs text-gray-400 mt-1">
+                                                        <?= htmlspecialchars($app['course']) ?>, Year <?= htmlspecialchars($app['year_of_study']) ?>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td><?= htmlspecialchars($app['opportunity_title']) ?></td>
-                                        <td><?= date('M j, Y', strtotime($app['submitted_at'])) ?></td>
-                                        <td>
-                                            <span class="badge status-badge status-<?= strtolower($app['status']) ?>">
+                                        <td class="py-4">
+                                            <div class="text-gray-900 font-medium"><?= htmlspecialchars($app['opportunity_title']) ?></div>
+                                            <div class="text-sm text-gray-500">Submitted: <?= date('M j, Y', strtotime($app['submitted_at'])) ?></div>
+                                        </td>
+                                        <td class="py-4">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                                <?= $app['status'] === 'Accepted' ? 'bg-green-100 text-green-800' : 
+                                                   ($app['status'] === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') ?>">
                                                 <?= htmlspecialchars($app['status']) ?>
                                             </span>
                                         </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary view-details"
+                                        <td class="py-4 space-x-2">
+                                            <button class="btn btn-sm btn-outline-primary view-details transition-all hover:scale-105"
                                                 data-id="<?= $app['applications_id'] ?>" data-bs-toggle="modal"
                                                 data-bs-target="#applicationModal">
                                                 <i class="fas fa-eye me-1"></i> View
                                             </button>
-                                            <form method="POST" action="CTrack.php" class="d-inline">
-                                                <input type="hidden" name="application_id"
-                                                    value="<?= $app['applications_id'] ?>">
+                                            <form method="POST" action="CTrack.php" class="inline-flex">
+                                                <input type="hidden" name="application_id" value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Accepted">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-success">
+                                                    class="btn btn-sm btn-outline-success transition-all hover:scale-105">
                                                     <i class="fas fa-check me-1"></i> Accept
                                                 </button>
                                             </form>
-                                            <form method="POST" action="CTrack.php" class="d-inline">
-                                                <input type="hidden" name="application_id"
-                                                    value="<?= $app['applications_id'] ?>">
+                                            <form method="POST" action="CTrack.php" class="inline-flex">
+                                                <input type="hidden" name="application_id" value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Rejected">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-danger">
+                                                    class="btn btn-sm btn-outline-danger transition-all hover:scale-105">
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
@@ -224,19 +230,75 @@ try {
         </div>
     </div>
 
-    <!-- Application Details Modal -->
+    <!-- Enhanced Application Details Modal -->
     <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Application Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-blue-600 text-white">
+                    <h5 class="modal-title font-bold">Application Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="applicationDetails">
-                    <!-- Content will be loaded via AJAX -->
+                <div class="modal-body p-0">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+                        <!-- Cover Letter Section -->
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+                                <i class="fas fa-envelope-open-text text-blue-500 mr-2"></i>Cover Letter
+                            </h3>
+                            <div class="prose max-w-none" id="modalCoverLetter">
+                                <p class="text-gray-600">Loading cover letter...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Resume Section -->
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+                                <i class="fas fa-file-alt text-blue-500 mr-2"></i>Resume
+                            </h3>
+                            <div class="prose max-w-none" id="modalResume">
+                                <p class="text-gray-600">Loading resume...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student Info Section -->
+                    <div class="bg-gray-100 p-4 border-t">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800" id="modalStudentName">Loading...</h4>
+                                <p class="text-gray-600" id="modalStudentInfo"></p>
+                                <p class="text-sm text-gray-500" id="modalOpportunity"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer bg-gray-50 px-5 py-4 border-t">
+                    <div class="flex justify-between w-full">
+                        <div class="space-x-2">
+                            <form method="POST" action="CTrack.php" class="inline-flex">
+                                <input type="hidden" name="application_id" id="modalAppId">
+                                <input type="hidden" name="status" value="Accepted">
+                                <button type="submit" name="update_status"
+                                    class="btn btn-success transition-all hover:scale-105">
+                                    <i class="fas fa-check me-1"></i> Accept Application
+                                </button>
+                            </form>
+                            <form method="POST" action="CTrack.php" class="inline-flex">
+                                <input type="hidden" name="application_id" id="modalAppId2">
+                                <input type="hidden" name="status" value="Rejected">
+                                <button type="submit" name="update_status"
+                                    class="btn btn-danger transition-all hover:scale-105">
+                                    <i class="fas fa-times me-1"></i> Reject Application
+                                </button>
+                            </form>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> Close
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -245,24 +307,120 @@ try {
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-<<<<<<< HEAD
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of service</a>
-            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-=======
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../../contact.php" class="text-white fw-bold">Contact Support: attachme@admin</a>
->>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
+            <a href="../../contact.php" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../Javascript/CTrack.js?v=<?= time() ?>"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        let currentApplicationData = null;
+
+        // Debug function to log data
+        function debugLog(message, data) {
+            console.log(message, data);
+            // Uncomment below to also log to server for debugging
+            // fetch('../../api/debug_log.php', {
+            //     method: 'POST',
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: JSON.stringify({message, data})
+            // });
+        }
+
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                const appId = this.getAttribute('data-id');
+                debugLog("Fetching application ID:", appId);
+                
+                fetch(`../../api/get_application.php?id=${appId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        debugLog("Application data received:", data);
+                        if (!data) throw new Error("No data received");
+                        
+                        currentApplicationData = data;
+
+                        // Update student info
+                        document.getElementById('modalStudentName').textContent = data.full_name || 'N/A';
+                        document.getElementById('modalStudentInfo').textContent = 
+                            `${data.course || 'N/A'}, Year ${data.year_of_study || 'N/A'} | ${data.email || 'N/A'}`;
+                        document.getElementById('modalOpportunity').textContent = 
+                            `Applied for: ${data.opportunity_title || 'N/A'}`;
+                        
+                        // Update cover letter
+                        const coverLetterDiv = document.querySelector('#modalCoverLetter .prose');
+                        if (data.cover_letter) {
+                            coverLetterDiv.innerHTML = data.cover_letter;
+                            document.getElementById('downloadCoverLetter').style.display = 'inline-block';
+                        } else {
+                            coverLetterDiv.innerHTML = '<p class="text-gray-400">No cover letter provided</p>';
+                            document.getElementById('downloadCoverLetter').style.display = 'none';
+                        }
+
+                        // Update resume
+                        const resumeDiv = document.querySelector('#modalResume .prose');
+                        if (data.resume) {
+                            resumeDiv.innerHTML = data.resume;
+                            document.getElementById('downloadResume').style.display = 'inline-block';
+                        } else {
+                            resumeDiv.innerHTML = '<p class="text-gray-400">No resume provided</p>';
+                            document.getElementById('downloadResume').style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        debugLog("Fetch error:", error.message);
+                        
+                        const errorMsg = `Error: ${error.message}`;
+                        document.querySelector('#modalCoverLetter .prose').innerHTML = 
+                            `<p class="text-danger">${errorMsg}</p>`;
+                        document.querySelector('#modalResume .prose').innerHTML = 
+                            `<p class="text-danger">${errorMsg}</p>`;
+                    });
+            });
+        });
+
+        // Download functionality
+        function downloadFile(content, filename, type = 'text/plain') {
+            if (!content) return;
+            
+            try {
+                const blob = new Blob([content], { type });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Failed to prepare download. Please try again.');
+            }
+        }
+
+        document.getElementById('downloadCoverLetter')?.addEventListener('click', function() {
+            if (currentApplicationData?.cover_letter) {
+                const filename = `Cover_Letter_${currentApplicationData.full_name.replace(/\s+/g, '_')}.txt`;
+                downloadFile(currentApplicationData.cover_letter, filename);
+            }
+        });
+
+        document.getElementById('downloadResume')?.addEventListener('click', function() {
+            if (currentApplicationData?.resume) {
+                const filename = `Resume_${currentApplicationData.full_name.replace(/\s+/g, '_')}.txt`;
+                downloadFile(currentApplicationData.resume, filename);
+            }
+        });
+    });
+    </script>
 </body>
 
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669

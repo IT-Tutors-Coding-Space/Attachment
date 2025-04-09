@@ -14,25 +14,25 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
         <div class="d-flex">
             <ul class="navbar-nav d-flex flex-row gap-3">
                 <li class="nav-item">
-                    <a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a>
+                    <a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a>
+                    <a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5"> Users</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a>
+                    <a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5"> Companies</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a>
+                    <a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a>
+                    <a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5"> Applications</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a>
+                    <a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5"> Analytics</a>
                 </li>
                 <li class="nav-item">
-                    <a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a>
+                    <a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5"> Settings</a>
                 </li>
             </ul>
         </div>

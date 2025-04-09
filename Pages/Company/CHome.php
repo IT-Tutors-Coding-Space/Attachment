@@ -2,6 +2,21 @@
 require_once "../../db.php";
 session_start();
 
+// Handle application status changes
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['application_id'])) {
+    try {
+        $status = ($_POST['action'] === 'accept') ? 'Accepted' : 'Rejected';
+        $updateStmt = $conn->prepare("UPDATE applications SET status = ? WHERE application_id = ?");
+        $updateStmt->execute([$status, $_POST['application_id']]);
+        
+        // Refresh page to show updated status
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        $error = "Error updating application: " . $e->getMessage();
+    }
+}
+
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "company") {
     header("Location: ../../SignUps/CLogin.php");
     exit();
@@ -61,10 +76,9 @@ try {
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+    <!-- Top Navigation Bar (Static) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3" style="position: static;">
         <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Company Portal</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="../Company/CHome.php" class="nav-link text-white fw-bold fs-5 active">
                         Dashboard</a></li>
@@ -139,8 +153,14 @@ try {
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-success">Accept</button>
-                                    <button class="btn btn-sm btn-outline-danger">Reject</button>
+                                    <form method="post" style="display:inline">
+                                        <input type="hidden" name="applications_id" value="<?php echo $application['applications_id']; ?>">
+                                        <button type="submit" name="action" value="accept" class="btn btn-sm btn-outline-success">Accept</button>
+                                    </form>
+                                    <form method="post" style="display:inline">
+                                        <input type="hidden" name="applications_id" value="<?php echo $application['applications_id']; ?>">
+                                        <button type="submit" name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -150,20 +170,13 @@ try {
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
+    <!-- Footer (Static) -->
+    <footer class="bg-dark text-white text-center py-3" style="position: static;">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-<<<<<<< HEAD
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-=======
         <div class="footer-links">
             <a href="../../help-center.php" class="text-white">Help Center</a>
             <a href="../../terms.php" class="text-white">Terms of Service</a>
-            <a href="../../contact.php" class="text-white">Contact Support: attachme@admin</a>
->>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
+            <a href="../../contact.php" class="text-white">Contact Support:</a>
         </div>
     </footer>
 

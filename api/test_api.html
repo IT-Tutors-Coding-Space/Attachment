@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script>
+        function testApi(action) {
+            const formData = new FormData();
+            formData.append('action', action);
+            
+            fetch('admin_settings_api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerHTML = 
+                    `Action: ${action}<br>Response: ${JSON.stringify(data)}`;
+            })
+            .catch(error => {
+                document.getElementById('output').innerHTML = 
+                    `Error: ${error.message}`;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>API Test Page</h1>
+    <button onclick="testApi('test')">Test Connection</button>
+    <button onclick="testApi('update_settings')">Test Settings</button>
+    <button onclick="testApi('create_backup')">Test Backup</button>
+    <div id="output" style="margin-top:20px; padding:10px; border:1px solid #ccc;"></div>
+</body>
+</html>

@@ -77,13 +77,13 @@ try {
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-white" href="CHome.php">🏢 AttachME - Messages</a>
+            <a class="navbar-brand fw-bold text-white" href="CHome.php"> AttachME - Messages</a>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5 active">💬 Messages</a></li>
-                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5">🏢 Profile</a></li>
+                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
+                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a></li>
+                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5"> Applications</a></li>
+                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5 active"> Messages</a></li>
+                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5"> Profile</a></li>
             </ul>
         </div>
     </nav>
@@ -96,7 +96,7 @@ try {
             </div>
         <?php endif; ?>
 
-        <h4 class="fw-bold text-primary">📩 Messages</h4>
+        <h4 class="fw-bold text-primary"> Messages</h4>
         <p class="text-muted">View and respond to messages from students.</p>
         
         <div class="card shadow p-3 mb-4">

@@ -2,7 +2,7 @@
 $host = 'localhost';
 $dbname = 'attachme'; // Adjust database name as needed
 $username = 'root'; // Default WAMP MySQL username
-$password = 'Attachme@Admin'; // Default WAMP MySQL password (empty)
+$password = ''; // Default WAMP MySQL password (empty)
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

@@ -161,9 +161,15 @@ try {
      <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
+<<<<<<< HEAD
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
+=======
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
             <a href="../../contact.php" class="text-white fw-bold">Contact Support: attachme@admin</a>
+>>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
         </div>
     </footer>
     

@@ -8,6 +8,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
 }
 
 $student_id = $_SESSION["user_id"];
+require "../../Components/StudentNav.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,23 +18,11 @@ $student_id = $_SESSION["user_id"];
     <title>About AttachME - Student Portal</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - About Us</h2>
-            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Dashboard</a>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="container p-5 flex-grow-1">
+<body>
+    <main class="container p-5 flex-grow-1">
         <header class="text-center mb-4">
             <h1 class="text-3xl fw-bold">Welcome to AttachME</h1>
             <p class="text-muted">Empowering students through seamless attachment opportunities.</p>
@@ -42,17 +31,17 @@ $student_id = $_SESSION["user_id"];
         <!-- About Section -->
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
             <h5 class="fw-bold text-primary">Our Mission</h5>
-            <p>AttachME is committed to revolutionizing the way students connect with companies for industrial attachments. We strive to equip students with real-world skills and experiences to enhance their professional journeys.</p>
+            <p>We're changing the game when it comes to student internships at AttachME. Our goal is simple: to connect you with companies so you can gain the real-world skills and experiences you need to shine in your career..</p>
             
             <h5 class="fw-bold text-primary">Our Vision</h5>
-            <p>To be the leading platform that bridges the gap between students and the corporate world by providing verified, accessible, and growth-oriented attachment opportunities.</p>
+            <p>We want to be the leading platform where students can easily find real, trustworthy internship opportunities that help them grow and connect with the professional world.</p>
             
             <h5 class="fw-bold text-primary">Core Values</h5>
             <ul>
-                <li>🌍 <strong>Innovation:</strong> Continuously improving our platform to meet industry demands.</li>
-                <li>🤝 <strong>Integrity:</strong> Ensuring transparency and fairness in all applications.</li>
-                <!-- <li>📚 <strong>Empowerment:</strong> Providing students with the resources to excel.</li> -->
-                <li>🚀 <strong>Accessibility:</strong> Making opportunities available to all students.</li>
+                <li> <strong>Innovation:</strong> Continuously improving our platform to meet industry demands.</li>
+                <li> <strong>Integrity:</strong> Ensuring transparency and fairness in all applications.</li>
+                <!-- <li> <strong>Empowerment:</strong> Providing students with the resources to excel.</li> -->
+                <li> <strong>Accessibility:</strong> Making opportunities available to all students.</li>
             </ul>
         </div>
 
@@ -60,9 +49,9 @@ $student_id = $_SESSION["user_id"];
         <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mt-4">
             <h5 class="fw-bold text-primary">How It Works</h5>
             <ul>
-                <li>🎓 <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
-                <li>🏢 <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
-                <li>📊 <strong>For Admins:</strong> Oversee platform operations.</li>
+                <li> <strong>For Students:</strong> Sign up, browse verified attachment opportunities, apply, and track progress in real-time.</li>
+                <li> <strong>For Companies:</strong> Post attachment openings, receive applications, and recruit the best candidates.</li>
+                <li> <strong>For Admins:</strong> Oversee platform operations.</li>
             </ul>
         </div>
 
@@ -76,8 +65,7 @@ $student_id = $_SESSION["user_id"];
                 <li>✅ Dedicated support system for both students and recruiters.</li>
             </ul>
             <p>As students, we are continuously learning and growing as we build this application. Our enthusiasm and commitment drive us to overcome challenges and achieve our goals.</p>
-        </section>
-    </main>
+        </div>
      
 
         </div>
@@ -126,14 +114,19 @@ $student_id = $_SESSION["user_id"];
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support:</a>
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Students/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
+=======
+    </main>
+    <?php require "../../Components/StudentFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
 </body>
 </html>

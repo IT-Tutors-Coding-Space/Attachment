@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Help Center</h2>
-            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Pages/Company/CHome.php" class="btn btn-outline-light">🏠 Home</a>
         </div>
     </nav>
     
@@ -71,14 +71,9 @@
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="Help Center.php" class="text-white fw-bold">Help Center</a>
-<<<<<<< HEAD
-            <a href="../Students/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-=======
-            <a href="../Pages/Students/Terms of servive.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Pages/Students/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
->>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
+            <a href="../Pages/Company/Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Pages/Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Pages/Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
     

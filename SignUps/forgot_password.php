@@ -65,4 +65,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
     
-    <!-- Footer same as login pages -->
+    

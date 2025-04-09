@@ -2,7 +2,7 @@
 require_once "db.php";
 
 try {
-    $stmt = $conn->query("DESCRIBE applications");
+    $stmt = $conn->query("DESCRIBE messages");
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     header('Content-Type: application/json');

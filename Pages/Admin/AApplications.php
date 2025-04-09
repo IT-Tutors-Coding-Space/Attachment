@@ -1,242 +1,289 @@
 <?php
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 require_once "../../db.php";
 session_start();
 
-// Check if the user is logged in
 if ($_SESSION["role"] !== "admin") {
-    header("Location: ../SignUps/Alogin.php");
+    header("Location: ../SignUps/ALogin.php");
     exit();
 }
 
-// Debug database connection
-if (!$conn) {
-    die("Database connection failed: " . print_r($conn->errorInfo(), true));
-}
+require "../../Components/AdminNav.php";
+
+// Get applications with joined data
+$applications = $conn->query("
+    SELECT a.*, 
+           s.full_name as student_name, 
+           s.email as student_email,
+           o.title as opportunity_title,
+           c.company_name,
+           c.logo as company_logo,
+           DATEDIFF(a.submitted_at, NOW()) as days_since_submission
+    FROM applications a
+    JOIN students s ON a.student_id = s.student_id
+    JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+    JOIN companies c ON o.company_id = c.company_id
+    ORDER BY a.submitted_at DESC
+")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttachME Admin - Applications</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Application Management - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4e73df;
+            --success: #1cc88a;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+        }
+        
+        .application-card {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .application-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .company-logo-sm {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .timeline-indicator {
+            position: relative;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .timeline-progress {
+            position: absolute;
+            height: 100%;
+            background: var(--primary);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5 active">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="container p-5 flex-grow-1">
-        <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Manage Applications</h1>
-            <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" id="searchApplications" placeholder="Search applications..." onkeyup="searchApplications()">
+<body class="bg-light">
+    <?php require "../../Components/AdminNav.php"; ?>
+
+    <div class="container py-4"><br><br><br><br>
+        <!-- Header with Search and Filters -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="mb-3 mb-md-0">
+                <h1 class="h3 mb-1 text-gray-800">Application Management</h1>
+                <p class="mb-0 text-muted">Review and manage all student applications</p>
             </div>
-        </header>
+            <div class="d-flex flex-column flex-md-row gap-3 w-100 w-md-auto">
+                <div class="position-relative flex-grow-1">
+                    <input type="text" class="form-control" id="searchApplications" 
+                           placeholder="Search applications..." onkeyup="searchApplications()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Filter Tabs -->
+        <ul class="nav nav-tabs mb-4" id="statusTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-status="all">All</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="Pending">Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="Accepted">Accepted</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="Rejected">Rejected</a>
+            </li>
+        </ul>
 
         <!-- Applications Table -->
-        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-            <h5 class="fw-bold fs-5 mb-3">Applications List</h5>
-            <p class="text-muted">Below is a list of all student applications. You can filter, review, or update their status.</p>
-            <table class="table table-striped">
-                <thead class="bg-dark text-white">
-                    <tr>
-                        <th>Student</th>
-                        <th>Opportunity</th>
-                        <th>Company</th>
-                        <th>Application Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="applicationsTableBody">
-                <?php
-                    // Get applications with joined data
-                    $sql = "SELECT a.*, s.full_name, s.email, 
-                            o.title AS opportunity_title, c.company_name AS company_name
-                            FROM applications a
-                            JOIN students s ON a.student_id = s.student_id
-                            JOIN opportunities o ON a.opportunities_id = o.opportunities_id
-                            JOIN companies c ON o.company_id = c.company_id
-                            ORDER BY a.submitted_at DESC";
-                    
-                    echo "<!-- SQL Query: $sql -->";
-                    
-                    try {
-                        $applicationsStmt = $conn->query($sql);
-                        if (!$applicationsStmt) {
-                            throw new Exception("Query failed: " . implode(" ", $conn->errorInfo()));
-                        }
-                        
-                        $rowCount = $applicationsStmt->rowCount();
-                        echo "<!-- Found $rowCount applications -->";
-                        
-                        if ($rowCount === 0) {
-                            echo "<!-- No applications found in database -->";
-                            echo "<tr><td colspan='6' class='text-center'>No applications found</td></tr>";
-                        }
-                        
-                        while ($application = $applicationsStmt->fetch(PDO::FETCH_ASSOC)) {
-                            $statusClass = '';
-                            if ($application['status'] == 'Accepted') {
-                                $statusClass = 'bg-success';
-                            } elseif ($application['status'] == 'Rejected') {
-                                $statusClass = 'bg-danger';
-                            } else {
-                                $statusClass = 'bg-warning';
-                            }
-                            
-                            echo "<tr>
-                                    <td>
-                                        {$application['full_name']}<br>
-                                        <small class='text-muted'>{$application['email']}</small>
-                                    </td>
-                                    <td>{$application['opportunity_title']}</td>
-                                    <td>{$application['company_name']}</td>
-                                    <td>{$application['submitted_at']}</td>
-                                    <td><span class='badge {$statusClass}'>{$application['status']}</span></td>
-                                    <td>
-                                        <form method='POST' action='../../updateApplicationStatus_new.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to accept this application?\")'>
-                                            <input type='hidden' name='applications_id' value='{$application['applications_id']}'>
-                                            <input type='hidden' name='status' value='Accepted'>
-                                            <button type='submit' class='btn btn-sm btn-outline-success'>Accept</button>
+        <div class="card application-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th style="width: 50px;"></th>
+                                <th>Student</th>
+                                <th>Opportunity</th>
+                                <th>Company</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTableBody">
+                            <?php foreach ($applications as $app): 
+                                $statusClass = [
+                                    'Pending' => 'bg-warning',
+                                    'Accepted' => 'bg-success',
+                                    'Rejected' => 'bg-danger'
+                                ][$app['status']] ?? 'bg-secondary';
+                                
+                                $initials = implode('', array_map(function($n) { 
+                                    return strtoupper($n[0]); 
+                                }, explode(' ', $app['student_name'])));
+                            ?>
+                            <tr data-status="<?= $app['status'] ?>">
+                                <td>
+                                    <div class="student-avatar">
+                                        <?= substr($initials, 0, 2) ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0 fw-bold"><?= htmlspecialchars($app['student_name']) ?></h6>
+                                    <small class="text-muted"><?= htmlspecialchars($app['student_email']) ?></small>
+                                </td>
+                                <td><?= htmlspecialchars($app['opportunity_title']) ?></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="../../images/<?= $app['company_logo'] ?? 'default-company.png' ?>" 
+                                             alt="Company Logo" class="company-logo-sm">
+                                        <span><?= htmlspecialchars($app['company_name']) ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <small><?= date('M d, Y', strtotime($app['submitted_at'])) ?></small>
+                                        <small class="text-muted">
+                                            <?= abs($app['days_since_submission']) ?> days <?= 
+                                            $app['days_since_submission'] > 0 ? 'ago' : 'from now' ?>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge status-badge <?= $statusClass ?>">
+                                        <?= $app['status'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <form method="POST" action="../../updateApplicationStatus_new.php" class="d-inline">
+                                            <input type="hidden" name="applications_id" value="<?= $app['applications_id'] ?>">
+                                            <input type="hidden" name="status" value="Accepted">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" 
+                                                <?= $app['status'] === 'Accepted' ? 'disabled' : '' ?>>
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                         </form>
-                                        <form method='POST' action='../../updateApplicationStatus_new.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to reject this application?\")'>
-                                            <input type='hidden' name='applications_id' value='{$application['applications_id']}'>
-                                            <input type='hidden' name='status' value='Rejected'>
-                                            <button type='submit' class='btn btn-sm btn-outline-danger'>Reject</button>
+                                        <form method="POST" action="../../updateApplicationStatus_new.php" class="d-inline">
+                                            <input type="hidden" name="applications_id" value="<?= $app['applications_id'] ?>">
+                                            <input type="hidden" name="status" value="Rejected">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                <?= $app['status'] === 'Rejected' ? 'disabled' : '' ?>>
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </form>
-                                        <form method='GET' action='get-application-details.php' style='display:inline;' target='_blank'>
-                                            <input type='hidden' name='id' value='{$application['applications_id']}'>
-                                            <button type='submit' class='btn btn-sm btn-outline-primary'>View Details</button>
-                                        </form>
-                                    </td>
-                                  </tr>";
-                        }
-                    } catch (Exception $e) {
-                        echo "<!-- Error: " . htmlspecialchars($e->getMessage()) . " -->";
-                        echo "<tr><td colspan='6' class='text-danger'>Error loading applications: " . 
-                             htmlspecialchars($e->getMessage()) . "</td></tr>";
-                    }
-                ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Application Details Modal -->
-    <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Application Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="applicationDetails">
-                    <!-- Content will be loaded via AJAX -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <a href="get-application-details.php?id=<?= $app['applications_id'] ?>" 
+                                           class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="#help" class="text-white fw-bold">Help Center</a>
-            <a href="#terms" class="text-white fw-bold">Terms of Service</a>
-            <a href="#contact" class="text-white fw-bold">Contact Support</a>
+            <a href="../Admin/Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Admin/Contact support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
+=======
+    <?php require "../../Components/AdminFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <script>
-        // Handle view application button clicks
-        document.querySelectorAll('.view-application').forEach(button => {
-            button.addEventListener('click', function() {
-                const applicationId = this.getAttribute('data-id');
-                fetch(`../get-application-details.php?id=${applicationId}`)
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('applicationDetails').innerHTML = data;
-                    })
-                    .catch(error => {
-                        document.getElementById('applicationDetails').innerHTML = 
-                            `<div class="alert alert-danger">Error loading application details</div>`;
-                    });
+        // Status tab filtering
+        document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const status = this.getAttribute('data-status');
+                filterApplications(status);
+                
+                // Update active tab
+                document.querySelectorAll('#statusTabs .nav-link').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
             });
         });
 
-        // Live search functionality
-        function searchApplications() {
-            const input = document.getElementById('searchApplications');
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById('applicationsTableBody');
-            const rows = table.getElementsByTagName('tr');
-
-            for (let i = 0; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                let found = false;
-                
-                for (let j = 0; j < cells.length; j++) {
-                    if (cells[j]) {
-                        const txtValue = cells[j].textContent || cells[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            found = true;
-                            break;
-                        }
-                    }
+        function filterApplications(status = 'all') {
+            const rows = document.querySelectorAll('#applicationsTableBody tr');
+            rows.forEach(row => {
+                if (status === 'all' || row.getAttribute('data-status') === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
-                
-                rows[i].style.display = found ? '' : 'none';
-            }
+            });
         }
 
-        // Display success/error messages
+        function searchApplications() {
+            const input = document.getElementById('searchApplications').value.toLowerCase();
+            const rows = document.querySelectorAll('#applicationsTableBody tr');
+            
+            rows.forEach(row => {
+                if (row.style.display === 'none') return;
+                
+                const student = row.cells[1].textContent.toLowerCase();
+                const opportunity = row.cells[2].textContent.toLowerCase();
+                const company = row.cells[3].textContent.toLowerCase();
+                
+                if (student.includes(input) || opportunity.includes(input) || company.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Apply initial filter
         document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const success = urlParams.get('success');
-            const error = urlParams.get('error');
-            
-            if (success) {
-                alert(success);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-            if (error) {
-                alert(error);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-            
-            // Initialize search on page load
-            document.getElementById('searchApplications').addEventListener('keyup', searchApplications);
+            filterApplications('all');
         });
     </script>
 </body>

@@ -4,6 +4,11 @@ ob_start();
 session_start();
 require_once "../db.php";
 
+// Remove any accidental SMTP configuration output
+if (ob_get_contents()) {
+    ob_clean();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
     if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["level"]) || empty($_POST["year_of_study"]) || empty($_POST["course"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {
@@ -180,14 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 <script src="../Javasript/StudentReg.js"></script>
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="help-center.html" class="text-white fw-bold">Help Center</a>
-            <a href="terms.html" class="text-white fw-bold">Terms of Service</a>
-            <a href="contact.html" class="text-white fw-bold">Contact Support: 0700234362</a>
-        </div>
-    </footer>
+
 </body>
 </html>

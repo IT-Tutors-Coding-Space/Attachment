@@ -3,7 +3,7 @@ require_once "../../db.php";
 session_start();
 
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "company") {
-    header("Location: ../../SignUps/Clogin.php");
+    header("Location: ../../SignUps/CLogin.php");
     exit();
 }
 
@@ -153,10 +153,17 @@ try {
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+<<<<<<< HEAD
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
+=======
         <div class="footer-links">
             <a href="../../help-center.php" class="text-white">Help Center</a>
             <a href="../../terms.php" class="text-white">Terms of Service</a>
             <a href="../../contact.php" class="text-white">Contact Support: attachme@admin</a>
+>>>>>>> 62fb1e5bca71397aa7565d25f7a09ece2b361669
         </div>
     </footer>
 

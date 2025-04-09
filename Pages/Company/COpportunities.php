@@ -234,7 +234,7 @@ try {
         <?php if ($showForm): ?>
             <div class="card border-0 shadow-sm p-4 bg-white rounded-lg mb-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-primary">Post a New Opportunity</h5>
+                    <h5 class="fw-bold text-primary">Post a New Opportunity for a student</h5>
                     <button onclick="window.location.href='COpportunities.php'" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-times"></i>
                     </button>

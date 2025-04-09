@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
     exit();
 }
 $student_id = $_SESSION['user_id'];
+require "../../Components/StudentNav.php";
 try {
     $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
     $stmt->execute([$student_id]);
@@ -26,22 +27,8 @@ try {
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/student-styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
+<body class="bg-gray-100 d-flex flex-column min-vh-100"><br><br><b></b>
     
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Students/SDashboard.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.php" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
-                <li class="nav-item"><a href="../Students/SBrowse.php" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-            </ul>
-        </div>
-    </nav>
     
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1">
@@ -55,7 +42,7 @@ try {
                
 
                 <!-- Profile Information Column -->
-                <div class="col-md-8">
+                <div class="col-md-8"><b></b><br>
                     <!-- Personal Information Card -->
                     <div class="card mb-4">
                         <div class="card-body">
@@ -264,6 +251,7 @@ try {
     });
     </script>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
@@ -273,6 +261,9 @@ try {
             <a href="tel:+254700234362" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
+=======
+    <?php require "../../Components/StudentFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

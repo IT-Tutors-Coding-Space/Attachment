@@ -4,6 +4,11 @@ ob_start();
 session_start();
 require_once "../db.php";
 
+// Remove any accidental SMTP configuration output
+if (ob_get_contents()) {
+    ob_clean();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields
     if (empty($_POST["full_name"]) || empty($_POST["email"]) || empty($_POST["level"]) || empty($_POST["year_of_study"]) || empty($_POST["course"]) || empty($_POST["password"]) || empty($_POST["confirm_password"])) {

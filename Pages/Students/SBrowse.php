@@ -6,6 +6,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student"){
     exit();
 }
 $student_id = $_SESSION["user_id"];
+require "../../Components/StudentNav.php";
 try {
     $stmt = $conn->prepare("SELECT * FROM opportunities");
     $stmt->execute();
@@ -33,24 +34,16 @@ try {
 </head>
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Students/SDashboard.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.php" class="nav-link text-white fw-bold fs-5 active">📖 About Us</a></li>
-
-                <li class="nav-item"><a href="../Students/SBrowse.php" class="nav-link text-white fw-bold fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white fw-bold fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white fw-bold fs-5">👤 Profile</a></li>
-            </ul>
-        </div>
-    </nav><br><br><br>
     
     <!-- Main Content -->
     <div class="container p-5 flex-grow-1">
+        <?php if (isset($_SESSION['application_success'])): ?>
+            <div class="alert alert-success mb-4">
+                <?= $_SESSION['application_success'] ?>
+                <?php unset($_SESSION['application_success']); ?>
+            </div>
+        <?php endif; ?>
+<br><br><br>
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Explore Attachment Opportunities</h1>
             <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="🔍 Search by title, company, or location...">
@@ -72,12 +65,25 @@ try {
                             <p><strong>Deadline:</strong> <?php echo htmlspecialchars($opportunity["application_deadline"]); ?></p>
                         </div>
                         <div class="col-md-4 d-flex align-items-center justify-content-center">
-                            <button class="btn btn-primary btn-lg apply-btn" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#applyModal"
-                                    data-opportunity-id="<?php echo htmlspecialchars($opportunity["opportunities_id"]); ?>">
-                                Apply Now
-                            </button>
+                            <?php
+                            // Check if student has already applied
+                            $applied_stmt = $conn->prepare("
+                                SELECT 1 FROM applications 
+                                WHERE student_id = ? AND opportunities_id = ?
+                            ");
+                            $applied_stmt->execute([$student_id, $opportunity["opportunities_id"]]);
+                            $has_applied = $applied_stmt->fetch();
+                            
+                            if ($has_applied): ?>
+                                <span class="badge bg-success p-3">Applied ✓</span>
+                            <?php else: ?>
+                                <button class="btn btn-primary btn-lg apply-btn" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#applyModal"
+                                        data-opportunity-id="<?php echo htmlspecialchars($opportunity["opportunities_id"]); ?>">
+                                    Apply Now
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -94,8 +100,9 @@ try {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="applicationForm" action="/Attachment/api/application-submit.php" method="POST" enctype="multipart/form-data">
+                            <form id="applicationForm" action="../../api/submit-application.php" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="student_id" value="<?php echo $student_id; ?>">
+                            <input type="hidden" name="opportunities_id" id="modalOpportunityId" value="">
                             
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Upload Cover Letter (PDF only)</label>
@@ -133,6 +140,7 @@ try {
         </script>
     </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
@@ -142,11 +150,56 @@ try {
             <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
+=======
+    <?php require "../../Components/StudentFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="../../Javasript/SBrowse.js?v=<?= time() ?>"></script>
+    <script>
+    // Enhanced live search functionality
+    let searchTimeout;
+    const searchInput = document.getElementById('searchOpportunities');
+    const opportunityCards = document.querySelectorAll('#opportunitiesList .col-md-12');
+    const noResultsMsg = document.createElement('div');
+    noResultsMsg.className = 'col-12 text-center py-4';
+    noResultsMsg.innerHTML = '<h4 class="text-muted">No matching opportunities found</h4>';
+    noResultsMsg.style.display = 'none';
+    document.getElementById('opportunitiesList').appendChild(noResultsMsg);
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const searchTerm = this.value.trim().toLowerCase();
+            let hasMatches = false;
+            
+            opportunityCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const company = card.querySelector('h5').textContent.toLowerCase();
+                const location = card.querySelector('p:nth-of-type(4)').textContent.toLowerCase();
+                
+                const matches = title.includes(searchTerm) || 
+                              company.includes(searchTerm) || 
+                              location.includes(searchTerm);
+                
+                card.style.display = matches ? 'block' : 'none';
+                if (matches) hasMatches = true;
+            });
+
+            noResultsMsg.style.display = searchTerm && !hasMatches ? 'block' : 'none';
+        }, 300); // 300ms delay
+    });
+
+    // Set opportunity ID when apply button clicked
+    document.querySelectorAll('.apply-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('modalOpportunityId').value = 
+                this.getAttribute('data-opportunity-id');
+        });
+    });
+    </script>
 </body>
 </html>
  

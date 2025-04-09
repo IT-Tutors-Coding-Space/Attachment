@@ -27,11 +27,12 @@ $messageType = $messageType ?? null;
 $showForm = isset($_GET['create']) ? true : false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Validate input fields (including duration)
+    // Validate input fields (including duration and company_name)
     if (
-        empty($_POST["title"]) || empty($_POST["description"]) || empty($_POST["requirements"]) ||
-        empty($_POST["available_slots"]) || empty($_POST["application_deadline"]) ||
-        empty($_POST["location"]) || empty($_POST["duration"])
+        empty($_POST["company_name"]) || empty($_POST["title"]) || empty($_POST["description"]) ||
+        empty($_POST["requirements"]) || empty($_POST["available_slots"]) ||
+        empty($_POST["application_deadline"]) || empty($_POST["location"]) ||
+        empty($_POST["duration"])
     ) {
         $message = "All fields are required.";
         $messageType = "danger";
@@ -58,11 +59,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         try {
             $conn->beginTransaction();
 
-            $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
-                                   available_slots, application_deadline, status, location, duration, created_at, updated_at) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt = $conn->prepare("INSERT INTO opportunities 
+                (company_id, company_name, title, description, requirements, 
+                available_slots, application_deadline, status, location, duration, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $stmt->execute([
                 $companyId,
+                $_POST["company_name"],
                 $_POST["title"],
                 $_POST["description"],
                 $_POST["requirements"],
@@ -124,6 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "success" => false,
                 "message" => $message,
                 "fieldErrors" => [
+                    "company_name" => strpos($message, "company name") !== false,
                     "title" => strpos($message, "title") !== false,
                     "deadline" => strpos($message, "deadline") !== false,
                     "slots" => strpos($message, "slots") !== false,
@@ -135,10 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// Fetch all opportunities (including duration)
+// Fetch all opportunities (including company_name)
 $opportunities = [];
 try {
-    $stmt = $conn->prepare("SELECT company_id, title, requirements, available_slots, 
+    $stmt = $conn->prepare("SELECT company_id, company_name, title, requirements, available_slots, 
                            application_deadline, status, location, duration 
                            FROM opportunities 
                            WHERE company_id = ? 
@@ -174,6 +178,20 @@ try {
         .status-badge {
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        .is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
         }
     </style>
 </head>
@@ -223,6 +241,11 @@ try {
                 </div>
 
                 <form id="opportunityForm" method="POST" action="COpportunities.php">
+                    <div class="mb-3">
+                        <label for="company_name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" required
+                            value="<?php echo isset($_POST['company_name']) ? htmlspecialchars($_POST['company_name']) : ''; ?>">
+                    </div>
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" id="title" name="title" required
@@ -281,6 +304,7 @@ try {
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Company</th>
                                     <th>Title</th>
                                     <th>Requirements</th>
                                     <th>Location</th>
@@ -293,6 +317,7 @@ try {
                             <tbody>
                                 <?php foreach ($opportunities as $opportunity): ?>
                                     <tr class="opportunity-card">
+                                        <td><?php echo htmlspecialchars($opportunity['company_name']); ?></td>
                                         <td><?php echo htmlspecialchars($opportunity['title']); ?></td>
                                         <td><?php echo nl2br(htmlspecialchars(substr($opportunity['requirements'], 0, 100) . (strlen($opportunity['requirements']) > 100 ? '...' : ''))); ?>
                                         </td>

@@ -8,6 +8,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
 }
 
 $student_id = $_SESSION["user_id"];
+require "../../Components/StudentNav.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,23 +18,11 @@ $student_id = $_SESSION["user_id"];
     <title>About AttachME - Student Portal</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - About Us</h2>
-            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Dashboard</a>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="container p-5 flex-grow-1">
+<body>
+    <main class="container p-5 flex-grow-1">
         <header class="text-center mb-4">
             <h1 class="text-3xl fw-bold">Welcome to AttachME</h1>
             <p class="text-muted">Empowering students through seamless attachment opportunities.</p>
@@ -76,8 +65,7 @@ $student_id = $_SESSION["user_id"];
                 <li>✅ Dedicated support system for both students and recruiters.</li>
             </ul>
             <p>As students, we are continuously learning and growing as we build this application. Our enthusiasm and commitment drive us to overcome challenges and achieve our goals.</p>
-        </section>
-    </main>
+        </div>
      
 
         </div>
@@ -126,6 +114,7 @@ $student_id = $_SESSION["user_id"];
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-auto">
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
@@ -135,5 +124,9 @@ $student_id = $_SESSION["user_id"];
             <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
         </div>
     </footer>
+=======
+    </main>
+    <?php require "../../Components/StudentFooter.php"; ?>
+>>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
 </body>
 </html>

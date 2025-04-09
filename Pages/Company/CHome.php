@@ -2,6 +2,21 @@
 require_once "../../db.php";
 session_start();
 
+// Handle application status changes
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['application_id'])) {
+    try {
+        $status = ($_POST['action'] === 'accept') ? 'Accepted' : 'Rejected';
+        $updateStmt = $conn->prepare("UPDATE applications SET status = ? WHERE application_id = ?");
+        $updateStmt->execute([$status, $_POST['application_id']]);
+        
+        // Refresh page to show updated status
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        $error = "Error updating application: " . $e->getMessage();
+    }
+}
+
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "company") {
     header("Location: ../../SignUps/CLogin.php");
     exit();

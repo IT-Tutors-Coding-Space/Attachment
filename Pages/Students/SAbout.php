@@ -21,11 +21,10 @@ require "../../Components/StudentNav.php";
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
-<body>
+<body><br><br><br><br>
     <main class="container p-5 flex-grow-1">
         <header class="text-center mb-4">
-            <h1 class="text-3xl fw-bold">Welcome to AttachME</h1>
-            <p class="text-muted">Empowering students through seamless attachment opportunities.</p>
+            <h3 class="text-muted">Empowering students through seamless attachment opportunities.</>
         </header>
 
         <!-- About Section -->
@@ -114,19 +113,7 @@ require "../../Components/StudentNav.php";
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Students/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support:</a>
-        </div>
-    </footer>
-=======
     </main>
     <?php require "../../Components/StudentFooter.php"; ?>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
 </body>
 </html>

@@ -45,7 +45,7 @@ try {
         <?php endif; ?>
 <br><br><br>
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Explore Attachment Opportunities</h1>
+            <h2 class="text-3xl fw-bold">Explore Attachment Opportunities</h2>
             <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="🔍 Search by title, company, or location...">
         </header>
 

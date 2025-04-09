@@ -12,23 +12,45 @@ if (empty($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 require "../../Components/AdminNav.php";
 
 // 1. Get application statistics with precise schema references
-$stats = $conn->query("
-    SELECT 
-        (SELECT COUNT(*) FROM applications) as total_apps,
-        (SELECT COUNT(*) FROM applications WHERE status = 'Accepted') as accepted,
-        (SELECT COUNT(*) FROM applications WHERE status = 'Rejected') as rejected,
-        (SELECT COUNT(*) FROM companies WHERE status = 'Active') as active_companies,
-        (SELECT COUNT(DISTINCT student_id) FROM applications) as unique_applicants,
-        (SELECT COUNT(*) FROM opportunities WHERE application_deadline >= CURDATE()) as active_opportunities,
-        (SELECT COUNT(*) FROM applications 
-         WHERE submitted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)) as weekly_apps,
-        (SELECT ROUND(AVG(
-            CASE 
-                WHEN processed_at IS NULL THEN DATEDIFF(CURDATE(), submitted_at)
-                ELSE DATEDIFF(processed_at, submitted_at)
-            END
-        ), 1) FROM applications WHERE status IN ('Accepted', 'Rejected')) as avg_processing_days
-")->fetch(PDO::FETCH_ASSOC);
+try {
+    $stats = $conn->query("
+        SELECT 
+            (SELECT COUNT(*) FROM applications) as total_apps,
+            (SELECT COUNT(*) FROM applications WHERE status = 'Accepted') as accepted,
+            (SELECT COUNT(*) FROM applications WHERE status = 'Rejected') as rejected,
+            (SELECT COUNT(*) FROM companies WHERE status = 'Active') as active_companies,
+            (SELECT COUNT(DISTINCT student_id) FROM applications) as unique_applicants,
+            (SELECT COUNT(*) FROM opportunities WHERE application_deadline >= CURDATE()) as active_opportunities,
+            (SELECT COUNT(*) FROM applications 
+             WHERE submitted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)) as weekly_apps,
+            (SELECT ROUND(AVG(DATEDIFF(CURDATE(), submitted_at)), 1) 
+             FROM applications WHERE status IN ('Accepted', 'Rejected')) as avg_processing_days,
+            (SELECT ROUND(AVG(DATEDIFF(reviewed_at, submitted_at)), 1)
+             FROM applications WHERE status IN ('Accepted', 'Rejected')) as company_response_days
+    ")->fetch(PDO::FETCH_ASSOC);
+
+    // Debug output - remove in production
+    error_log("Stats query results: " . print_r($stats, true));
+    
+    // Set default values if null
+    $stats = array_map(function($value) {
+        return $value ?? 0;
+    }, $stats);
+    
+} catch (PDOException $e) {
+    error_log("Database error in AAnalytics.php: " . $e->getMessage());
+    $stats = [
+        'total_apps' => 0,
+        'accepted' => 0,
+        'rejected' => 0,
+        'active_companies' => 0,
+        'unique_applicants' => 0,
+        'active_opportunities' => 0,
+        'weekly_apps' => 0,
+        'avg_processing_days' => 0,
+        'company_response_days' => 0
+    ];
+}
 
 // 2. Get timeline data with proper date handling
 $timelineData = $conn->query("
@@ -49,10 +71,10 @@ $companyData = $conn->query("
         c.company_id,
         c.company_name, 
         c.logo, 
-        COUNT(a.application_id) as application_count
+        COUNT(a.applications_id) as application_count
     FROM companies c
     LEFT JOIN opportunities o ON c.company_id = o.company_id
-    LEFT JOIN applications a ON o.opportunity_id = a.opportunity_id
+    LEFT JOIN applications a ON o.opportunities_id = a.opportunities_id
     WHERE c.status = 'Active'
     GROUP BY c.company_id
     ORDER BY application_count DESC
@@ -117,8 +139,10 @@ $statusData = $conn->query("
         
         .chart-container {
             position: relative;
-            height: 100%;
-            min-height: 300px;
+            height: 40vh;
+            min-height: 250px;
+            max-height: 350px;
+            margin-bottom: 1rem;
         }
         
         .company-logo {
@@ -134,7 +158,7 @@ $statusData = $conn->query("
 <body class="bg-light">
     <?php require "../../Components/AdminNav.php"; ?>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-4"><br><b></b><br><b></b><br><br><br>
         <!-- Dashboard Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -364,10 +388,18 @@ $statusData = $conn->query("
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <h6 class="mb-1">Acceptance Rate</h6>
-                                        <h3 class="mb-0"><?= round($stats['accepted']/max(1,$stats['total_apps'])*100) ?>%</h3>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $rate = round($stats['accepted']/max(1,$stats['total_apps'])*100);
+                                                echo $rate > 0 ? $rate.'%' : 'N/A';
+                                            ?>
+                                        </h3>
                                     </div>
-                                    <i class="fas fa-arrow-up fa-2x opacity-25"></i>
+                                    <i class="fas fa-check-circle fa-2x opacity-25"></i>
                                 </div>
+                                <small class="opacity-75">
+                                    <?= $stats['accepted'] ?> of <?= $stats['total_apps'] ?> applications
+                                </small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -375,32 +407,84 @@ $statusData = $conn->query("
                                 <div class="d-flex justify-content-between">
                                     <div>
                                         <h6 class="mb-1">Avg. Response Time</h6>
-                                        <h3 class="mb-0"><?= $stats['avg_processing_days'] ?> days</h3>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $days = $stats['avg_processing_days'];
+                                                echo $days > 0 ? $days.' days' : 'N/A';
+                                            ?>
+                                        </h3>
                                     </div>
-                                    <i class="fas fa-clock fa-2x opacity-25"></i>
+                                    <i class="fas fa-stopwatch fa-2x opacity-25"></i>
                                 </div>
+                                <small class="opacity-5">From submission to decision</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="glass-card p-3 gradient-warning text-white rounded-lg">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <h6 class="mb-1">Weekly Growth</h6>
-                                        <h3 class="mb-0">+<?= round($stats['weekly_apps']/max(1,$stats['total_apps']-$stats['weekly_apps'])*100) ?>%</h3>
+                                        <h6 class="mb-1">Student Engagement</h6>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $engagement = round($stats['unique_applicants']/max(1,$stats['total_apps'])*100);
+                                                echo $engagement > 0 ? $engagement.'%' : 'N/A';
+                                            ?>
+                                        </h3>
                                     </div>
-                                    <i class="fas fa-chart-line fa-2x opacity-25"></i>
+                                    <i class="fas fa-users fa-2x opacity-25"></i>
                                 </div>
+                                <small class="opacity-75"><?= $stats['unique_applicants'] ?> unique applicants</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="glass-card p-3 gradient-info text-white rounded-lg">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <h6 class="mb-1">Active Opportunities</h6>
-                                        <h3 class="mb-0"><?= number_format($stats['active_opportunities']) ?></h3>
+                                        <h6 class="mb-1">Opportunity Fill Rate</h6>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $fillRate = round($stats['accepted']/max(1,$stats['active_opportunities'])*100);
+                                                echo $fillRate > 0 ? $fillRate.'%' : 'N/A';
+                                            ?>
+                                        </h3>
                                     </div>
                                     <i class="fas fa-briefcase fa-2x opacity-25"></i>
                                 </div>
+                                <small class="opacity-75">Of <?= $stats['active_opportunities'] ?> opportunities</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 gradient-danger text-white rounded-lg">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1">Weekly Growth</h6>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $growth = round($stats['weekly_apps']/max(1,$stats['total_apps']-$stats['weekly_apps'])*100);
+                                                echo $growth > 0 ? '+'.$growth.'%' : 'N/A';
+                                            ?>
+                                        </h3>
+                                    </div>
+                                    <i class="fas fa-chart-line fa-2x opacity-25"></i>
+                                </div>
+                                <small class="opacity-75"><?= $stats['weekly_apps'] ?> new applications</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 gradient-secondary text-white rounded-lg">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1">Company Response</h6>
+                                        <h3 class="mb-0">
+                                            <?php 
+                                                $responseDays = $stats['company_response_days'];
+                                                echo $responseDays > 0 ? $responseDays.' days' : 'N/A';
+                                            ?>
+                                        </h3>
+                                    </div>
+                                    <i class="fas fa-building fa-2x opacity-25"></i>
+                                </div>
+                                <small class="opacity-75">Avg. time to review</small>
                             </div>
                         </div>
                     </div>
@@ -409,19 +493,7 @@ $statusData = $conn->query("
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Hep Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
-=======
     <?php require "../../Components/AdminFooter.php"; ?>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -463,7 +535,8 @@ $statusData = $conn->query("
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.5,
                     plugins: {
                         legend: {
                             position: 'top',
@@ -512,8 +585,9 @@ $statusData = $conn->query("
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    cutout: '65%',
                     plugins: {
                         legend: {
                             position: 'right',

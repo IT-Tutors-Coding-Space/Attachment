@@ -131,27 +131,10 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
         }
     </style>
 </head>
-<<<<<<< HEAD
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5"> Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5"> Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5">Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5"> Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5 active"> Settings</a></li>
-            </ul>
-=======
 <body class="bg-light">
     <?php require "../../Components/AdminNav.php"; ?>
 
-    <div class="container py-4">
+    <div class="container py-4"><br><br><br><br>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="h3 mb-1 text-gray-800 fw-bold">System Settings</h1>
@@ -167,43 +150,8 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user-shield me-2"></i> Audit Log</a></li>
                 </ul>
             </div>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
         </div>
 
-<<<<<<< HEAD
-        <form method="POST" action="">
-            <div class="row g-4">
-                <!-- Account Settings -->
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                        <h5 class="fw-bold fs-5 mb-3">Account Settings</h5>
-                        <?php if (isset($_SESSION['error'])): ?>
-                            <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                        <?php endif; ?>
-                        <?php if (isset($_SESSION['success'])): ?>
-                            <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
-                        <?php endif; ?>
-                        
-                        <div class="alert alert-info mb-3">
-                            <strong>Logged in as:</strong> <?php echo htmlspecialchars($adminData['full_name'] ?? 'Administrator'); ?>
-                            <div><small>Admin ID: <?php echo htmlspecialchars($_SESSION['admin_id'] ?? ''); ?></small></div>
-                            <!-- DEBUG: <?php var_dump($adminData); ?> -->
-                        </div>
-                        <label class="fw-bold">Full Name</label>
-                        <input type="text" class="form-control mb-3" id="adminName" name="full_name" 
-                            value="<?php echo htmlspecialchars($adminData['full_name'] ?? ''); ?>" 
-                            required>
-                        <label class="fw-bold">Email Address</label>
-                        <input type="email" class="form-control mb-3" id="adminEmail" name="email" 
-                            value="<?php echo htmlspecialchars($adminData['email'] ?? ''); ?>" 
-                            pattern="[a-zA-Z0-9._%+-]+@admin\.attachme$" 
-                            title="Admin email must be in format username@admin.attachme" required>
-                        <label class="fw-bold">Change Password</label>
-                        <input type="password" class="form-control mb-3" id="adminPassword" name="password" placeholder="Enter new password">
-                        <button type="submit" name="update_profile" class="btn btn-primary w-100">Save Changes</button>
-                        <button type="submit" name="delete_account" class="btn btn-danger w-100 mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
-                    </div>
-=======
         <div class="row g-4">
             <div class="col-lg-3">
                 <div class="settings-card p-4 h-100">
@@ -237,7 +185,6 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                             </a>
                         </li>
                     </ul>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
                 </div>
             </div>
             
@@ -249,36 +196,29 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                             <h5 class="fw-bold mb-4">
                                 <i class="fas fa-cog me-2"></i> General Settings
                             </h5>
-                            <form>
+                            <form method="POST" action="../../api/update_settings.php">
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">System Name</label>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($settings['system_name'] ?? 'AttachME') ?>">
+                                        <input type="text" name="system_name" class="form-control" value="<?= htmlspecialchars($settings['system_name'] ?? 'AttachME') ?>" readonly>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Timezone</label>
-                                        <select class="form-select">
-                                            <option>UTC</option>
-                                            <option selected>Africa/Nairobi</option>
-                                            <option>America/New_York</option>
-                                        </select>
+                                        <div class="d-none"></div>
                                     </div>
                                 </div>
                                 
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">Default Theme</label>
-                                        <select class="form-select">
-                                            <option>Light</option>
-                                            <option>Dark</option>
-                                            <option selected>System</option>
+                                        <select class="form-select" name="default_theme">
+                                            <option selected>Light</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Maintenance Mode</label>
                                         <div class="d-flex align-items-center">
                                             <label class="toggle-switch me-3">
-                                                <input type="checkbox" <?= ($settings['maintenance_mode'] ?? 0) ? 'checked' : '' ?>>
+                                                <input type="checkbox" name="maintenance_mode" <?= ($settings['maintenance_mode'] ?? 0) ? 'checked' : '' ?>>
                                                 <span class="slider"></span>
                                             </label>
                                             <span><?= ($settings['maintenance_mode'] ?? 0) ? 'Enabled' : 'Disabled' ?></span>
@@ -305,7 +245,7 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Last Active</th>
-                                            <th>Actions</th>
+                                            <!-- <th>Actions</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -319,14 +259,14 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                                             <td><?= htmlspecialchars($admin['full_name']) ?></td>
                                             <td><?= htmlspecialchars($admin['email']) ?></td>
                                             <td><?= $admin['last_login'] ? date('M d, Y', strtotime($admin['last_login'])) : 'Never' ?></td>
-                                            <td>
+                                            <!-- <td>
                                                 <button class="btn btn-sm btn-outline-primary me-2">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -371,26 +311,60 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                                 </div>
                             </div>
                             
-                            <h6 class="fw-bold mt-4 mb-3">Recent Backups</h6>
-                            <div class="list-group">
-                                <?php foreach($backupHistory as $backup): ?>
-                                <div class="list-group-item backup-item">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="mb-1"><?= htmlspecialchars($backup['backup_name']) ?></h6>
-                                            <small class="text-muted"><?= date('M d, Y H:i', strtotime($backup['created_at'])) ?></small>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-sm btn-outline-primary me-2">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
+                            <h6 class="fw-bold mt-4 mb-3">Backup History</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Size</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($backupHistory as $backup): ?>
+                                        <tr class="backup-item">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-database text-primary me-2"></i>
+                                                    <div>
+                                                        <h6 class="mb-0"><?= htmlspecialchars($backup['backup_name']) ?></h6>
+                                                        <small class="text-muted">ID: <?= $backup['id'] ?></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-<?= $backup['backup_type'] === 'manual' ? 'primary' : 'info' ?>">
+                                                    <?= ucfirst($backup['backup_type']) ?>
+                                                </span>
+                                            </td>
+                                            <td><?= formatSizeUnits($backup['size']) ?></td>
+                                            <td>
+                                                <span class="badge bg-<?= $backup['status'] === 'completed' ? 'success' : 'warning' ?>">
+                                                    <?= ucfirst($backup['status']) ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <?= date('M d, Y', strtotime($backup['created_at'])) ?>
+                                                <small class="d-block text-muted"><?= date('H:i', strtotime($backup['created_at'])) ?></small>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <button class="btn btn-sm btn-outline-primary me-2 download-backup" data-id="<?= $backup['id'] ?>">
+                                                        <i class="fas fa-download"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger delete-backup" data-id="<?= $backup['id'] ?>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -399,19 +373,7 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
         </div>
     </div>
 
-<<<<<<< HEAD
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Admin/Terms of service.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Admin/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
-=======
     <?php require "../../Components/AdminFooter.php"; ?>
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
@@ -434,6 +396,124 @@ $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at 
                 statusText.textContent = this.checked ? 'Enabled' : 'Disabled';
             });
         });
+
+        // AJAX form submission for settings
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('action', 'update_settings');
+            
+            fetch('../../api/admin_settings_api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Settings saved successfully', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to save settings');
+                }
+            })
+            .catch(error => showAlert(error.message, 'danger'));
+        });
+
+        // Backup functionality
+        document.querySelector('.backup-now').addEventListener('click', function() {
+            if (confirm('Create database backup now?')) {
+                const formData = new FormData();
+                formData.append('action', 'create_backup');
+                
+                fetch('../../api/admin_settings_api.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Backup created successfully', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        throw new Error(data.error || 'Backup failed');
+                    }
+                })
+                .catch(error => showAlert(error.message, 'danger'));
+            }
+        });
+
+        // Admin user management
+        document.querySelectorAll('.edit-admin').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const adminId = this.dataset.id;
+                // Open edit modal with admin details
+                fetchAdminDetails(adminId);
+            });
+        });
+
+        document.querySelectorAll('.delete-admin').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const adminId = this.dataset.id;
+                if (confirm('Are you sure you want to delete this admin?')) {
+                    const formData = new FormData();
+                    formData.append('action', 'delete_admin');
+                    formData.append('admin_id', adminId);
+                    
+                    fetch('../../api/admin_settings_api.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showAlert('Admin deleted successfully', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            throw new Error(data.error || 'Delete failed');
+                        }
+                    })
+                    .catch(error => showAlert(error.message, 'danger'));
+                }
+            });
+        });
+
+        // Add new admin
+        document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('action', 'add_admin');
+            
+            fetch('../../api/admin_settings_api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Admin added successfully', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.error || 'Failed to add admin');
+                }
+            })
+            .catch(error => showAlert(error.message, 'danger'));
+        });
+
+        function fetchAdminDetails(adminId) {
+            // Implement fetch to get admin details for editing
+            // Then populate and show the edit modal
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container.py-4').prepend(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
     </script>
 </body>
 </html>

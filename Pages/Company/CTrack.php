@@ -65,129 +65,35 @@ try {
         $updateStmt = $conn->prepare("UPDATE applications SET status = ? WHERE applications_id = ?");
         $updateStmt->execute([$new_status, $application_id]);
 
-        if ($updateStmt->rowCount() > 0) {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'message' => 'Status updated successfully!']);
-                exit();
-            } else {
-                $_SESSION['message'] = "Status updated successfully!";
-                $_SESSION['message_type'] = "success";
-                header("Location: CTrack.php");
-                exit();
-            }
-        } else {
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'message' => 'No changes made to the application status']);
-                exit();
-            } else {
-                $_SESSION['message'] = "No changes made to the application status";
-                $_SESSION['message_type'] = "info";
-                header("Location: CTrack.php");
-                exit();
-            }
+        if ($stmt->rowCount() === 0) {
+            throw new Exception("No application found or you don't have permission to update it");
         }
+
+        $message = "Application status updated successfully!";
+        $messageType = "success";
+    } catch (Exception $e) {
+        $message = "Error updating application status: " . $e->getMessage();
+        $messageType = "danger";
     }
+}
 
-    // Handle file downloads
-    if (isset($_GET['action']) && $_GET['action'] === 'download' && isset($_GET['type']) && isset($_GET['id'])) {
-        $application_id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
-        $file_type = filter_var($_GET['type'], FILTER_SANITIZE_STRING);
+// Fetch all applications for this company's opportunities with joined data
+try {
+    $opportunity_filter = filter_input(INPUT_GET, 'opportunity', FILTER_VALIDATE_INT);
 
-        // Verify application belongs to company
-        $verifyStmt = $conn->prepare("SELECT opportunities.company_id, applications.resume, applications.cover_letter 
-                                    FROM applications 
-                                    JOIN opportunities ON applications.opportunities_id = opportunities.opportunities_id
-                                    WHERE applications.applications_id = ?");
-        $verifyStmt->execute([$application_id]);
-        $appData = $verifyStmt->fetch(PDO::FETCH_ASSOC);
+    $query = "
+        SELECT 
+            a.applications_id, a.status, a.submitted_at, a.cover_letter,
+            s.student_id, s.full_name, s.email, s.course, s.year_of_study,
+            o.opportunities_id, o.title AS opportunity_title,
+            c.company_id, c.company_name
+        FROM applications a
+        JOIN students s ON a.student_id = s.student_id
+        JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+        JOIN companies c ON o.company_id = c.company_id
+        WHERE o.company_id = ?
+    ";
 
-        if (!$appData || $appData['company_id'] != $company_id) {
-            $_SESSION['message'] = "No application found or you don't have permission to access it";
-            $_SESSION['message_type'] = "danger";
-            header("Location: CTrack.php");
-            exit();
-        }
-
-        $file_path = null;
-        $file_name = '';
-
-        if ($file_type === 'resume' && !empty($appData['resume'])) {
-            $file_path = "../../uploads/resumes/" . $appData['resume'];
-            $file_name = "Resume_" . basename($appData['resume']);
-        } elseif ($file_type === 'cover' && !empty($appData['cover_letter'])) {
-            $file_path = "../../uploads/cover_letters/" . $appData['cover_letter'];
-            $file_name = "CoverLetter_" . basename($appData['cover_letter']);
-        }
-
-        if ($file_path && file_exists($file_path)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="' . $file_name . '"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($file_path));
-            readfile($file_path);
-            exit();
-        } else {
-            $_SESSION['message'] = "File not found or unavailable";
-            $_SESSION['message_type'] = "danger";
-            header("Location: CTrack.php");
-            exit();
-        }
-    }
-
-    // Function to get application details for view modal
-    function getApplicationDetails($conn, $application_id, $company_id)
-    {
-        try {
-            $stmt = $conn->prepare("SELECT 
-                                    applications.*, 
-                                    students.full_name, 
-                                    students.email, 
-                                    students.phone, 
-                                    students.university, 
-                                    students.major, 
-                                    students.graduation_year,
-                                    opportunities.title,
-                                    opportunities.description
-                                FROM applications 
-                                JOIN students ON applications.student_id = students.student_id
-                                JOIN opportunities ON applications.opportunities_id = opportunities.opportunities_id
-                                WHERE applications.applications_id = ? AND opportunities.company_id = ?");
-            $stmt->execute([$application_id, $company_id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
-
-    // Check if viewing application details
-    $viewing_application = false;
-    $application_details = null;
-    if (isset($_GET['view']) && is_numeric($_GET['view'])) {
-        $application_id = intval($_GET['view']);
-        $application_details = getApplicationDetails($conn, $application_id, $company_id);
-        if ($application_details) {
-            $viewing_application = true;
-        } else {
-            $_SESSION['message'] = "Application not found or you don't have permission to view it";
-            $_SESSION['message_type'] = "danger";
-            header("Location: CTrack.php");
-            exit();
-        }
-    }
-
-    // Build base query for applications table
-    $sql = "SELECT applications.*, students.full_name, opportunities.title 
-            FROM applications 
-            JOIN students ON applications.student_id = students.student_id
-            JOIN opportunities ON applications.opportunities_id = opportunities.opportunities_id
-            WHERE opportunities.company_id = ?";
-
-    // Add filter condition
     $params = [$company_id];
     if ($filter !== 'all') {
         $sql .= " AND applications.status = ?";
@@ -216,7 +122,6 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Tracking - AttachME</title>
-    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../../CSS/CTrack.css">
@@ -259,6 +164,7 @@ try {
         }
     </style>
 </head>
+
 
 <body>
     <!-- Navigation Bar -->
@@ -443,39 +349,43 @@ try {
                             </thead>
                             <tbody>
                                 <?php foreach ($applications as $app): ?>
-                                    <tr data-application-id="<?= $app['applications_id'] ?>">
-                                        <td><?= htmlspecialchars($app['full_name']) ?></td>
-                                        <td><?= htmlspecialchars($app['title']) ?></td>
+                                    <tr class="application-card">
+                                        <td>
+                                            <strong><?= htmlspecialchars($app['full_name']) ?></strong><br>
+                                            <small class="text-muted"><?= htmlspecialchars($app['email']) ?></small><br>
+                                            <small><?= htmlspecialchars($app['course']) ?>, Year
+                                                <?= htmlspecialchars($app['year_of_study']) ?></small>
+                                        </td>
+                                        <td><?= htmlspecialchars($app['opportunity_title']) ?></td>
                                         <td><?= date('M j, Y', strtotime($app['submitted_at'])) ?></td>
                                         <td>
-                                            <span class="badge status-badge bg-<?=
-                                                $app['status'] === 'Accepted' ? 'success' :
-                                                ($app['status'] === 'Rejected' ? 'danger' : 'warning') ?>">
+                                            <span class="badge status-badge status-<?= strtolower($app['status']) ?>">
                                                 <?= htmlspecialchars($app['status']) ?>
                                             </span>
                                         </td>
-                                        <td class="action-buttons">
-                                            <a href="CTrack.php?view=<?= $app['applications_id'] ?>"
-                                                class="btn btn-sm btn-outline-primary">
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary view-details"
+                                                data-id="<?= $app['applications_id'] ?>" data-bs-toggle="modal"
+                                                data-bs-target="#applicationModal">
                                                 <i class="fas fa-eye me-1"></i> View
-                                            </a>
-                                            <form method="POST" action="CTrack.php" class="d-inline update-status-form">
+                                            </button>
+                                            <form method="POST" action="CTrack.php" class="d-inline">
                                                 <input type="hidden" name="application_id"
                                                     value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Accepted">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-success <?= $app['status'] === 'Accepted' ? 'disabled' : '' ?>">
+                                                    class="btn btn-sm btn-outline-success">
                                                     <i class="fas fa-check me-1"></i> Accept
                                                 </button>
                                             </form>
-                                            <form method="POST" action="CTrack.php" class="d-inline update-status-form">
+                                            <form method="POST" action="CTrack.php" class="d-inline">
                                                 <input type="hidden" name="application_id"
                                                     value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Rejected">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-danger <?= $app['status'] === 'Rejected' ? 'disabled' : '' ?>">
+                                                    class="btn btn-sm btn-outline-danger">
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
@@ -499,8 +409,35 @@ try {
         </div>
     </div>
 
+    <!-- Application Details Modal -->
+    <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Application Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="applicationDetails">
+                    <!-- Content will be loaded via AJAX -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../Company/Terms of service.php" class="text-white fw-bold">Terms of service</a>
+            <a href="../Company/Contact Support.php" class="text-white fw-bold">Contact Support</a>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../Javascript/CTrack.js"></script>
+    <script src="../../Javascript/CTrack.js?v=<?= time() ?>"></script>
 </body>
 
 </html>

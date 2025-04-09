@@ -127,7 +127,7 @@ $opportunities = $conn->query("
                                 <th>Company</th>
                                 <th>Timeline</th>
                                 <th>Applications</th>
-                                <th>Status</th>
+                                <!-- <th>Status</th> -->
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -168,11 +168,11 @@ $opportunities = $conn->query("
                                         <?= $opp['application_count'] ?>
                                     </span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span class="badge bg-<?= $opp['status'] == 'Open' ? 'success' : 'danger' ?>">
                                         <?= $opp['status'] ?>
                                     </span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-primary" 
@@ -239,12 +239,12 @@ $opportunities = $conn->query("
                                 <label for="editSlots" class="form-label">Available Slots*</label>
                                 <input type="number" class="form-control" id="editSlots" name="available_slots" min="1" required>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <!-- <div class="col-md-4 mb-3">
                                 <label for="editStatus" class="form-label">Status*</label>
                                 <select class="form-select" id="editStatus" name="status" required>
                                     <option value="Open">Open</option>
                                     <option value="Closed">Closed</option>
-                                </select>
+                                </select> -->
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">

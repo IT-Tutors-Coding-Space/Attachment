@@ -2,6 +2,7 @@
 require_once "../db.php";
 session_start();
 
+// Admins can always login, no maintenance mode check needed
 $error = ""; // Initialize error variable
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -26,6 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $_SESSION["user_id"] = $user["admin_id"];
                 $_SESSION["role"] = "admin";
+                
+                // Update last login time
+                try {
+                    $conn->prepare("UPDATE admins SET last_login = NOW() WHERE admin_id = ?")
+                         ->execute([$user["admin_id"]]);
+                } catch (PDOException $e) {
+                    // Silently fail if column doesn't exist yet
+                    error_log("Failed to update last_login: " . $e->getMessage());
+                }
 
                 header("Location: ../Pages/Admin/AHome.php"); // Redirect to AHome.php after successful login
                 exit();

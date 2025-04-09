@@ -230,14 +230,7 @@ try {
     <?php require "../../Components/AdminFooter.php"; ?>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="../Javasript/ADashboard.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.querySelector("input[placeholder='Search...']");
-            const dropdown = document.createElement("div");
-            dropdown.classList.add("dropdown-menu");
-            searchInput.parentNode.insertBefore(dropdown, searchInput.nextSibling);
-
-            searchInput.addEventListener("input", function() {
-                const query = searchInput.value;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="../../Javascript/ADashboard.js"></script>
+</body>
+</html>

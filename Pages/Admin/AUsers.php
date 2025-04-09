@@ -78,7 +78,7 @@ $users = $conn->query("
 <body class="bg-light">
     <?php require "../../Components/AdminNav.php"; ?>
 
-    <div class="container py-4"><br><br><br>
+    <div class="container py-4"><br><br><br><br>
         <!-- Header with Search and Add User -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
             <div class="mb-3 mb-md-0">

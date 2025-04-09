@@ -43,13 +43,13 @@ try {
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME</h2>
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
+                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
+                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5"> Users</a></li>
+                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5"> Companies</a></li>
+                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a></li>
+                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5"> Applications</a></li>
+                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5"> Analytics</a></li>
+                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5"> Settings</a></li>
             </ul>
         </div>
     </nav>

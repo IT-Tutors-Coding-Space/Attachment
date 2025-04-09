@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Terms & Privacy</h2>
-            <a href="../Students/AHome.php" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Students/AHome.php" class="btn btn-outline-light"> Home</a>
         </div>
     </nav>
     

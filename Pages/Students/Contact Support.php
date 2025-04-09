@@ -29,7 +29,7 @@ $student_id = $_SESSION["user_id"];
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Contact Support</h2>
-            <a href="../Students/SDashboard.php" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Students/SDashboard.php" class="btn btn-outline-light"> Home</a>
         </div>
     </nav>
     
@@ -44,19 +44,19 @@ $student_id = $_SESSION["user_id"];
         <div class="row g-4 text-center">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">📧 Email Support</h5>
+                    <h5 class="fw-bold"> Email Support</h5>
                     <p><a href="mailto:support@attachme.com" class="text-primary fw-bold">support@attachme.com</a></p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">📞 Phone Support</h5>
+                    <h5 class="fw-bold"> Phone Support</h5>
                     <p><a href="tel:+254700234362" class="text-primary fw-bold">0700234362</a></p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">💬 Live Chat</h5>
+                    <h5 class="fw-bold"> Live Chat</h5>
                     <p><a href="#" class="text-primary fw-bold">Chat with an Agent</a></p>
                 </div>
             </div>

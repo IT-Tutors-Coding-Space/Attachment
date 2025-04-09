@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
             <h2 class="text-white fw-bold fs-3">AttachME - Help Center</h2>
-            <a href="../Admin/AHome.php" class="btn btn-outline-light">🏠 Home</a>
+            <a href="../Admin/AHome.php" class="btn btn-outline-light"> Home</a>
         </div>
     </nav>
     
@@ -30,7 +30,7 @@
 
         <!-- Search Bar -->
         <div class="input-group mb-4">
-            <input type="text" class="form-control" id="searchHelp" placeholder="🔍 Search for help topics...">
+            <input type="text" class="form-control" id="searchHelp" placeholder=" Search for help topics...">
             <button class="btn btn-primary">Search</button>
         </div>
 
@@ -45,21 +45,21 @@
             </div>
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">📩 Applications & Opportunities</h5>
+                    <h5 class="fw-bold"> Applications & Opportunities</h5>
                     <p>Find out how to browse opportunities, submit applications, and track progress.</p>
                     <a href="#" class="text-primary">Read More</a>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">🔒 Security & Privacy</h5>
+                    <h5 class="fw-bold"> Security & Privacy</h5>
                     <p>Learn how we protect your data and how to enable security features.</p>
                     <a href="#" class="text-primary">Read More</a>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-                    <h5 class="fw-bold">📞 Contact Support</h5>
+                    <h5 class="fw-bold"> Contact Support</h5>
                     <p>Need more help? Get in touch with our support team.</p>
                     <a href="contact.html" class="text-primary">Contact Us</a>
                 </div>

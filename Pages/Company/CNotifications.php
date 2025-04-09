@@ -146,7 +146,7 @@ try {
     // Auto-refresh messages every 5 seconds
     setInterval(() => {
         location.reload();
-    }, 5000);
+    }, 503300);
     </script>
 </body>
 

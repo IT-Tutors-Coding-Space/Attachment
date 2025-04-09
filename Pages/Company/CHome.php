@@ -54,7 +54,7 @@ try {
                 <li class="nav-item"><a href="../Company/CHome.php" class="nav-link text-white fw-bold fs-5 active">🏠 Dashboard</a></li>
                 <li class="nav-item"><a href="../Company/COpportunities.php" class="nav-link text-white fw-bold fs-5">📢 Opportunities</a></li>
                 <li class="nav-item"><a href="../Company/CTrack.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Company/CNotifications.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
+                <li class="nav-item"><a href="../Company/CChat.php" class="nav-link text-white fw-bold fs-5">💬 Messages</a></li>
                 <li class="nav-item"><a href="../Company/CProfile.php" class="nav-link text-white fw-bold fs-5">🏢 Profile</a></li>
             </ul>
         </div>

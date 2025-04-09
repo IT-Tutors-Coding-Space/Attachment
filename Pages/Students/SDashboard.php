@@ -8,6 +8,8 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
 }
 
 $student_id = $_SESSION["user_id"];
+require "../../Components/StudentNav.php";
+
 try {
     $stmt = $conn->prepare("SELECT * FROM students WHERE student_id = ?");
     $stmt->execute([$student_id]);
@@ -49,31 +51,11 @@ try {
     <title>AttachME Student Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/student-styles.css">
+    <link rel="stylesheet" href="../../CSS/styles.css">
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Student Portal</h2>
-            <ul class="navbar-nav d-flex flex-row gap-3">
-                <li class="nav-item"><a href="../Students/SDashboard.php" class="nav-link text-white  fs-5 active">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Students/SAbout.php" class="nav-link text-white  fs-5 active">📖 About Us</a></li>
-
-                <li class="nav-item"><a href="../Students/SBrowse.php" class="nav-link text-white  fs-5">🔍 Browse Opportunities</a></li>
-                <li class="nav-item"><a href="../Students/SApplicationSubmission.php" class="nav-link text-white  fs-5">📄 My Applications</a></li>
-                <li class="nav-item"><a href="../Students/SNotifications.php" class="nav-link text-white  fs-5">💬 Messages</a></li>
-                <li class="nav-item"><a href="../Students/SProfile.php" class="nav-link text-white  fs-5">👤 Profile</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="container p-5 flex-grow-1">
+<body>
+    <main class="container p-5 flex-grow-1">
         <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
             <h1 class="text-3xl fw-bold">Welcome, <?php echo htmlspecialchars($student["full_name"] ?? "Guest"); ?>!</h1>
             <p class="text-muted">Track your applications, explore new opportunities, and manage your profile.</p>
@@ -127,17 +109,8 @@ try {
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="../Help Center.php" class="text-white fw-bold">Help Center</a>
-            <a href="../Students/Terms of servive.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../Students/Contact Support.php" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
+    </main>
+    <?php require "../../Components/StudentFooter.php"; ?>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,14 +3,11 @@
 ob_start();
 session_start();
 require_once "../db.php";
-<<<<<<< HEAD
 
 // Remove any accidental SMTP configuration output
 if (ob_get_contents()) {
     ob_clean();
 }
-=======
->>>>>>> 6f3d3a023608c00074b8df5b85ab0c12241a24bd
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate input fields

@@ -2,192 +2,300 @@
 require_once "../../db.php";
 session_start();
 
-// Check if the user is logged in
-// if (!isset($_SESSION['admin_id'])) {
-//     header("Location: Slogin.php"); // Redirect to login page if not authenticated
-//     exit();
-// }
-
 if ($_SESSION["role"] !== "admin") {
     header("Location: ../SignUps/Alogin.php");
     exit();
 }
-// ?>
+
+require "../../Components/AdminNav.php";
+
+// Get all opportunities with company info and application counts
+$opportunities = $conn->query("
+    SELECT o.*, 
+           c.company_name, 
+           c.logo as company_logo,
+           COUNT(a.applications_id)as application_count
+    FROM opportunities o
+    JOIN companies c ON o.company_id = c.company_id
+    LEFT JOIN applications a ON o.opportunities_id = a.opportunities_id
+    GROUP BY o.opportunities_id
+")->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttachME Admin - Opportunities</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Opportunity Management - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4e73df;
+            --success: #1cc88a;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+        }
+        
+        .opportunity-card {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .opportunity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .company-logo-sm {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .deadline-indicator {
+            position: relative;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .deadline-progress {
+            position: absolute;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        .search-box {
+            border-radius: 20px;
+            padding-left: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239C9C9C' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 15px center;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
-        <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME</h2>
-            <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="../Admin/AHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="../Admin/AUsers.php" class="nav-link text-white fw-bold fs-5">👤 Users</a></li>
-                <li class="nav-item"><a href="../Admin/ACompanies.php" class="nav-link text-white fw-bold fs-5">🏢 Companies</a></li>
-                <li class="nav-item"><a href="../Admin/AOpportunities.php" class="nav-link text-white fw-bold fs-5 active">📢 Opportunities</a></li>
-                <li class="nav-item"><a href="../Admin/AApplications.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a></li>
-                <li class="nav-item"><a href="../Admin/AAnalytics.php" class="nav-link text-white fw-bold fs-5">📊 Analytics</a></li>
-                <li class="nav-item"><a href="../Admin/ASettings.php" class="nav-link text-white fw-bold fs-5">⚙️ Settings</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="container p-5 flex-grow-1">
-        <header class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 shadow rounded">
-            <h1 class="text-3xl fw-bold">Manage Opportunities</h1>
-            <div class="d-flex align-items-center gap-3">
-                <input type="text" class="form-control w-50" id="searchOpportunities" placeholder="Search opportunities..." onkeyup="searchOpportunities()">
-                <!-- <a href="OpportunityReg.php" class="btn btn-primary fw-bold fs-5">+ Post Opportunity</a> -->
+<body class="bg-light">
+    <?php require "../../Components/AdminNav.php"; ?>
+
+    <div class="container py-4"><br><br><br><br>
+        <!-- Header with Search and Add Opportunity -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="mb-3 mb-md-0">
+                <h1 class="h3 mb-1 text-gray-800">Opportunity Management</h1>
+                <p class="mb-0 text-muted">Manage all attachment opportunities</p>
             </div>
-        </header>
+            <div class="d-flex flex-column flex-md-row gap-3 w-100 w-md-auto">
+                <div class="position-relative flex-grow-1">
+                    <input type="text" class="form-control search-box" id="searchOpportunities" 
+                           placeholder="Search opportunities..." onkeyup="searchOpportunities()">
+                </div>
+                <a href="../Company/COpportunities.php" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Add Opportunity
+                </a>
+            </div>
+        </div>
+
+        <!-- Status Filter Tabs -->
+        <ul class="nav nav-tabs mb-4" id="statusTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-status="Open">Open</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="Closed">Closed</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="all">All</a>
+            </li>
+        </ul>
 
         <!-- Opportunities Table -->
-        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-            <h5 class="fw-bold fs-5 mb-3">Opportunities List</h5>
-            <p class="text-muted">Below is a list of available attachment opportunities. You can filter or remove them as needed.</p>
-            <table class="table table-striped">
-                <thead class="bg-dark text-white">
-                    <tr>
-                        <th>Company</th>
-                        <th>Title</th>
-                        <th>Location</th>
-                        <th>Deadline</th>
-                        <th>Slots</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="opportunityTableBody">
-                <?php
-                    $opportunitiesStmt = $conn->query("SELECT o.*, c.company_name FROM opportunities o JOIN companies c ON o.company_id = c.company_id");
-                    while ($opportunity = $opportunitiesStmt->fetch(PDO::FETCH_ASSOC)) {
-                        echo "<tr>
-                                <td>{$opportunity['company_name']} ({$opportunity['company_id']})</td>
-                                <td>{$opportunity['title']}</td>
-                                <td>{$opportunity['location']}</td>
-                                <td>{$opportunity['application_deadline']}</td>
-                                <td>{$opportunity['available_slots']}</td>
-                                <td><span class='badge " . ($opportunity['status'] == 'Open' ? 'bg-success' : 'bg-danger') . "'>{$opportunity['status']}</span></td>
+        <div class="card opportunity-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th style="width: 50px;"></th>
+                                <th>Opportunity</th>
+                                <th>Company</th>
+                                <th>Timeline</th>
+                                <th>Applications</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opportunityTableBody">
+                            <?php foreach ($opportunities as $opp): 
+                                $deadlineClass = (strtotime($opp['application_deadline']) < time()) ? 'text-danger' : 'text-success';
+                                $daysLeft = round((strtotime($opp['application_deadline']) - time()) / (60 * 60 * 24));
+                                $progressPercent = min(100, max(0, 100 - ($daysLeft * 5)));
+                                $isClosed = strtotime($opp['application_deadline']) < time() || $opp['status'] === 'Closed';
+                            ?>
+                            <tr data-status="<?= $opp['status'] ?>" data-closed="<?= $isClosed ? 'true' : 'false' ?>">
                                 <td>
-                                    
-                                    <form method='POST' action='deleteOpportunity.php' style='display:inline;' onsubmit='return confirm(\"Are you sure you want to delete this opportunity?\")'>
-                                        <input type='hidden' name='opportunities_id' value='{$opportunity['opportunities_id']}'>
-                                        <button type='submit' class='btn btn-sm btn-outline-danger'>Delete</button>
-                                    </form>
+                                    <img src="../../images/<?= $opp['company_logo'] ?? 'default-company.png' ?>" 
+                                         alt="Company Logo" class="company-logo-sm">
                                 </td>
-                              </tr>";
-                    }
-                ?>
-                </tbody>
-            </table>
+                                <td>
+                                    <h6 class="mb-0 fw-bold"><?= htmlspecialchars($opp['title']) ?></h6>
+                                    <small class="text-muted"><?= htmlspecialchars($opp['location']) ?></small>
+                                </td>
+                                <td><?= htmlspecialchars($opp['company_name']) ?></td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <small class="<?= $deadlineClass ?>">
+                                            <i class="far fa-clock me-1"></i>
+                                            <?= $daysLeft > 0 ? "$daysLeft days left" : "Closed" ?>
+                                        </small>
+                                        <div class="deadline-indicator mt-1">
+                                            <div class="deadline-progress" style="width: <?= $progressPercent ?>%"></div>
+                                        </div>
+                                        <small class="text-muted">
+                                            Deadline: <?= date('M d, Y', strtotime($opp['application_deadline'])) ?>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?= $opp['application_count'] > 0 ? 'info' : 'secondary' ?>">
+                                        <i class="fas fa-users me-1"></i>
+                                        <?= $opp['application_count'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?= $opp['status'] == 'Open' ? 'success' : 'danger' ?>">
+                                        <?= $opp['status'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                            onclick="openEditOpportunityModal(
+                                                '<?= $opp['opportunities_id'] ?>',
+                                                '<?= htmlspecialchars($opp['title']) ?>',
+                                                '<?= htmlspecialchars($opp['description']) ?>',
+                                                '<?= htmlspecialchars($opp['location']) ?>',
+                                                '<?= $opp['application_deadline'] ?>',
+                                                '<?= $opp['available_slots'] ?>',
+                                                '<?= $opp['status'] ?>'
+                                            )">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form method="POST" action="deleteOpportunity.php" class="d-inline">
+                                            <input type="hidden" name="opportunities_id" value="<?= $opp['opportunities_id'] ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this opportunity?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Edit Opportunity Modal -->
-    <div class="modal fade" id="editOpportunityModal" tabindex="-1" aria-labelledby="editOpportunityModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="editOpportunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editOpportunityModalLabel">Edit Opportunity</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Edit Opportunity</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editOpportunityForm" method="POST" action="editOpportunity.php" onsubmit="return validateEditForm()">
+                    <form id="editOpportunityForm" method="POST" action="editOpportunity.php">
                         <input type="hidden" name="opportunities_id" id="editOpportunityId">
-                        <div class="mb-3">
-                            <label for="editTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="editTitle" name="title" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editTitle" class="form-label">Title*</label>
+                                <input type="text" class="form-control" id="editTitle" name="title" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editLocation" class="form-label">Location*</label>
+                                <input type="text" class="form-control" id="editLocation" name="location" required>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editDescription" class="form-label">Description</label>
+                            <label for="editDescription" class="form-label">Description*</label>
                             <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="editLocation" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="editLocation" name="location" required>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="editDeadline" class="form-label">Deadline*</label>
+                                <input type="date" class="form-control" id="editDeadline" name="application_deadline" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="editSlots" class="form-label">Available Slots*</label>
+                                <input type="number" class="form-control" id="editSlots" name="available_slots" min="1" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="editStatus" class="form-label">Status*</label>
+                                <select class="form-select" id="editStatus" name="status" required>
+                                    <option value="Open">Open</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editDeadline" class="form-label">Application Deadline</label>
-                            <input type="date" class="form-control" id="editDeadline" name="application_deadline" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editSlots" class="form-label">Available Slots</label>
-                            <input type="number" class="form-control" id="editSlots" name="available_slots" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editStatus" class="form-label">Status</label>
-                            <select class="form-select" id="editStatus" name="status" required>
-                                <option value="Open">Open</option>
-                                <option value="Closed">Closed</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i> Save Changes
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
-        <div class="d-flex justify-content-center gap-4 mt-2">
-            <a href="#help" class="text-white fw-bold">Help Center</a>
-            <a href="#terms" class="text-white fw-bold">Terms of Service</a>
-            <a href="#contact" class="text-white fw-bold">Contact Support</a>
-        </div>
-    </footer>
+    <?php require "../../Components/AdminFooter.php"; ?>
     
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <script>
-        function validateEditForm() {
-            const title = document.getElementById('editTitle').value.trim();
-            const description = document.getElementById('editDescription').value.trim();
-            const location = document.getElementById('editLocation').value.trim();
-            const deadline = document.getElementById('editDeadline').value;
-            const slots = document.getElementById('editSlots').value;
+        // Enhanced status filtering with automatic deadline checking
+        document.querySelectorAll('#statusTabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filterType = this.getAttribute('data-status');
+                filterOpportunities(filterType);
+                
+                // Update active tab
+                document.querySelectorAll('#statusTabs .nav-link').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        function filterOpportunities(filterType = 'Open') {
+            const rows = document.querySelectorAll('#opportunityTableBody tr');
             
-            if (!title || !description || !location || !deadline || !slots) {
-                alert('Please fill in all required fields');
-                return false;
-            }
-            if (slots < 1) {
-                alert('Available slots must be at least 1');
-                return false;
-            }
-            return true;
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const isClosed = row.getAttribute('data-closed') === 'true';
+                
+                if (filterType === 'all') {
+                    row.style.display = '';
+                } 
+                else if (filterType === 'Open') {
+                    row.style.display = (status === 'Open' && !isClosed) ? '' : 'none';
+                }
+                else if (filterType === 'Closed') {
+                    row.style.display = (status === 'Closed' || isClosed) ? '' : 'none';
+                }
+            });
         }
 
-        // Display success/error messages if present in URL
+        // Apply initial filter to show open opportunities
         document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const success = urlParams.get('success');
-            const error = urlParams.get('error');
-            
-            if (success) {
-                alert(success);
-                // Remove success param from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-            if (error) {
-                alert(error);
-                // Remove error param from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
+            filterOpportunities('Open');
         });
 
         function searchOpportunities() {
@@ -195,11 +303,13 @@ if ($_SESSION["role"] !== "admin") {
             const rows = document.querySelectorAll('#opportunityTableBody tr');
             
             rows.forEach(row => {
-                const title = row.cells[1].textContent.toLowerCase();
-                const location = row.cells[2].textContent.toLowerCase();
-                const deadline = row.cells[3].textContent.toLowerCase();
+                if (row.style.display === 'none') return;
                 
-                if (title.includes(input) || location.includes(input) || deadline.includes(input)) {
+                const title = row.cells[1].textContent.toLowerCase();
+                const company = row.cells[2].textContent.toLowerCase();
+                const location = row.cells[1].textContent.toLowerCase();
+                
+                if (title.includes(input) || company.includes(input) || location.includes(input)) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -207,7 +317,18 @@ if ($_SESSION["role"] !== "admin") {
             });
         }
 
-        
+        function openEditOpportunityModal(id, title, description, location, deadline, slots, status) {
+            document.getElementById('editOpportunityId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editDescription').value = description;
+            document.getElementById('editLocation').value = location;
+            document.getElementById('editDeadline').value = deadline;
+            document.getElementById('editSlots').value = slots;
+            document.getElementById('editStatus').value = status;
+            
+            const editModal = new bootstrap.Modal(document.getElementById('editOpportunityModal'));
+            editModal.show();
+        }
     </script>
 </body>
 </html>

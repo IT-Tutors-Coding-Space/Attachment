@@ -75,11 +75,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } else {
                 $conn->beginTransaction();
 
-                $stmt = $conn->prepare("INSERT INTO opportunities (company_id, title, description, requirements, 
+                // Get company name
+                $companyStmt = $conn->prepare("SELECT company_name FROM companies WHERE company_id = ?");
+                $companyStmt->execute([$companyId]);
+                $company = $companyStmt->fetch(PDO::FETCH_ASSOC);
+                $company_name = $company ? $company["company_name"] : "Unknown Company";
+
+                $stmt = $conn->prepare("INSERT INTO opportunities (company_id, company_name, title, description, requirements, 
                                        available_slots, application_deadline, status, location, created_at, updated_at) 
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                 $stmt->execute([
                     $companyId,
+                    $company_name,
                     $_POST["title"],
                     $_POST["description"],
                     $_POST["requirements"],
@@ -130,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Fetch all opportunities for this company
 $opportunities = [];
 try {
-    $stmt = $conn->prepare("SELECT company_id, title, requirements, available_slots, 
+    $stmt = $conn->prepare("SELECT company_id, company_name, title, requirements, available_slots, 
                            application_deadline, status, location 
                            FROM opportunities 
                            WHERE company_id = ? 
@@ -264,6 +271,7 @@ try {
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Company</th>
                                     <th>Title</th>
                                     <th>Requirements</th>
                                     <th>Location</th>
@@ -275,6 +283,7 @@ try {
                             <tbody>
                                 <?php foreach ($opportunities as $opportunity): ?>
                                     <tr class="opportunity-card">
+                                        <td><?php echo htmlspecialchars($opportunity['company_name']); ?></td>
                                         <td><?php echo htmlspecialchars($opportunity['title']); ?></td>
                                         <td><?php echo nl2br(htmlspecialchars(substr($opportunity['requirements'], 0, 100) . (strlen($opportunity['requirements']) > 100 ? '...' : ''))); ?>
                                         </td>

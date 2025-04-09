@@ -115,15 +115,6 @@ php -S localhost:8000 -t public/
 ### Admin Access
 Access the admin panel at `/admin` after logging in with admin credentials.
 
-## 📚 API Documentation
-
-The system provides RESTful API endpoints for:
-- User authentication (`/api/auth`)
-- Opportunity management (`/api/opportunities`)
-- Application processing (`/api/applications`)
-- System configuration (`/api/settings`)
-
-For complete API documentation, see [API_DOCS.md](API_DOCS.md)
 
 ## 🤝 Contributing
 

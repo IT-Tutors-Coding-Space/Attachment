@@ -2,15 +2,7 @@
 require_once "../../db.php";
 session_start();
 
-<<<<<<< HEAD
-// Check if the user is logged in
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: Alogin.php"); // Redirect to login page if not authenticated
-    exit();
- }
-=======
->>>>>>> d7a7306aa262dea58932b91eb35201da20f5463f
-if ($_SESSION["role"] !== "admin") {
+ if ($_SESSION["role"] !== "admin") {
     header("Location: ../SignUps/ALogin.php");
     exit();
 }

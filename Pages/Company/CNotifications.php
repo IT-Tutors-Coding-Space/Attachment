@@ -4,28 +4,6 @@ session_start();
 
 // Check authentication
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'company') {
-<<<<<<< HEAD
-    header("Location: ../SignUps/Clogin.php");
-    exit();
-}
-
-$company_id = $_SESSION['user_id'];
-
-// Get all messages for this company
-try {
-    $stmt = $conn->prepare("
-        SELECT m.*, s.full_name as student_name
-        FROM messages m
-        JOIN students s ON (m.sender_id = s.student_id OR m.receiver_id = s.student_id) 
-        WHERE m.sender_id = ? OR m.receiver_id = ?
-        ORDER BY m.sent_at DESC
-    ");
-    $stmt->execute([$company_id, $company_id]);
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $messages = [];
-    $error = "Error loading messages: " . $e->getMessage();
-=======
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
         http_response_code(403);
         echo json_encode(["success" => false, "message" => "Unauthorized access."]);
@@ -76,7 +54,6 @@ try {
         echo json_encode(["success" => false, "message" => $error]);
         exit();
     }
->>>>>>> 9dc23dda81bd08e61ab1351f4af64dbe38a8a350
 }
 ?>
 

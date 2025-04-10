@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-// CHome.js - Company Dashboard Functionality
-=======
 document.addEventListener("DOMContentLoaded", function () {
   // Handle status update forms with AJAX
   document.querySelectorAll(".update-status-form").forEach((form) => {
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
->>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
 
       const form = this;
       const button = form.querySelector('button[type="submit"]');
@@ -16,14 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const row = form.closest("tr");
       const statusBadge = row.querySelector(".status-badge");
 
-<<<<<<< HEAD
-    // Display status message if present in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const statusMessage = urlParams.get('message');
-    if (statusMessage) {
-        showStatusMessage(decodeURIComponent(statusMessage), urlParams.get('isError') === 'true');
-    }
-=======
       // Show loading state
       button.disabled = true;
       button.innerHTML =
@@ -154,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize
   highlightActiveFilter();
->>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
 });
 
 function confirmAction(action) {

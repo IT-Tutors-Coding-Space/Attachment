@@ -124,9 +124,9 @@ try {
                     <h1 class="h3 mb-1 text-gray-800">Dashboard Overview</h1>
                     <p class="mb-0 text-muted">Welcome back, Admin</p>
                 </div>
-                <button class="btn btn-primary">
+                <!-- <button class="btn btn-primary">
                     <i class="fas fa-download fa-sm"></i> Generate Report
-                </button>
+                </button> -->
             </div>
         </div>
 

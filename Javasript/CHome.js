@@ -143,3 +143,28 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize
   highlightActiveFilter();
 });
+
+function confirmAction(action) {
+    return confirm(`Are you sure you want to ${action} this application?`);
+}
+
+function showStatusMessage(message, isError = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert alert-${isError ? 'danger' : 'success'} alert-dismissible fade show`;
+    messageDiv.role = 'alert';
+    messageDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    const container = document.querySelector('.main-content');
+    if (container) {
+        container.insertBefore(messageDiv, container.firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            const alert = bootstrap.Alert.getOrCreateInstance(messageDiv);
+            alert.close();
+        }, 5000);
+    }
+}

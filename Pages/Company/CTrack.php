@@ -85,7 +85,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Tracking - AttachME</title>
+    <!-- <title>Application Tracking - AttachME</title> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../../CSS/CTrack.css">
@@ -132,7 +132,7 @@ try {
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a>
+            <!-- <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a> -->
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">Dashboard</a></li>
                 <li class="nav-item"><a href="COpportunities.php"
@@ -182,7 +182,7 @@ try {
                                     <th>Student</th>
                                     <th>Opportunity</th>
                                     <th>Application Date</th>
-                                    <th>Status</th>
+                                    <!-- <th>Status</th> -->
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -218,7 +218,7 @@ try {
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

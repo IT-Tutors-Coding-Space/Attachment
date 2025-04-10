@@ -99,16 +99,16 @@ try {
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid d-flex justify-content-between">
-            <h2 class="text-white fw-bold fs-3">AttachME - Company Portal</h2>
+            <!-- <h2 class="text-white fw-bold fs-3">AttachME - Company Portal</h2> -->
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">🏠 Dashboard</a></li>
-                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5">📢
+                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
+                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5">
                         Opportunities</a></li>
-                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5">📄 Applications</a>
+                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5"> Applications</a>
                 </li>
-                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">💬
+                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">
                         Messages</a></li>
-                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5 active">🏢
+                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5 active">
                         Profile</a></li>
             </ul>
         </div>

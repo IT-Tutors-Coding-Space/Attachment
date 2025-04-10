@@ -29,12 +29,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["update_status"])) {
             throw new Exception("No application found or you don't have permission to update it");
         }
 
-        $message = "Application status updated successfully!";
-        $messageType = "success";
+        $message = urlencode("Application status updated to {$new_status} successfully!");
+        header("Location: CTrack.php?message=$message");
+        exit();
     } catch (Exception $e) {
-        $message = "Error updating application status: " . $e->getMessage();
-        $messageType = "danger";
+        $error = urlencode("Error updating application status: " . $e->getMessage());
+        header("Location: CTrack.php?message=$error&isError=true");
+        exit();
     }
+}
+
+// Display status message if present in URL
+$url_message = '';
+$url_message_type = '';
+if (isset($_GET['message'])) {
+    $url_message = htmlspecialchars(urldecode($_GET['message']));
+    $url_message_type = isset($_GET['isError']) ? 'danger' : 'success';
 }
 
 // Fetch all applications for this company's opportunities with joined data
@@ -83,7 +93,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Tracking - AttachME</title>
+    <!-- <title>Application Tracking - AttachME</title> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -101,7 +111,7 @@ try {
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a>
+            <!-- <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a> -->
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
                 <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5">
@@ -155,7 +165,7 @@ try {
                                     <th>Student</th>
                                     <th>Opportunity</th>
                                     <th>Application Date</th>
-                                    <th>Status</th>
+                                    <!-- <th>Status</th> -->
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -193,7 +203,7 @@ try {
                                                 data-bs-target="#applicationModal">
                                                 <i class="fas fa-eye me-1"></i> View
                                             </button>
-                                            <form method="POST" action="CTrack.php" class="inline-flex">
+                                            <!-- <form method="POST" action="CTrack.php" class="inline-flex">
                                                 <input type="hidden" name="application_id" value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Accepted">
                                                 <button type="submit" name="update_status"
@@ -209,7 +219,7 @@ try {
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -230,51 +240,61 @@ try {
         </div>
     </div>
 
-    <!-- Enhanced Application Details Modal -->
+    <!-- New Document Viewer Modal -->
     <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-blue-600 text-white">
-                    <h5 class="modal-title font-bold">Application Details</h5>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Application Documents</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
-                        <!-- Cover Letter Section -->
-                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-                                <i class="fas fa-envelope-open-text text-blue-500 mr-2"></i>Cover Letter
-                            </h3>
-                            <div class="prose max-w-none" id="modalCoverLetter">
-                                <p class="text-gray-600">Loading cover letter...</p>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="applicationTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="cover-letter-tab" data-bs-toggle="tab" data-bs-target="#cover-letter" type="button" role="tab">Cover Letter</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="resume-tab" data-bs-toggle="tab" data-bs-target="#resume" type="button" role="tab">Resume</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3 border border-top-0" id="applicationTabsContent">
+                        <div class="tab-pane fade show active" id="cover-letter" role="tabpanel">
+                            <div class="document-container p-3 bg-light rounded" id="coverLetterContainer">
+                                <p class="text-muted">Loading cover letter...</p>
+                            </div>
+                            <div class="mt-3 text-end">
+                                <button class="btn btn-sm btn-primary" id="downloadCoverLetterBtn">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </button>
                             </div>
                         </div>
-                        
-                        <!-- Resume Section -->
-                        <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-                                <i class="fas fa-file-alt text-blue-500 mr-2"></i>Resume
-                            </h3>
-                            <div class="prose max-w-none" id="modalResume">
-                                <p class="text-gray-600">Loading resume...</p>
+                        <div class="tab-pane fade" id="resume" role="tabpanel">
+                            <div class="document-container p-3 bg-light rounded" id="resumeContainer">
+                                <p class="text-muted">Loading resume...</p>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Student Info Section -->
-                    <div class="bg-gray-100 p-4 border-t">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-gray-800" id="modalStudentName">Loading...</h4>
-                                <p class="text-gray-600" id="modalStudentInfo"></p>
-                                <p class="text-sm text-gray-500" id="modalOpportunity"></p>
+                            <div class="mt-3 text-end">
+                                <button class="btn btn-sm btn-primary" id="downloadResumeBtn">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Student Info Section -->
+                <div class="bg-gray-100 p-4 border-t">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-800" id="modalStudentName">Loading...</h4>
+                            <p class="text-gray-600" id="modalStudentInfo"></p>
+                            <p class="text-sm text-gray-500" id="modalOpportunity"></p>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="modal-footer bg-gray-50 px-5 py-4 border-t">
                     <div class="flex justify-between w-full">
                         <div class="space-x-2">
@@ -314,88 +334,76 @@ try {
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
     <script>
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js';
     document.addEventListener('DOMContentLoaded', function() {
         const loadingOverlay = document.getElementById('loadingOverlay');
         let currentApplicationData = null;
 
-        // Debug function to log data
-        function debugLog(message, data) {
-            console.log(message, data);
-            // Uncomment below to also log to server for debugging
-            // fetch('../../api/debug_log.php', {
-            //     method: 'POST',
-            //     headers: {'Content-Type': 'application/json'},
-            //     body: JSON.stringify({message, data})
-            // });
-        }
-
-        document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', function() {
-                const appId = this.getAttribute('data-id');
-                debugLog("Fetching application ID:", appId);
-                
-                fetch(`../../api/get_application.php?id=${appId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                        return response.json();
-                    })
-                    .then(data => {
-                        debugLog("Application data received:", data);
-                        if (!data) throw new Error("No data received");
-                        
-                        currentApplicationData = data;
-
-                        // Update student info
-                        document.getElementById('modalStudentName').textContent = data.full_name || 'N/A';
-                        document.getElementById('modalStudentInfo').textContent = 
-                            `${data.course || 'N/A'}, Year ${data.year_of_study || 'N/A'} | ${data.email || 'N/A'}`;
-                        document.getElementById('modalOpportunity').textContent = 
-                            `Applied for: ${data.opportunity_title || 'N/A'}`;
-                        
-                        // Update cover letter
-                        const coverLetterDiv = document.querySelector('#modalCoverLetter .prose');
-                        if (data.cover_letter) {
-                            coverLetterDiv.innerHTML = data.cover_letter;
-                            document.getElementById('downloadCoverLetter').style.display = 'inline-block';
-                        } else {
-                            coverLetterDiv.innerHTML = '<p class="text-gray-400">No cover letter provided</p>';
-                            document.getElementById('downloadCoverLetter').style.display = 'none';
-                        }
-
-                        // Update resume
-                        const resumeDiv = document.querySelector('#modalResume .prose');
-                        if (data.resume) {
-                            resumeDiv.innerHTML = data.resume;
-                            document.getElementById('downloadResume').style.display = 'inline-block';
-                        } else {
-                            resumeDiv.innerHTML = '<p class="text-gray-400">No resume provided</p>';
-                            document.getElementById('downloadResume').style.display = 'none';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        debugLog("Fetch error:", error.message);
-                        
-                        const errorMsg = `Error: ${error.message}`;
-                        document.querySelector('#modalCoverLetter .prose').innerHTML = 
-                            `<p class="text-danger">${errorMsg}</p>`;
-                        document.querySelector('#modalResume .prose').innerHTML = 
-                            `<p class="text-danger">${errorMsg}</p>`;
-                    });
-            });
-        });
-
-        // Download functionality
-        function downloadFile(content, filename, type = 'text/plain') {
-            if (!content) return;
+        // New document viewer functionality with PDF support
+        async function displayDocument(containerId, content, isPdf = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear previous content
+            
+            if (!content) {
+                container.innerHTML = '<p class="text-danger">Document not available</p>';
+                return;
+            }
             
             try {
-                const blob = new Blob([content], { type });
+                if (isPdf) {
+                    // Handle PDF content
+                    const pdfData = atob(content);
+                    const pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
+                    
+                    // Get first page
+                    const page = await pdfDoc.getPage(1);
+                    const viewport = page.getViewport({scale: 1.0});
+                    
+                    // Prepare canvas
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    container.appendChild(canvas);
+                    
+                    // Render PDF page
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                } else {
+                    // Handle plain text content
+                    if (/^[A-Za-z0-9+/]+={0,2}$/.test(content)) {
+                        content = atob(content);
+                    }
+                    container.innerHTML = `<pre class="document-content">${content}</pre>`;
+                }
+            } catch (e) {
+                console.error('Error displaying document:', e);
+                container.innerHTML = `<p class="text-danger">Error displaying document: ${e.message}</p>`;
+            }
+        }
+
+        function downloadDocument(content, filename, isPdf = false) {
+            if (!content) {
+                alert('Document not available for download');
+                return;
+            }
+            
+            try {
+                // Handle base64 content
+                if (/^[A-Za-z0-9+/]+={0,2}$/.test(content)) {
+                    content = atob(content);
+                }
+                
+                const blob = new Blob([content], { type: isPdf ? 'application/pdf' : 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = filename;
+                a.download = isPdf ? filename.replace('.txt', '.pdf') : filename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -406,18 +414,61 @@ try {
             }
         }
 
-        document.getElementById('downloadCoverLetter')?.addEventListener('click', function() {
-            if (currentApplicationData?.cover_letter) {
-                const filename = `Cover_Letter_${currentApplicationData.full_name.replace(/\s+/g, '_')}.txt`;
-                downloadFile(currentApplicationData.cover_letter, filename);
-            }
-        });
+        // Event listeners for the new modal
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                const appId = this.getAttribute('data-id');
+                loadingOverlay.style.display = 'flex';
+                
+                fetch(`../../api/get_application_documents.php?id=${appId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        currentApplicationData = data;
 
-        document.getElementById('downloadResume')?.addEventListener('click', function() {
-            if (currentApplicationData?.resume) {
-                const filename = `Resume_${currentApplicationData.full_name.replace(/\s+/g, '_')}.txt`;
-                downloadFile(currentApplicationData.resume, filename);
-            }
+                        // Update student info
+                        document.getElementById('modalStudentName').textContent = data.student_name || 'N/A';
+                        document.getElementById('modalStudentInfo').textContent = 
+                            `${data.student_course || 'N/A'}, Year ${data.student_year || 'N/A'} | ${data.student_email || 'N/A'}`;
+                        document.getElementById('modalOpportunity').textContent = 
+                            `Applied for: ${data.opportunity_title || 'N/A'}`;
+                        
+                        // Display documents in the new tabbed interface
+                        displayDocument('coverLetterContainer', data.cover_letter);
+                        displayDocument('resumeContainer', data.resume);
+                        
+                        // Set up download buttons
+                        document.getElementById('downloadCoverLetterBtn').onclick = () => {
+                            downloadDocument(data.cover_letter, 
+                                `Cover_Letter_${data.student_name.replace(/\s+/g, '_')}.txt`,
+                                data.is_pdf_cover_letter);
+                        };
+                        
+                        document.getElementById('downloadResumeBtn').onclick = () => {
+                            downloadDocument(data.resume, 
+                                `Resume_${data.student_name.replace(/\s+/g, '_')}.txt`,
+                                data.is_pdf_resume);
+                        };
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('coverLetterContainer').innerHTML = 
+                            `<p class="text-danger">${error.message}</p>`;
+                        document.getElementById('resumeContainer').innerHTML = 
+                            `<p class="text-danger">${error.message}</p>`;
+                    })
+                    .finally(() => {
+                        loadingOverlay.style.display = 'none';
+                    });
+            });
         });
     });
     </script>

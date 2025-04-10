@@ -90,9 +90,9 @@ $users = $conn->query("
                     <input type="text" class="form-control search-box" id="searchUsers" 
                            placeholder="Search users..." onkeyup="searchUsers()">
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <a href="addUser.php" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> Add User
-                </button>
+                </a>
             </div>
         </div>
 

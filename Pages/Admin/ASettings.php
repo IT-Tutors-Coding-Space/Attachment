@@ -12,16 +12,7 @@ require "../../Components/AdminNav.php";
 // Get current settings
 $settings = $conn->query("SELECT * FROM system_settings")->fetch(PDO::FETCH_ASSOC);
 $adminUsers = $conn->query("SELECT * FROM admins")->fetchAll(PDO::FETCH_ASSOC);
-<<<<<<< HEAD
-
-// Check if backup_history table exists
-$tableExists = $conn->query("SHOW TABLES LIKE 'backup_history'")->rowCount() > 0;
-$backupHistory = $tableExists ? 
-    $conn->query("SELECT * FROM backup_history ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC) : 
-    [];
-=======
 $backupHistory = $conn->query("SELECT * FROM backup_history ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
->>>>>>> ca98f247eb8b2bb8750c6223fa53c11b6eaf3e0f
 ?>
 <!DOCTYPE html>
 <html lang="en">

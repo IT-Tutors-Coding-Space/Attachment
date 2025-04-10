@@ -6,14 +6,17 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['application_id'])) {
     try {
         $status = ($_POST['action'] === 'accept') ? 'Accepted' : 'Rejected';
-        $updateStmt = $conn->prepare("UPDATE applications SET status = ? WHERE application_id = ?");
+        $updateStmt = $conn->prepare("UPDATE applications SET status = ? WHERE applications_id = ?");
         $updateStmt->execute([$status, $_POST['application_id']]);
         
-        // Refresh page to show updated status
-        header("Location: ".$_SERVER['PHP_SELF']);
+        // Redirect with success message
+        $message = urlencode("Application successfully {$status}");
+        header("Location: ".$_SERVER['PHP_SELF']."?message=$message");
         exit();
     } catch (PDOException $e) {
-        $error = "Error updating application: " . $e->getMessage();
+        $error = urlencode("Error updating application: " . $e->getMessage());
+        header("Location: ".$_SERVER['PHP_SELF']."?message=$error&isError=true");
+        exit();
     }
 }
 
@@ -153,12 +156,12 @@ try {
                                     </span>
                                 </td>
                                 <td>
-                                    <form method="post" style="display:inline">
-                                        <input type="hidden" name="applications_id" value="<?php echo $application['applications_id']; ?>">
+                                    <form method="post" style="display:inline" onsubmit="return confirmAction('accept')">
+                                        <input type="hidden" name="application_id" value="<?php echo $application['applications_id']; ?>">
                                         <button type="submit" name="action" value="accept" class="btn btn-sm btn-outline-success">Accept</button>
                                     </form>
-                                    <form method="post" style="display:inline">
-                                        <input type="hidden" name="applications_id" value="<?php echo $application['applications_id']; ?>">
+                                    <form method="post" style="display:inline" onsubmit="return confirmAction('reject')">
+                                        <input type="hidden" name="application_id" value="<?php echo $application['applications_id']; ?>">
                                         <button type="submit" name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
                                     </form>
                                 </td>

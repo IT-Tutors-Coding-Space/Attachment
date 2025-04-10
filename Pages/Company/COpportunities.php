@@ -199,10 +199,10 @@ try {
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a>
+            <!-- <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a> -->
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">Dashboard</a></li>
-                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5 active">📢
+                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5 active">
                         Opportunities</a></li>
                 <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5"> Applications</a>
                 </li>

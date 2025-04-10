@@ -1,44 +1,65 @@
+ 
+
 <?php
-require_once('../../db.php');
+require_once "../../db.php";
 session_start();
 
-// Check if user is logged in as company
 if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "company") {
-    header("Location: ../../SignUps/Clogin.php");
+    header("Location: ../../SignUps/CLogin.php");
     exit();
 }
 
 $company_id = $_SESSION["user_id"];
-$message = '';
-$messageType = '';
+$filter = isset($_GET['filter']) ? filter_var($_GET['filter'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : 'all';
 
-// Handle application status update
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["update_status"])) {
-    try {
+try {
+    // Fetch company name
+    $companyStmt = $conn->prepare("SELECT company_name FROM companies WHERE company_id = ?");
+    $companyStmt->execute([$company_id]);
+    $company = $companyStmt->fetch(PDO::FETCH_ASSOC);
+    $company_name = $company ? htmlspecialchars($company["company_name"]) : "Unknown Company";
+
+    // Handle status update
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["update_status"])) {
         $application_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
-        $new_status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
+        $new_status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (!$application_id || !$new_status) {
             throw new Exception("Invalid input data");
         }
 
-        $stmt = $conn->prepare("UPDATE applications SET status = ? WHERE applications_id = ? AND company_id = ?");
-        $stmt->execute([$new_status, $application_id, $company_id]);
+        // Update query with proper company ownership check
+        $updateStmt = $conn->prepare("
+            UPDATE applications a
+            JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+            SET a.status = ? 
+            WHERE a.applications_id = ? 
+            AND o.company_id = ?
+        ");
+        $updateStmt->execute([$new_status, $application_id, $company_id]);
 
-        if ($stmt->rowCount() === 0) {
+        if ($updateStmt->rowCount() > 0) {
+            $_SESSION['message'] = "Status updated successfully!";
+            $_SESSION['message_type'] = "success";
+        } 
+        else {
             throw new Exception("No application found or you don't have permission to update it");
         }
 
+<<<<<<< HEAD
         $message = urlencode("Application status updated to {$new_status} successfully!");
         header("Location: CTrack.php?message=$message");
         exit();
     } catch (Exception $e) {
         $error = urlencode("Error updating application status: " . $e->getMessage());
         header("Location: CTrack.php?message=$error&isError=true");
+=======
+        header("Location: CTrack.php");
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
         exit();
     }
-}
 
+<<<<<<< HEAD
 // Display status message if present in URL
 $url_message = '';
 $url_message_type = '';
@@ -63,28 +84,35 @@ try {
         JOIN companies c ON o.company_id = c.company_id
         WHERE o.company_id = ?
     ";
+=======
+    // Build base query
+    $sql = "SELECT a.*, s.full_name, o.title 
+            FROM applications a
+            JOIN students s ON a.student_id = s.student_id
+            JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+            WHERE o.company_id = ?";
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
 
+    // Add filter condition
     $params = [$company_id];
-
-    if ($opportunity_filter) {
-        $query .= " AND o.opportunities_id = ?";
-        $params[] = $opportunity_filter;
+    if ($filter !== 'all') {
+        $sql .= " AND a.status = ?";
+        $params[] = $filter;
     }
 
-    $query .= " ORDER BY a.submitted_at DESC";
+    // Add sorting
+    $sql .= " ORDER BY a.submitted_at DESC";
 
-    $stmt = $conn->prepare($query);
-    $stmt->execute($params);
-    $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Fetch opportunities for filter dropdown
-    $stmt = $conn->prepare("SELECT opportunities_id, title FROM opportunities WHERE company_id = ?");
-    $stmt->execute([$company_id]);
-    $opportunities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch applications
+    $applicationsStmt = $conn->prepare($sql);
+    $applicationsStmt->execute($params);
+    $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
-    $message = "Error fetching data: " . $e->getMessage();
-    $messageType = "danger";
+    $_SESSION['message'] = "Error fetching data: " . $e->getMessage();
+    $_SESSION['message_type'] = "danger";
+    header("Location: CTrack.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -96,62 +124,87 @@ try {
     <!-- <title>Application Tracking - AttachME</title> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/CTrack.css">
+    <link rel="stylesheet" href="../../CSS/CTrack.css">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+
+        .status-filter {
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.35em 0.65em;
+        }
+
+        .action-buttons .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
 </head>
 
-
-<body class="bg-gray-100 d-flex flex-column min-vh-100">
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay">
-        <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-
+<body>
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
             <!-- <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a> -->
             <ul class="navbar-nav d-flex flex-row gap-4">
-                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
-                <li class="nav-item"><a href="COpportunities.php" class="nav-link text-white fw-bold fs-5">
-                        Opportunities</a></li>
-                <li class="nav-item"><a href="CTrack.php" class="nav-link text-white fw-bold fs-5 active">
-                        Applications</a></li>
-                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">
-                        Messages</a></li>
-                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5"> Profile</a></li>
+                <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">Dashboard</a></li>
+                <li class="nav-item"><a href="COpportunities.php"
+                        class="nav-link text-white fw-bold fs-5">Opportunities</a></li>
+                <li class="nav-item"><a href="CTrack.php"
+                        class="nav-link text-white fw-bold fs-5 active">Applications</a></li>
+                <li class="nav-item"><a href="CNotifications.php" class="nav-link text-white fw-bold fs-5">Messages</a>
+                </li>
+                <li class="nav-item"><a href="CProfile.php" class="nav-link text-white fw-bold fs-5">Profile</a></li>
             </ul>
         </div>
     </nav>
 
-    <div class="container p-5 flex-grow-1">
-        <?php if (!empty($message)): ?>
-            <div class="alert alert-<?php echo $messageType === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show mb-4"
-                role="alert">
-                <?php echo htmlspecialchars($message); ?>
+    <div class="main-content container p-5">
+        <?php if (isset($_SESSION['message'])): ?>
+            <div class="alert alert-<?= $_SESSION['message_type'] ?> alert-dismissible fade show mb-4">
+                <?= $_SESSION['message'] ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            <?php unset($_SESSION['message']);
+            unset($_SESSION['message_type']); ?>
         <?php endif; ?>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-primary">Applications Tracking</h2>
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter me-1"></i> Filter
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                    <li><a class="dropdown-item" href="CTrack.php">All Applications</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <?php foreach ($opportunities as $opp): ?>
-                        <li><a class="dropdown-item"
-                                href="CTrack.php?opportunity=<?= $opp['opportunities_id'] ?>"><?= htmlspecialchars($opp['title']) ?></a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+
+            <!-- Status Filter -->
+            <div class="btn-group status-filter">
+                <a href="CTrack.php?filter=all"
+                    class="btn btn-outline-secondary <?= $filter === 'all' ? 'active' : '' ?>">All</a>
+                <a href="CTrack.php?filter=Pending"
+                    class="btn btn-outline-warning <?= $filter === 'Pending' ? 'active' : '' ?>">Pending</a>
+                <a href="CTrack.php?filter=Accepted"
+                    class="btn btn-outline-success <?= $filter === 'Accepted' ? 'active' : '' ?>">Accepted</a>
+                <a href="CTrack.php?filter=Rejected"
+                    class="btn btn-outline-danger <?= $filter === 'Rejected' ? 'active' : '' ?>">Rejected</a>
             </div>
         </div>
 
@@ -171,32 +224,18 @@ try {
                             </thead>
                             <tbody>
                                 <?php foreach ($applications as $app): ?>
-                                    <tr class="application-card hover:bg-gray-50 transition-colors duration-200">
-                                        <td class="py-4">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-blue-600"></i>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="font-medium text-gray-900"><?= htmlspecialchars($app['full_name']) ?></div>
-                                                    <div class="text-sm text-gray-500"><?= htmlspecialchars($app['email']) ?></div>
-                                                    <div class="text-xs text-gray-400 mt-1">
-                                                        <?= htmlspecialchars($app['course']) ?>, Year <?= htmlspecialchars($app['year_of_study']) ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4">
-                                            <div class="text-gray-900 font-medium"><?= htmlspecialchars($app['opportunity_title']) ?></div>
-                                            <div class="text-sm text-gray-500">Submitted: <?= date('M j, Y', strtotime($app['submitted_at'])) ?></div>
-                                        </td>
-                                        <td class="py-4">
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
-                                                <?= $app['status'] === 'Accepted' ? 'bg-green-100 text-green-800' : 
-                                                   ($app['status'] === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') ?>">
+                                    <tr data-application-id="<?= $app['applications_id'] ?>">
+                                        <td><?= htmlspecialchars($app['full_name']) ?></td>
+                                        <td><?= htmlspecialchars($app['title']) ?></td>
+                                        <td><?= date('M j, Y', strtotime($app['submitted_at'])) ?></td>
+                                        <td>
+                                            <span class="badge status-badge bg-<?=
+                                                $app['status'] === 'Accepted' ? 'success' :
+                                                ($app['status'] === 'Rejected' ? 'danger' : 'warning') ?>">
                                                 <?= htmlspecialchars($app['status']) ?>
                                             </span>
                                         </td>
+<<<<<<< HEAD
                                         <td class="py-4 space-x-2">
                                             <button class="btn btn-sm btn-outline-primary view-details transition-all hover:scale-105"
                                                 data-id="<?= $app['applications_id'] ?>" data-bs-toggle="modal"
@@ -205,17 +244,24 @@ try {
                                             </button>
                                             <!-- <form method="POST" action="CTrack.php" class="inline-flex">
                                                 <input type="hidden" name="application_id" value="<?= $app['applications_id'] ?>">
+=======
+                                        <td class="action-buttons">
+                                            <form method="POST" action="CTrack.php" class="d-inline update-status-form">
+                                                <input type="hidden" name="application_id"
+                                                    value="<?= $app['applications_id'] ?>">
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
                                                 <input type="hidden" name="status" value="Accepted">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-success transition-all hover:scale-105">
+                                                    class="btn btn-sm btn-outline-success <?= $app['status'] === 'Accepted' ? 'disabled' : '' ?>">
                                                     <i class="fas fa-check me-1"></i> Accept
                                                 </button>
                                             </form>
-                                            <form method="POST" action="CTrack.php" class="inline-flex">
-                                                <input type="hidden" name="application_id" value="<?= $app['applications_id'] ?>">
+                                            <form method="POST" action="CTrack.php" class="d-inline update-status-form">
+                                                <input type="hidden" name="application_id"
+                                                    value="<?= $app['applications_id'] ?>">
                                                 <input type="hidden" name="status" value="Rejected">
                                                 <button type="submit" name="update_status"
-                                                    class="btn btn-sm btn-outline-danger transition-all hover:scale-105">
+                                                    class="btn btn-sm btn-outline-danger <?= $app['status'] === 'Rejected' ? 'disabled' : '' ?>">
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
@@ -228,9 +274,8 @@ try {
                 <?php else: ?>
                     <div class="text-center py-5">
                         <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
-                        <h5 class="text-muted">No applications received yet</h5>
-                        <p class="text-muted">Applications from students will appear here when they apply to your
-                            opportunities</p>
+                        <h5 class="text-muted">No applications found</h5>
+                        <p class="text-muted">There are no applications matching your selected filter</p>
                         <a href="COpportunities.php" class="btn btn-primary mt-3">
                             <i class="fas fa-plus me-1"></i> Post New Opportunity
                         </a>
@@ -240,6 +285,7 @@ try {
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- New Document Viewer Modal -->
     <div class="modal fade" id="applicationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -325,15 +371,19 @@ try {
     </div>
 
     <footer class="bg-dark text-white text-center py-3 mt-auto">
+=======
+    <footer class="bg-dark text-white text-center py-3">
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
         <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../../contact.php" class="text-white fw-bold">Contact Support:</a>
+            <a href="../../contact.php" class="text-white fw-bold">Contact Support: attachme@admin</a>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<<<<<<< HEAD
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
     <script>
         // Initialize PDF.js
@@ -472,6 +522,10 @@ try {
         });
     });
     </script>
+=======
+    <script src="../../Javascript/CTrack.js"></script>
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
 </body>
 
 </html>
+ 

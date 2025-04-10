@@ -112,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             
             <!-- Company Signup -->
             <form id="companySignupForm" class="signup-form" method="POST" action="../SignUps/CompanyReg.php">
-                <h6 style="text-align: center;" class="fw-bold text-secondary">🏢 Company Registration</h6>
+                <h6 style="text-align: center;" class="fw-bold text-secondary">Company Registration</h6>
                 <div class="mb-3">
                     <label for="companyName" class="form-label">Company Name</label>
                     <div class="input-group">

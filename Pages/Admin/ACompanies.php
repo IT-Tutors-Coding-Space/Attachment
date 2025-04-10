@@ -2,7 +2,11 @@
 require_once "../../db.php";
 session_start();
 
+<<<<<<< HEAD
  if ($_SESSION["role"] !== "admin") {
+=======
+if ($_SESSION["role"] !== "admin") {
+>>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
     header("Location: ../SignUps/ALogin.php");
     exit();
 }

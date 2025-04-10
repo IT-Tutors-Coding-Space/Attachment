@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $conn->commit();
 
-        // Redirect to loginn.php after successful registration
+        // Redirect to loginn.php after successful registrationj
         echo json_encode(["success" => true, "message" => "Registration successful!"]);
         header("Location: Clogin.php");
         exit();

@@ -66,12 +66,6 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .chat-box { max-height: 500px; overflow-y: auto; padding: 1rem; }
-        .message { max-width: 70%; padding: 0.75rem; border-radius: 1rem; margin-bottom: 0.5rem; }
-        .sent { align-self: flex-end; background-color: #0d6efd; color: white; }
-        .received { align-self: flex-start; background-color: #f8f9fa; }
-    </style>
 </head>
 <body class="bg-gray-100 d-flex flex-column min-vh-100">
     
@@ -103,12 +97,14 @@ try {
             <div class="chat-box d-flex flex-column" id="messageList">
                 <?php foreach ($messages as $msg): ?>
                     <div class="message <?= ($msg['sender_id'] == $company_id && $msg['sender_role'] == 'company') ? 'sent' : 'received' ?>">
-                        <div class="fw-bold">
-                            <?= ($msg['sender_id'] == $company_id && $msg['sender_role'] == 'company') ? 'You' : htmlspecialchars($msg['student_name']) ?>:
-                        </div>
-                        <div><?= htmlspecialchars($msg['message']) ?></div>
-                        <div class="small text-muted">
-                            <?= date('M j, g:i a', strtotime($msg['sent_at'])) ?>
+                        <div class="message-bubble">
+                            <div class="fw-bold">
+                                <?= ($msg['sender_id'] == $company_id && $msg['sender_role'] == 'company') ? 'You' : htmlspecialchars($msg['student_name']) ?>:
+                            </div>
+                            <div><?= htmlspecialchars($msg['message']) ?></div>
+                            <div class="small text-muted">
+                                <?= date('M j, g:i a', strtotime($msg['sent_at'])) ?>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -168,6 +164,104 @@ try {
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --text-color: #2b2d42;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+        }
+        
+        .dark-mode {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --text-color: #f8f9fa;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #2d2d2d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message.received {
+            margin-right: auto;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            position: relative;
+            margin: 8px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 80%;
+        }
+
+        .message.sent .message-bubble {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+            margin-left: 20%;
+        }
+
+        .message.received .message-bubble {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+            margin-right: 20%;
+        }
+
+        .message-bubble div {
+            margin-bottom: 4px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border-radius: 18px;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .typing-dots {
+            display: flex;
+            margin-left: 8px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+    </style>
     <script src="../../Javasript/CNotifications.js?v=<?= time() ?>"></script>
 </body>
 </html>

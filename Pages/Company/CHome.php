@@ -154,47 +154,6 @@ try {
             </div>
         </div>
 
-<<<<<<< HEAD
-        <!-- Recent Applications -->
-        <div class="card border-0 shadow-sm p-4 bg-white rounded-lg">
-            <h5 class="fw-bold fs-5 mb-3">Recent Applications</h5>
-            <div class="table-responsive">
-                <table class="application-table">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Opportunity</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($applications as $application): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($application["full_name"]); ?></td>
-                                <td><?php echo htmlspecialchars($application["title"]); ?></td>
-                                <td>
-                                    <span class="badge bg-<?php
-                                    echo ($application["status"] === "Accepted") ? "success" :
-                                        (($application["status"] === "Pending") ? "warning" : "danger"); ?>">
-                                        <?php echo htmlspecialchars($application["status"]); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <form method="post" style="display:inline" onsubmit="return confirmAction('accept')">
-                                        <input type="hidden" name="application_id" value="<?php echo $application['applications_id']; ?>">
-                                        <button type="submit" name="action" value="accept" class="btn btn-sm btn-outline-success">Accept</button>
-                                    </form>
-                                    <form method="post" style="display:inline" onsubmit="return confirmAction('reject')">
-                                        <input type="hidden" name="application_id" value="<?php echo $application['applications_id']; ?>">
-                                        <button type="submit" name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-=======
         <div class="card border-0 shadow-sm">
             <div class="card-body p-0">
                 <?php if (count($applications) > 0): ?>
@@ -257,7 +216,6 @@ try {
                         </a>
                     </div>
                 <?php endif; ?>
->>>>>>> a7fdc1617024d3b49d78499c395d2065200bfe22
             </div>
         </div>
     </div>

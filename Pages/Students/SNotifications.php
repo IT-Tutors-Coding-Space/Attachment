@@ -1,75 +1,58 @@
 <?php
+require_once '../../db.php';
 session_start();
-require "../../db.php";
 
-// Check if user is logged in as student
-if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "student") {
-    header("Location: ../../SignUps/Slogin.php");
-    exit();
-}
-
-$student_id = $_SESSION["user_id"];
-require "../../Components/StudentNav.php";
-$company_id = $_GET["company_id"] ?? null;
-
-// Get list of companies the student has applied to
-try {
-    $stmt = $conn->prepare("
-        SELECT o.company_id, c.company_name, 
-               (SELECT COUNT(*) FROM messages 
-                WHERE receiver_id = ? AND sender_id = o.company_id AND status = 'unread') as unread_count
-        FROM applications a
-        JOIN opportunities o ON a.opportunities_id = o.opportunities_id
-        JOIN companies c ON o.company_id = c.company_id
-        WHERE a.student_id = ? AND a.status != 'draft'
-        GROUP BY o.company_id, c.company_name
-    ");
-    $stmt->execute([$student_id]);
-    $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $error = "Error fetching companies: " . $e->getMessage();
-}
-
-// Get messages if company is selected
-$messages = [];
-if ($company_id) {
-    try {
-        // Mark messages as read when opened
-        $conn->prepare("
-            UPDATE messages 
-            SET status = 'read' 
-            WHERE receiver_id = ? AND sender_id = ? AND status = 'unread'
-        ")->execute([$student_id, $company_id]);
-
-        // Get conversation
-        $stmt = $conn->prepare("
-            SELECT m.*, 
-                   IF(m.sender_id = ?, 'sent', 'received') as message_type
-            FROM messages m
-            WHERE (sender_id = ? AND receiver_id = ?)
-               OR (sender_id = ? AND receiver_id = ?)
-            ORDER BY sent_at ASC
-        ");
-        $stmt->execute([$student_id, $student_id, $company_id, $company_id, $student_id]);
-        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        $error = "Error fetching messages: " . $e->getMessage();
+// Check authentication
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        http_response_code(403);
+        echo json_encode(["success" => false, "message" => "Unauthorized access."]);
+        exit();
+    } else {
+        header("Location: ../SignUps/Slogin.php");
+        exit();
     }
 }
 
-// Handle new message submission
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
-    try {
+$student_id = $_SESSION['user_id'];
+$selected_company = isset($_GET['company_id']) ? (int)$_GET['company_id'] : null;
+$messages = [];
+$error = null;
+
+try {
+    if (!$conn) throw new PDOException("Failed to connect to database");
+
+    if ($selected_company) {
         $stmt = $conn->prepare("
-            INSERT INTO messages 
-            (sender_id, receiver_id, message, status, sent_at) 
-            VALUES (?, ?, ?, 'sent', NOW())
+            SELECT m.*, c.name as company_name
+            FROM messages m
+            JOIN companies c ON (m.sender_id = c.user_id AND m.sender_role = 'company') 
+                          OR (m.receiver_id = c.user_id AND m.receiver_role = 'company')
+            WHERE (m.sender_id = ? AND m.sender_role = 'student' AND m.receiver_id = ? AND m.receiver_role = 'company')
+               OR (m.sender_id = ? AND m.sender_role = 'company' AND m.receiver_id = ? AND m.receiver_role = 'student')
+            ORDER BY m.sent_at ASC
         ");
-        $stmt->execute([$student_id, $company_id, $_POST["message"]]);
-        header("Location: SNotifications.php?company_id=$company_id");
+        if (!$stmt) throw new PDOException("Failed to prepare statement");
+        
+        $stmt->execute([$student_id, $selected_company, $selected_company, $student_id]);
+        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Mark messages as read
+        $stmt = $conn->prepare("
+            UPDATE messages SET is_read = 1 
+            WHERE receiver_id = ? AND receiver_role = 'student'
+            AND sender_id = ? AND sender_role = 'company'
+            AND is_read = 0
+        ");
+        if (!$stmt) throw new PDOException("Failed to prepare update statement");
+        $stmt->execute([$student_id, $selected_company]);
+    }
+} catch (PDOException $e) {
+    $error = "Database error: " . $e->getMessage();
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        http_response_code(500);
+        echo json_encode(["success" => false, "message" => $error]);
         exit();
-    } catch (PDOException $e) {
-        $error = "Error sending message: " . $e->getMessage();
     }
 }
 ?>
@@ -81,8 +64,106 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messages - AttachME</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../CSS/styles.css">
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 d-flex flex-column min-vh-100">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
+        <div class="container-fluid">
+            <ul class="navbar-nav d-flex flex-row gap-4">
+                <li class="nav-item"><a href="SHome.php" class="nav-link text-white fw-bold fs-5"> Dashboard</a></li>
+                <li class="nav-item"><a href="SOpportunities.php" class="nav-link text-white fw-bold fs-5"> Opportunities</a></li>
+                <li class="nav-item"><a href="SApplications.php" class="nav-link text-white fw-bold fs-5"> Applications</a></li>
+                <li class="nav-item"><a href="SNotifications.php" class="nav-link text-white fw-bold fs-5 active"> Messages</a></li>
+                <li class="nav-item"><a href="SProfile.php" class="nav-link text-white fw-bold fs-5"> Profile</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container p-5 flex-grow-1">
+        <?php if ($error): ?>
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <?= htmlspecialchars($error) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <h4 class="fw-bold text-primary"> Messages</h4>
+        <p class="text-muted">View and respond to messages from companies.</p>
+        
+        <div class="card shadow p-3 mb-4">
+            <div class="chat-box d-flex flex-column" id="messageList">
+                <?php foreach ($messages as $msg): ?>
+                    <div class="message <?= ($msg['sender_id'] == $student_id && $msg['sender_role'] == 'student') ? 'sent' : 'received' ?>">
+                        <div class="message-bubble">
+                            <div class="fw-bold">
+                                <?= ($msg['sender_id'] == $student_id && $msg['sender_role'] == 'student') ? 'You' : htmlspecialchars($msg['company_name']) ?>:
+                            </div>
+                            <div><?= htmlspecialchars($msg['message']) ?></div>
+                            <div class="small text-muted">
+                                <?= date('M j, g:i a', strtotime($msg['sent_at'])) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        
+        <form id="messageForm" class="mb-3">
+            <input type="hidden" name="sender_id" value="<?= $student_id ?>">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <select name="receiver_id" id="companySelect" class="form-select" required>
+                        <option value="">Select company...</option>
+                        <?php
+                        try {
+                            $stmt = $conn->prepare("
+                                SELECT DISTINCT c.user_id, c.name 
+                                FROM applications a
+                                JOIN opportunities o ON a.opportunities_id = o.opportunities_id
+                                JOIN companies c ON o.company_id = c.user_id
+                                WHERE a.student_id = ?
+                                AND a.status IN ('submitted', 'under_review', 'accepted', 'interview_scheduled', 'offer_received')
+                                ORDER BY c.name
+                            ");
+                            $stmt->execute([$student_id]);
+                            $companies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            foreach ($companies as $company): ?>
+                                <option value="<?= $company['user_id'] ?>" <?= $selected_company == $company['user_id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($company['name']) ?>
+                                </option>
+                            <?php endforeach;
+                        } catch (PDOException $e) {
+                            echo "<!-- Error loading companies: " . htmlspecialchars($e->getMessage()) . " -->";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" name="message" id="messageInput" class="form-control" placeholder="Type your message..." required>
+                        <button type="submit" id="sendMessage" class="btn btn-primary">
+                            <i class="fa fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2025 AttachME. All rights reserved.</p>
+        <div class="d-flex justify-content-center gap-4 mt-2">
+            <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
+            <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
+            <a href="../../contact.php" class="text-white fw-bold">Contact Support:</a>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary-color: #4361ee;
@@ -108,133 +189,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
             transition: all 0.3s ease;
         }
 
-        .chat-container {
-            display: flex;
-            height: 80vh;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .chat-sidebar {
-            width: 350px;
-            background-color: var(--card-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 15px;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .chat-item:hover, .chat-item.active {
-            background-color: rgba(67, 97, 238, 0.1);
-        }
-
-        .chat-item-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 12px;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-
-        .chat-item-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .chat-item-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .chat-item-preview {
-            font-size: 0.9em;
-            color: var(--text-color);
-            opacity: 0.7;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .chat-item-time {
-            font-size: 0.8em;
-            color: var(--text-color);
-            opacity: 0.6;
-        }
-
-        .chat-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--card-bg);
-        }
-
-        .message-container {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: var(--bg-color);
-        }
-
-        .message-day-divider {
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .message-day-divider span {
-            background-color: var(--card-bg);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            position: relative;
-            z-index: 1;
-        }
-
-        .message-day-divider:before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background-color: var(--border-color);
-            z-index: 0;
-        }
-
         .message {
             display: flex;
             margin-bottom: 15px;
@@ -250,59 +204,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
             margin-right: auto;
         }
 
-        .message-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 10px;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-
-        .message-content {
-            display: flex;
-            flex-direction: column;
-        }
-
         .message-bubble {
             padding: 12px 16px;
             border-radius: 18px;
             word-wrap: break-word;
             position: relative;
+            margin: 8px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 80%;
         }
 
         .message.sent .message-bubble {
             background-color: var(--primary-color);
             color: white;
             border-bottom-right-radius: 4px;
+            margin-left: 20%;
         }
 
         .message.received .message-bubble {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-bottom-left-radius: 4px;
+            margin-right: 20%;
         }
 
-        .message-time {
-            font-size: 0.75em;
-            margin-top: 4px;
-            color: var(--text-color);
-            opacity: 0.7;
-            display: flex;
-            align-items: center;
-        }
-
-        .message.sent .message-time {
-            justify-content: flex-end;
-        }
-
-        .message-status {
-            margin-left: 5px;
+        .message-bubble div {
+            margin-bottom: 4px;
         }
 
         .typing-indicator {
@@ -329,337 +256,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
             animation: typingAnimation 1.4s infinite ease-in-out;
         }
 
-        .typing-dot:nth-child(1) { animation-delay: 0s; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
         @keyframes typingAnimation {
             0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
             30% { transform: translateY(-5px); opacity: 1; }
         }
-
-        .message-input-container {
-            padding: 15px;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--card-bg);
-            display: flex;
-            align-items: center;
-        }
-
-        .message-input {
-            flex: 1;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 10px 15px;
-            margin-right: 10px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .attachment-btn, .emoji-btn {
-            background: none;
-            border: none;
-            font-size: 1.2em;
-            margin: 0 5px;
-            cursor: pointer;
-            color: var(--text-color);
-            opacity: 0.7;
-        }
-
-        .attachment-btn:hover, .emoji-btn:hover {
-            opacity: 1;
-        }
-
-        .send-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .dark-mode-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
     </style>
-</head>
-<body>
-    
-    
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Company List -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4>Companies</h4>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="p-3 border-bottom">
-                            <input type="text" id="companySearch" class="form-control" placeholder="Search companies...">
-                        </div>
-                        <div class="company-list" style="height: calc(70vh - 56px); overflow-y: auto;">
-                        <?php if (empty($companies)): ?>
-                            <div class="alert alert-info">You haven't applied to any companies yet.</div>
-                        <?php else: ?>
-                            <?php foreach ($companies as $company): ?>
-                                <div class="company-item p-3 border-bottom <?= $company['company_id'] == $company_id ? 'active' : '' ?>"
-                                     onclick="window.location='SNotifications.php?company_id=<?= $company['company_id'] ?>'"
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span><?= htmlspecialchars($company['company_name']) ?></span>
-                                        <?php if ($company['unread_count'] ?? 0 > 0): ?>
-                                            <span class="unread-count"><?= $company['unread_count'] ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Area -->
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4>
-                            <?php if ($company_id): ?>
-                                Chat with <?= htmlspecialchars($companies[array_search($company_id, array_column($companies, 'company_id'))]['company_name'] ?? 'Company') ?>
-                            <?php else: ?>
-                                Select a company to chat
-                            <?php endif; ?>
-                        </h4>
-                    </div>
-                    
-                    <div class="card-body">
-                        <?php if ($company_id): ?>
-                            <div class="chat-container mb-3" id="chatContainer">
-                                <?php if (empty($messages)): ?>
-                                    <div class="text-center text-muted">No messages yet. Start the conversation!</div>
-                                <?php else: ?>
-                                    <?php foreach ($messages as $message): ?>
-                                        <div class="message <?= $message['message_type'] ?>">
-                                            <div><?= htmlspecialchars($message['message']) ?></div>
-                                            <div class="message-time">
-                                                <?= date('M j, g:i a', strtotime($message['sent_at'])) ?>
-                                                <?php if ($message['message_type'] === 'sent'): ?>
-                                                    <span class="ms-2">
-                                                        <?php if ($message['status'] === 'read'): ?>
-                                                            <i class="fas fa-check-double text-info" title="Read"></i>
-                                                        <?php elseif ($message['status'] === 'delivered'): ?>
-                                                            <i class="fas fa-check-double text-muted" title="Delivered"></i>
-                                                        <?php else: ?>
-                                                            <i class="fas fa-check text-muted" title="Sent"></i>
-                                                        <?php endif; ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
-
-                            <form method="POST" class="d-flex">
-                                <input type="text" name="message" class="form-control me-2" placeholder="Type your message..." required>
-                                <button type="submit" class="btn btn-primary">Send</button>
-                            </form>
-                        <?php else: ?>
-                            <div class="alert alert-info">Please select a company to view messages</div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <?php require "../../Components/StudentFooter.php"; ?>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script>
-        // Dark mode toggle
-        const darkModeToggle = document.createElement('button');
-        darkModeToggle.className = 'dark-mode-toggle';
-        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        document.body.appendChild(darkModeToggle);
-
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            darkModeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            
-            // Save preference to localStorage
-            localStorage.setItem('darkMode', isDark);
-        });
-
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-
-        // Real-time message updates
-        function setupEventSource() {
-            const eventSource = new EventSource('../../API/chat_updates.php?user_id=<?= $student_id ?>');
-            
-            eventSource.onmessage = function(e) {
-                const data = JSON.parse(e.data);
-                
-                if (data.type === 'new_message' && data.sender_id === '<?= $company_id ?>') {
-                    // Add new message to chat
-                    const chatContainer = document.getElementById('chatContainer');
-                    const messageHTML = `
-                        <div class="message received">
-                            <div class="message-avatar">${data.sender_name.charAt(0)}</div>
-                            <div class="message-content">
-                                <div class="message-bubble">${data.message}</div>
-                                <div class="message-time">
-                                    ${new Date(data.sent_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    chatContainer.insertAdjacentHTML('beforeend', messageHTML);
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                }
-                
-                if (data.type === 'typing' && data.sender_id === '<?= $company_id ?>') {
-                    // Show typing indicator
-                    const typingIndicator = document.getElementById('typingIndicator');
-                    if (data.is_typing) {
-                        typingIndicator.style.display = 'flex';
-                    } else {
-                        typingIndicator.style.display = 'none';
-                    }
-                }
-            };
-        }
-
-        // Typing indicator
-        const messageInput = document.querySelector('input[name="message"]');
-        let typingTimeout;
-        
-        messageInput?.addEventListener('input', () => {
-            // Send typing start event
-            fetch('../../API/typing_indicator.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: <?= $student_id ?>,
-                    recipient_id: <?= $company_id ?>,
-                    is_typing: true
-                })
-            });
-            
-            // Clear previous timeout
-            clearTimeout(typingTimeout);
-            
-            // Set timeout to send typing stop event
-            typingTimeout = setTimeout(() => {
-                fetch('../../API/typing_indicator.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_id: <?= $student_id ?>,
-                        recipient_id: <?= $company_id ?>,
-                        is_typing: false
-                    })
-                });
-            }, 2000);
-        });
-
-        // Initialize real-time updates
-        if (<?= $company_id ? 'true' : 'false' ?>) {
-            setupEventSource();
-            
-            // Add typing indicator element
-            const chatContainer = document.getElementById('chatContainer');
-            chatContainer.insertAdjacentHTML('beforeend', `
-                <div id="typingIndicator" class="typing-indicator" style="display: none;">
-                    <div class="message-avatar">C</div>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-            `);
-        }
-
-        // Auto-scroll to bottom of chat
-        const chatContainer = document.getElementById('chatContainer');
-        if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Live search functionality
-        document.getElementById('companySearch')?.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const companyItems = document.querySelectorAll('.company-item');
-            
-            companyItems.forEach(item => {
-                const companyName = item.textContent.toLowerCase();
-                item.style.display = companyName.includes(searchTerm) ? 'block' : 'none';
-            });
-        });
-
-        // Enhanced message submission with file upload
-        document.querySelector('form[method="POST"]')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const form = this;
-            const button = form.querySelector('button[type="submit"]');
-            const originalText = button.textContent;
-            
-            button.disabled = true;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Sending...';
-            
-            try {
-                const formData = new FormData(form);
-                const response = await fetch('', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                if (response.ok) {
-                    form.reset();
-                    location.reload();
-                } else {
-                    alert('Error sending message');
-                }
-            } catch (error) {
-                alert('Network error - please try again');
-            } finally {
-                button.disabled = false;
-                button.textContent = originalText;
-            }
-        });
-    </script>
+    <script src="../../Javasript/SNotifications.js?v=<?= time() ?>"></script>
 </body>
 </html>

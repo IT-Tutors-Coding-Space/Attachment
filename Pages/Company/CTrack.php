@@ -132,7 +132,7 @@ try {
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg p-3">
         <div class="container-fluid">
-            <!-- <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME - Opportunities</a> -->
+            <a class="navbar-brand fw-bold text-white" href="CHome.php">AttachME</a>
             <ul class="navbar-nav d-flex flex-row gap-4">
                 <li class="nav-item"><a href="CHome.php" class="nav-link text-white fw-bold fs-5">Dashboard</a></li>
                 <li class="nav-item"><a href="COpportunities.php"
@@ -218,7 +218,7 @@ try {
                                                     <i class="fas fa-times me-1"></i> Reject
                                                 </button>
                                             </form>
-                                        </td> -->
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

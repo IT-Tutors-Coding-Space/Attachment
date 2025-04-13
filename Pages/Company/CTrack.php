@@ -243,7 +243,7 @@ try {
         <div class="d-flex justify-content-center gap-4 mt-2">
             <a href="../../help-center.php" class="text-white fw-bold">Help Center</a>
             <a href="../../terms.php" class="text-white fw-bold">Terms of Service</a>
-            <a href="../../contact.php" class="text-white fw-bold">Contact Support: attachme@admin</a>
+            <a href="../../contact.php" class="text-white fw-bold">Contact Support</a>
         </div>
     </footer>
 

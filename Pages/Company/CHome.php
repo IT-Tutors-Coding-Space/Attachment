@@ -258,11 +258,15 @@ try {
             </div>
         </div>
 
+<<<<<<< HEAD
+        <div class="card border-0 shadow-sm">
+=======
         <!-- Recent Applications Section -->
         <div class="card shadow-sm recent-applications">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Recent Applications</h5>
             </div>
+>>>>>>> 1ea657c150b1e0d7966bdb71a34e6d0b26061841
             <div class="card-body p-0">
                 <?php if (count($recentApplications) > 0): ?>
                     <div class="table-responsive">
@@ -299,11 +303,14 @@ try {
                         <p class="text-muted">No recent applications found</p>
                     </div>
                 <?php endif; ?>
+<<<<<<< HEAD
+=======
             </div>
             <div class="card-footer bg-white text-end py-3">
                 <a href="CTrack.php" class="btn btn-primary btn-sm">
                     <i class="fas fa-list me-1"></i> View All Applications
                 </a>
+>>>>>>> 1ea657c150b1e0d7966bdb71a34e6d0b26061841
             </div>
         </div>
     </div>
